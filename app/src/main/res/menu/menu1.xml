@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <group android:id="@+id/group1" android:visible="true" android:enabled="true" android:menuCategory="system">
+        
+    <item android:id="@+id/itemupdate" android:title="@string/itemupdate"></item>
+    <item android:id="@+id/itemdelete" android:title="@string/itemdelete"></item>
+    
+</group>
+    
+
+</menu>

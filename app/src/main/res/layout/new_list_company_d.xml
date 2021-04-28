@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0" >
+
+            <TextView
+                android:id="@+id/agent_list1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingLeft="10dp"
+                android:text="代理商名称"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="30dp" />
+
+            <TextView
+                android:id="@+id/agent_brackets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/agent_list1"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:text="（"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="26dp" />
+
+            <TextView
+                android:id="@+id/agent_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/agent_list1"
+                android:layout_toRightOf="@+id/agent_brackets"
+                android:paddingBottom="5dp"
+                android:text="代理商代号"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="26dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/agent_list1"
+                android:layout_toRightOf="@+id/agent_id"
+                android:paddingBottom="5dp"
+                android:text="）"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="26dp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:background="#AEAEAE" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8" >
+
+            <TextView
+                android:id="@+id/agent_list2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingLeft="10dp"
+                android:text="联系人"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="30dp" />
+            
+             <TextView
+                android:id="@+id/agent_tel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/agent_list2"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:text="（"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="26dp" />
+
+               <TextView
+                android:id="@+id/txt_tel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/agent_list2"
+                android:layout_toRightOf="@+id/agent_tel"
+                android:paddingBottom="5dp"
+                android:text="联系电话"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="26dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/agent_list2"
+                android:layout_toRightOf="@+id/txt_tel"
+                android:paddingBottom="5dp"
+                android:text="）"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="26dp" />
+
+        
+        </RelativeLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:background="#AEAEAE" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8" >
+
+            <TextView
+                android:id="@+id/agent_list3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_centerVertical="true"
+                android:text="公司地址"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="28dp" />
+       
+        </RelativeLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#AEAEAE" />
+
+</LinearLayout>

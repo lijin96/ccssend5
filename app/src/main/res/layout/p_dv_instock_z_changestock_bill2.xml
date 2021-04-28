@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText,dpUsage,InefficientWeight,UselessLeaf" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar_back"
+        android:gravity="center_vertical" >
+
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="right|center_vertical"
+                android:text="调拨单号："
+                android:textSize="18dp" 
+                android:textColor="@color/white"/>
+
+            <TextView
+                android:id="@+id/tv_bill_allotlno"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:textSize="18dp"
+                android:text=""
+                android:textColor="@color/white" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.5"
+                android:gravity="right|center_vertical"
+                android:text="SAP单号："
+                android:textSize="18dp" 
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/tv_saplno"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:textSize="18dp" 
+                android:text=""
+                android:textColor="@color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.88"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:text="调出仓"
+                android:textSize="20dp" />
+            <View android:layout_width="1dp"
+			    android:layout_height="fill_parent"
+			    android:background="#AEAEAE"
+			    android:layout_marginLeft="0.5dp"/>
+            <TextView
+                android:id="@+id/tv_outstock"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:textSize="18dp" 
+                android:paddingLeft="5dp"/>
+			<View android:layout_width="1dp"
+			    android:layout_height="fill_parent"
+			    android:background="#AEAEAE"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:text="调入仓"
+                android:textSize="20dp" />
+            <View android:layout_width="1dp"
+			    android:layout_height="fill_parent"
+			    android:background="#AEAEAE"/>
+            <TextView
+                android:id="@+id/tv_instock"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:textSize="18dp" 
+                android:paddingLeft="5dp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#AEAEAE" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+             >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:text="条\t\t码"
+                android:textSize="20dp" />
+            <View android:layout_width="1dp"
+			    android:layout_height="fill_parent"
+			    android:background="#AEAEAE"/>
+			<View 
+                android:layout_width="0dp"
+                android:layout_weight="0.05"
+                android:layout_height="fill_parent"/>
+            <EditText
+                android:id="@+id/bill2_et_barcode"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="2.35"
+                android:gravity="center_vertical"
+                android:textSize="18dp"
+                android:ems="18"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+            	android:inputType="text"
+            	android:imeOptions="actionDone"
+            	>
+          </EditText>
+            <View 
+                android:layout_width="0dp"
+                android:layout_weight="0.1"
+                android:layout_height="fill_parent"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#AEAEAE" />
+         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+             <TextView
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:layout_height="wrap_content"
+                android:text="型号色号 "
+                android:textSize="19dp" 
+                android:gravity="center"/>
+               <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#AEAEAE" />
+             <TextView
+                 android:id="@+id/bill2_tv_model_colors" 
+                 android:layout_width="0dp"
+                 android:layout_weight="2.5"
+                 android:layout_height="fill_parent"
+                 android:text=""
+                 android:gravity="center_vertical"
+                 android:textSize="20dp" 
+                 android:paddingLeft="10dp"/>
+             
+            </LinearLayout>
+        
+          <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#AEAEAE" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#D7D7D7"
+                android:gravity="center"
+                android:text="此型号累计"
+                android:textSize="30dp" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="fill_parent"
+                android:background="#AEAEAE" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#D7D7D7"
+                android:gravity="center"
+                android:text="合\t计"
+                android:textSize="30dp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#AEAEAE" />
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/bill2_tv_one_count"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="0"
+                android:textSize="35dp" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="fill_parent"
+                android:background="#AEAEAE" />
+
+            <TextView
+                android:id="@+id/bill2_tv_count"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="0"
+                android:textSize="35dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/LinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar_back"
+        android:gravity="center_horizontal" >
+
+        <Button
+            android:id="@+id/bill2_btn_detail"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:text="明细" />
+
+        <Button
+            android:id="@+id/bill2_btn_print"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/bill2_btn_detail"
+            android:text="打印" />
+        <Button
+            android:id="@+id/bill2_btn_ok"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/bill2_btn_print"
+            android:text="返回" />
+    </RelativeLayout>
+
+</LinearLayout>

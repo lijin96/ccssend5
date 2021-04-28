@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/item_PackDressBox_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.3"
+            android:gravity="center"
+            android:padding="7dp"
+            android:text="产品ID"
+            android:textSize="28dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#AEAEAE" />
+
+        <TextView
+            android:id="@+id/item_PackDressBox_Modelm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.3"
+            android:gravity="center"
+            android:padding="7dp"
+            android:text="型号"
+            android:textSize="28dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#AEAEAE" />
+
+        <TextView
+            android:id="@+id/item_PackDressBox_Color"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.3"
+            android:gravity="center"
+            android:padding="7dp"
+            android:text="色号"
+            android:textSize="28dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#AEAEAE" />
+
+        <TextView
+            android:id="@+id/item_PackDressBox_total"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.3"
+            android:gravity="center"
+            android:padding="7dp"
+            android:text="产品数量"
+            android:textSize="28dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#AEAEAE" />
+
+        <TextView
+            android:id="@+id/item_PackDressBox_scannum"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.3"
+            android:gravity="center"
+            android:padding="7dp"
+            android:text="当前扫描数量"
+            android:textSize="28dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#AEAEAE" />
+
+</LinearLayout>

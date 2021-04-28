@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bottombar_back_button" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="操作帮助"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="1、客户资料查找不到"
+                android:textColor="@color/black"
+                android:textSize="18dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="3dp"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1、重新获取客户资料"
+                        android:textColor="#303030"
+                        android:textSize="16dp" />
+
+                    <Button
+                        android:id="@+id/btn_obtain"
+                        android:layout_width="100dp"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="15dp"
+                        android:background="@drawable/button_background"
+                        android:gravity="center"
+                        android:text="重新获取"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2、登录ccs，在基本资料→客户资料中找到设备上找不到的那个客户，检查销售状态是否有开启，没开就选【是】保存，重新登录设备。"
+                        android:textColor="#303030"
+                        android:textSize="16dp" />
+
+                    <uk.co.senab.photoview.PhotoView
+                        android:id="@+id/ex_one"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/explain01" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="3、登录ccs，在基本资料→客户资料中找到设备上找不到的那个客户，如果客户资料背景色是绿色，说明建立的这个客户资料是分销店，如果对应品牌没有开启分销店功能，在设备上看不到这个客户资料，可点击零售店处的【新增】重新新建为零售店即可在设备上显示、"
+                        android:textColor="#303030"
+                        android:textSize="16dp" />
+
+                    <uk.co.senab.photoview.PhotoView
+                        android:id="@+id/ex_two"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/explain02" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4、对于第五代ccs系统，在使用者设置中检查当前登录的仓库帐号的品牌权限、区域权限是否有分配。"
+                        android:textColor="#303030"
+                        android:textSize="16dp" />
+
+                    <uk.co.senab.photoview.PhotoView
+                        android:id="@+id/ex_three"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/explain03" />
+
+                    <uk.co.senab.photoview.PhotoView
+                        android:id="@+id/ex_four"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/explain04" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:ignore="TextFields,HardcodedText,InefficientWeight,Uselesdparent" >
+
+    <LinearLayout
+        android:id="@+id/LinearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/titlebar_back"
+        android:gravity="left|center_vertical"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/TextView02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="补货单号"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+
+        <EditText
+            android:id="@+id/editText1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:ems="10" >
+
+            <requestFocus />
+        </EditText>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/gray"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/lblTip"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="客户名称"
+            android:textSize="18dp" 
+            android:gravity="center"/>
+        <View
+            android:layout_width="2dp"
+            android:layout_height="fill_parent"
+            android:background="#656565" />
+
+        <TextView
+            android:id="@+id/txt_pur_2"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="单\t号"
+            android:textSize="18dp"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lst_menu"
+        android:layout_width="match_parent"
+        android:layout_height="221dp"
+        android:layout_weight="1" >
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/LinearLayout01"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar_back"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btn_ok"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="确定" />
+
+        <Button
+            android:id="@+id/btn_exit"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:text="返回" />
+
+    </LinearLayout>
+
+</LinearLayout>

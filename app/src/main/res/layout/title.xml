@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="Deprecated,ContentDescription,HardcodedText,ObsoleteLayoutParam" >
+
+    <ImageView
+        android:id="@+id/titleimage"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_x="0dp"
+        android:layout_y="0dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/titlebackground" />
+
+    <Button
+        android:id="@+id/titlebtn1"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+
+        android:background="@drawable/titlebtnback" />
+    <!-- android:visibility="gone" -->
+
+    <TextView
+        android:id="@+id/titletext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/titleimage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:gravity="center_horizontal"
+        android:text="标题"
+        android:textSize="30dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/titlebtn2"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/titlebtn1"
+        android:background="@drawable/button_background"
+        android:text="升级"
+        android:textSize="24dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:visibility="visible" 
+        android:layout_marginRight="10dp"/>
+
+</RelativeLayout>

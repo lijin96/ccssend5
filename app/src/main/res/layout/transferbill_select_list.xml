@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText,TextFields,InefficientWeight,UselessLeaf" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        tools:ignore="Uselesdparent" >
+
+        <TextView
+            android:id="@+id/txt_listitem1"
+            android:layout_width="380dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="深圳市合力思科技有限公司"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <LinearLayout
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/darkgray" >
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/txt_listitem2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2019009991"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/txt_listitem3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2015-01-01" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/darkgray"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+</LinearLayout>

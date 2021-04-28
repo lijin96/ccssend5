@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:ignore="TextFields,HardcodedText,InefficientWeight,Uselesdparent" >
+
+    <LinearLayout
+        android:id="@+id/LinearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar_back"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/TextView04"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="退货明细"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:background="#C7C7C7">
+
+        <TextView
+            android:id="@+id/txtCompany_na"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:text="零售商"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="18dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#040404" />
+
+        <TextView
+            android:id="@+id/txtMolen"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="型号"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="18dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#040404" />
+
+        <TextView
+            android:id="@+id/txtColor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:gravity="center"
+            android:text="色号"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="18dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#040404" />
+
+        <TextView
+            android:id="@+id/txtNum"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:gravity="center"
+            android:text="数量" 
+            android:textSize="18dp"/>
+    </LinearLayout>
+     <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#AEAEAE" />
+
+    <ListView
+        android:id="@+id/lst_menu"
+        android:layout_width="match_parent"
+        android:layout_height="221dp"
+        android:layout_weight="1.24" >
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/LinearLayout01"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar_back"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/btn_exit"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="返回" />
+    </LinearLayout>
+
+</LinearLayout>

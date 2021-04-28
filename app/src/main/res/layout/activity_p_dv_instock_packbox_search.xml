@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/relayout_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebackground"
+        android:padding="10dp" >
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="补打盒标"
+            android:textColor="@color/white"
+            android:textSize="30dp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/cornflowerblue"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="条\t\t码"
+            android:textColor="@color/white"
+            android:textSize="30dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_marginRight="2dp"
+            android:background="#696969" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.05" />
+
+        <EditText
+            android:id="@+id/et_barcode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2.4"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center_vertical"
+            android:hint="请扫描或输入条码或者盒标码"
+            android:inputType="text"
+            android:textSize="30dp" >
+
+            <requestFocus />
+        </EditText>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.05" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <TextView
+            android:id="@+id/tv_box_message_str"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="盒标信息"
+            android:textSize="30dp" />
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_toRightOf="@id/tv_box_message_str"
+            android:background="#696969" />
+
+        <TextView
+            android:id="@+id/tv_box_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@id/line"
+            android:text=""
+            android:textSize="30dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#D7D7D7"
+        android:padding="10dp" >
+
+        <TextView
+            android:id="@+id/tv_connect_state_str"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right|center_vertical"
+            android:text="蓝牙打印机："
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/tv_connect_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tv_connect_state_str"
+            android:gravity="center"
+            android:text="未连接"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="50dp"
+            android:gravity="center"
+            android:text="可扫描"
+            android:textSize="30dp"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebackground"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" 
+        android:gravity="center" >
+
+        <Button
+            android:id="@+id/btn_connect"
+            android:layout_width="250dp"
+            android:layout_height="80dp"
+            android:background="@drawable/button_background2"
+            android:text="连接"
+            android:textSize="@dimen/show_title_size"
+           />
+
+        <Button
+            android:id="@+id/btn_again_print_boxcode"
+            android:layout_width="250dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="30dp"
+            android:layout_toRightOf="@id/btn_connect"
+            android:background="@drawable/button_background2"
+            android:text="补打盒标"
+            android:textSize="@dimen/show_title_size" />
+
+        <Button
+            android:id="@+id/btn_finish"
+            android:layout_width="250dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="30dp"
+            android:layout_toRightOf="@id/btn_again_print_boxcode"
+            android:background="@drawable/button_background2"
+            android:text="完成"
+            android:textSize="@dimen/show_title_size" />
+    </RelativeLayout>
+
+</LinearLayout>

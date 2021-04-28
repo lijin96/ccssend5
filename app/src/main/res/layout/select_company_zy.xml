@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/titlebar_back"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:layout_width="255dp"
+            android:layout_height="fill_parent" >
+
+            <TextView
+                android:id="@+id/selected_company_z_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="5dp"
+                android:text="（已选：）"
+                android:textColor="#00FF00"
+                android:textSize="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/selected_company_z_tv"
+                android:layout_marginLeft="10dp"
+                android:text="直营店选择"
+                android:textColor="@color/white"
+                android:textSize="20dp" />
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/select_company_z_et_search"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:ems="16"
+            android:hint="模糊查找"
+            android:inputType="text" 
+            android:imeOptions="flagNoExtractUi">
+        </EditText>
+
+        <Button
+            android:id="@+id/select_company_z_btn_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/button_find" />
+
+        <Button
+            android:id="@+id/select_company_z_btn_filter"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="筛 选" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2.88"
+        android:gravity="left"
+        android:orientation="vertical" >
+		<RelativeLayout 
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:background="@color/burlywood" >
+		     <include
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/list_company_z"
+            />
+		</RelativeLayout>
+
+        <ListView
+            android:id="@+id/listView_company_z"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:cacheColorHint="#00000000" >
+        </ListView>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar_back"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/select_company_z_tv_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:text="共计 0 条"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/select_company_z_btn_cancel"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="110dp"
+            android:layout_toRightOf="@id/select_company_z_tv_count"
+            android:text="返回" />
+
+        <Button
+            android:id="@+id/select_company_z_btn_ok"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_toRightOf="@id/select_company_z_btn_cancel"
+            android:text="确 定" />
+    </RelativeLayout>
+
+</LinearLayout>

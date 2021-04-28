@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/LinearLayout1"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    tools:ignore="HardcodedText">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/bottombar_back_button"
+        android:orientation="horizontal">
+
+        <RelativeLayout 
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent">
+             <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="请选择供应商"
+            android:textColor="@color/white"
+            android:textAppearance="?android:attr/textAppearanceLarge" 
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"/>
+              <TextView 
+            android:id="@+id/tv_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="（共 0 条）"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            android:textSize="12dp"
+            android:layout_alignParentBottom="true"/>
+       
+        </RelativeLayout>
+            
+        
+        <EditText
+            android:id="@+id/et_query_supplier" 
+            android:layout_width="250dp"
+            android:layout_height="fill_parent"
+            android:hint="模糊查找，请输入查找条件"
+            android:inputType="text"
+            android:ems="18"
+            android:focusableInTouchMode="true"
+            android:gravity="center_vertical"
+            android:imeOptions="flagNoExtractUi"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="100dp"
+            android:layout_centerVertical="true">
+            <requestFocus />
+        </EditText>
+         <Button 
+            android:id="@+id/btn_query_supplier"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="搜索"
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"/>
+       
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:background="@color/burlywood">
+
+        <include
+            android:id="@+id/include1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp"
+            android:background="@color/red"
+            layout="@layout/list_select_supplier"/>
+    </LinearLayout>
+
+    <include
+        android:id="@+id/include2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/select_datalist"/>
+    
+
+</LinearLayout>

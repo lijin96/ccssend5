@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/AbsoluteLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="Deprecated,HardcodedText" >
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/title" />
+
+    <AbsoluteLayout
+        android:id="@+id/AbsoluteLayout2"
+        android:layout_width="266dp"
+        android:layout_height="220dp"
+        android:layout_x="121dp"
+        android:layout_y="62dp"
+        android:background="@color/mycolor" >
+
+        <TextView
+            android:id="@+id/listrowmenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_x="20dp"
+            android:layout_y="31dp"
+            android:text="原密码："
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/prepwdedt"
+            android:layout_width="141dp"
+            android:layout_height="wrap_content"
+            android:layout_x="102dp"
+            android:layout_y="23dp"
+            android:ems="10"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:id="@+id/daka_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_x="20dp"
+            android:layout_y="80dp"
+            android:text="新密码："
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/newpwdedt"
+            android:layout_width="141dp"
+            android:layout_height="wrap_content"
+            android:layout_x="103dp"
+            android:layout_y="69dp"
+            android:ems="10"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:id="@+id/listrowbudannum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_x="20dp"
+            android:layout_y="130dp"
+            android:text="确定修改："
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/surepwdedt"
+            android:layout_width="141dp"
+            android:layout_height="wrap_content"
+            android:layout_x="102dp"
+            android:layout_y="113dp"
+            android:ems="10"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/btn1"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="64dp"
+            android:layout_height="38dp"
+            android:layout_x="38dp"
+            android:layout_y="177dp"
+            android:text="确定" />
+
+        <Button
+            android:id="@+id/btn2"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="64dp"
+            android:layout_height="38dp"
+            android:layout_x="165dp"
+            android:layout_y="174dp"
+            android:text="重置" />
+    </AbsoluteLayout>
+
+</AbsoluteLayout>

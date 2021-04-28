@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main"
+    android:orientation="vertical"
+    tools:ignore="Uselesdparent,ContentDescription" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="42dp"
+            android:src="@drawable/link_state_on" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="80dp"
+            android:gravity="center" >
+            <Button
+                android:id="@+id/btn_instock"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_instock" />
+
+            <Button
+                android:id="@+id/btn_sendgoods"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_sendgoods"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp" />
+
+            <Button
+                android:id="@+id/btn_backgoods"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_backgoods" />
+
+            <Button
+                android:id="@+id/btn_otherscan"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_other" 
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/linearLayout1"
+            android:layout_marginTop="50dp"
+            android:gravity="center" >
+
+            <Button
+                android:id="@+id/btn_net"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_os_set"
+               />
+            <TextView 
+                android:id="@+id/tv_net"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="设置" 
+                android:layout_below="@id/btn_net"
+                android:textColor="@color/white"
+                android:paddingLeft="6dp"/>
+
+            <Button
+                android:id="@+id/btn_function"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/btn_net"
+                android:background="@drawable/btn_function"
+                android:layout_marginLeft="35dp"
+                android:layout_marginRight="35dp"/>
+             <TextView
+                android:id="@+id/tv_function" 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="功能" 
+                android:layout_below="@id/btn_function"
+                android:textColor="@color/white"
+                android:layout_toRightOf="@id/tv_net"
+                android:layout_alignLeft="@id/btn_function"
+                android:paddingLeft="6.5dp"/>
+
+            <Button
+                android:id="@+id/btn_update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/btn_function"
+                android:background="@drawable/btn_update_b"/>
+             <TextView 
+                 android:id="@+id/tv_update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="升级" 
+                android:layout_below="@id/btn_update"
+                android:textColor="@color/white"
+                android:layout_toRightOf="@id/tv_function"
+                android:layout_alignLeft="@id/btn_update"
+                android:paddingLeft="7dp"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

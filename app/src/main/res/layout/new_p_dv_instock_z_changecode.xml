@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText,dpUsage,InefficientWeight,UselessLeaf" >
+
+    <LinearLayout
+        android:id="@+id/linelayout_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar_back"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp" >
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="产品换标"
+            android:textColor="@color/white"
+            android:textSize="30dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linelayout_middle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.88"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#DFDFDF"
+            android:padding="15dp" >
+
+            <TextView
+                android:id="@+id/tv_new_mess"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="80dp"
+                android:gravity="center"
+                android:text="新标物流码："
+                android:textColor="@color/black"
+                android:textSize="30dp" />
+
+            <EditText
+                android:id="@+id/et_new_code"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_toRightOf="@id/tv_new_mess"
+                android:hint="请扫描新标物流码"
+                android:singleLine="true"
+                android:textSize="30dp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#AEAEAE" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#DFDFDF"
+            android:padding="15dp" >
+
+            <TextView
+                android:id="@+id/tv_head"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="80dp"
+                android:gravity="right"
+                android:text="选择旧标类型："
+                android:textColor="@color/black"
+                android:textSize="30dp" />
+
+            <RadioGroup
+                android:id="@+id/radiogroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@id/tv_head"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radiobtn_logistics"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:focusable="false"
+                    android:text="物流码"
+                    android:textColor="@color/black"
+                    android:textSize="30dp" />
+
+                <RadioButton
+                    android:id="@+id/radiobtn_security"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:focusable="false"
+                    android:text="防伪码 "
+                    android:textSize="30dp" />
+            </RadioGroup>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#AEAEAE" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#DFDFDF"
+            android:padding="15dp" >
+
+            <TextView
+                android:id="@+id/tv_old_mess"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="80dp"
+                android:gravity="center"
+                android:text="旧标物流码："
+                android:textColor="@color/black"
+                android:textSize="30dp" />
+
+            <EditText
+                android:id="@+id/et_old_code"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_toRightOf="@id/tv_old_mess"
+                android:hint="请扫描旧标物流码"
+                android:nextFocusForward="@id/et_new_code"
+                android:singleLine="true"
+                android:textSize="30dp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#AEAEAE" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp" >
+
+            <TextView
+                android:id="@+id/tv_result_str"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="80dp"
+                android:gravity="center"
+                android:text="换标结果："
+                android:textColor="@color/black"
+                android:textSize="35dp" />
+
+            <TextView
+                android:id="@+id/tv_result"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@id/tv_result_str"
+                android:text="未开始"
+                android:textSize="35dp" />
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/tv_result" >
+
+                <TextView
+                    android:id="@+id/tv_new_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="新标物流码："
+                    android:textColor="@color/black"
+                    android:textSize="30dp" />
+
+                <TextView
+                    android:id="@+id/tv_old_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_new_code"
+                    android:text="旧标物流码："
+                    android:textColor="@color/black"
+                    android:textSize="30dp" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:text=""
+            android:textColor="@color/red"
+            android:textSize="30dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linelayout_buttom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar_back"
+        android:gravity="center"
+        android:padding="10dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btn_list"
+            android:layout_width="250dp"
+            android:layout_height="80dp"
+            android:focusable="false"
+            android:text="明细"
+            android:textSize="@dimen/show_title_size" />
+
+        <Button
+            android:id="@+id/btn_print"
+            android:layout_width="250dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="30dp"
+            android:focusable="false"
+            android:text="打印"
+            android:textSize="@dimen/show_title_size" />
+
+        <Button
+            android:id="@+id/btn_exit"
+            android:layout_width="250dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="30dp"
+            android:focusable="false"
+            android:text="完成"
+            android:textSize="@dimen/show_title_size" />
+    </LinearLayout>
+
+</LinearLayout>

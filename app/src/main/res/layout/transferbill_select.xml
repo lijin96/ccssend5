@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText,TextFields,InefficientWeight,Orientation,UselessLeaf" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/titlebar_back" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="45dp" >
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="调货扫描"
+                android:textColor="@color/white"
+                android:textSize="20dp" 
+                android:layout_marginTop="5dp"
+                android:padding="0dp"/>
+            <TextView
+                android:id="@+id/tv_count"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="（共 0 条）"
+                android:textColor="@color/white"
+                android:textSize="12dp" 
+                android:layout_below="@id/tv_title"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="0dp"/>
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/edtSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="150dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:gravity="center_vertical|center_horizontal"
+            android:hint="可模糊查找" 
+            android:imeOptions="flagNoExtractUi"/>
+
+        <Button
+            android:id="@+id/btnOk"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:text="搜索" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/gainsboro" >
+
+        <TextView
+            android:id="@+id/txt_list2"
+            android:layout_width="380dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="公司名称"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <LinearLayout
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/darkgray" >
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txt_list1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="单号"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/darkgray"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+
+</LinearLayout>

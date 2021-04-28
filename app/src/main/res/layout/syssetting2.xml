@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/settingback"
+    android:orientation="vertical"
+    tools:ignore="Uselesdparent,ContentDescription,TextFields,HardcodedText,InefficientWeight,DuplicateIds" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="50dp"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="115dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="3dp" >
+
+                <TextView
+                    android:id="@+id/TextView07"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="服务器地址："
+                    android:textColor="@color/white"
+                    android:textSize="26dp" />
+
+                <EditText
+                    android:id="@+id/txtIP"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="3.8"
+                    android:background="@drawable/textback"
+                    android:enabled="false"
+                    android:imeOptions="flagNoExtractUi"
+                    android:padding="5dp"
+                    android:textSize="26dp"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="20dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="3dp" >
+
+                <TextView
+                    android:id="@+id/TextView08"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="端   口   号  ："
+                    android:textColor="@color/white"
+                    android:textSize="26dp" />
+
+                <EditText
+                    android:id="@+id/txtport"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="3.8"
+                    android:background="@drawable/textback"
+                    android:enabled="false"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="number"
+                    android:padding="5dp"
+                    android:textSize="26dp"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="20dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="3dp" >
+
+                <TextView
+                    android:id="@+id/TextView03"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="系 统 类 型 ："
+                    android:textColor="@color/white"
+                    android:textSize="26dp" />
+
+                <EditText
+                    android:id="@+id/txtSoftType"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="3.8"
+                    android:background="@drawable/textback"
+                    android:enabled="false"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="number"
+                    android:padding="5dp"
+                    android:textSize="26dp"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="20dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="3dp" >
+
+                <TextView
+                    android:id="@+id/TextView02"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="品 牌 代 号 ："
+                    android:textColor="@color/white"
+                    android:textSize="26dp" />
+
+                <EditText
+                    android:id="@+id/txtEnterpriseID"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="3.8"
+                    android:background="@drawable/textback"
+                    android:enabled="false"
+                   android:textSize="26dp"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="number"
+                    android:padding="5dp"
+                    android:singleLine="true" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal" >
+
+            <Button
+                android:id="@+id/btn_print"
+                android:layout_width="250dp"
+                android:layout_height="fill_parent"
+                android:background="@drawable/button_background"
+                android:text="测试打印"
+                android:textSize="26dp"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_testnet"
+                android:layout_width="250dp"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/button_background"
+                android:text="测试网络"
+                android:textSize="26dp"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_getmenu"
+                android:layout_width="250dp"
+                android:layout_height="fill_parent"
+                android:background="@drawable/button_background"
+                android:text="获取菜单"
+                android:textSize="26dp"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginTop="40dp"
+            android:gravity="center_horizontal" >
+
+            <Button
+                android:id="@+id/btn_clear"
+                android:layout_width="250dp"
+                android:layout_height="fill_parent"
+                android:background="@drawable/button_background"
+                android:text="清除数据"
+                android:textSize="26dp"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_cleanbrand"
+                android:layout_width="250dp"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/button_background"
+                android:text="清除品牌"
+                android:textSize="26dp"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_to_v4"
+                android:layout_width="250dp"
+                android:layout_height="fill_parent"
+                android:background="@drawable/button_background"
+                android:text="转成V4"
+                android:textSize="26dp"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:gravity="center" >
+
+            <Button
+                android:id="@+id/btn_exit"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:textSize="26dp"
+                android:padding="20dp"
+                android:text="取\t消" />
+
+            <Button
+                android:id="@+id/btn_ok"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="100dp"
+                android:layout_toRightOf="@id/btn_exit"
+                android:textSize="26dp"
+                android:padding="20dp"
+                android:text="确\t定" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

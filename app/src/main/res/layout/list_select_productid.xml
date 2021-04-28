@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:ignore="HardcodedText" >
+
+    <TextView
+        android:id="@+id/txt_list1"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:text="年份"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/txt_list2"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:text="系列"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/txt_list3"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:text="代号"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/txt_list4"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="型号"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/txt_list5"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="色号"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</LinearLayout>

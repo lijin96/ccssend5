@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bottombar_back_button"
+        android:gravity="center_vertical"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/txt_tile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="20dp"
+                android:text="请选择仓库"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/white"
+                android:textSize="30dp" />
+
+            <TextView
+                android:id="@+id/tv_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txt_tile"
+                android:layout_centerHorizontal="true"
+                android:text="（共 0 条）"
+                android:textColor="@color/white"
+                android:textSize="28dp" />
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/et_query_stock"
+            android:layout_width="450dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:hint="模糊查找，请输入查找条件"
+            android:imeOptions="flagNoExtractUi"
+            android:inputType="text"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/tv_redownload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@id/et_query_stock"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="重新下载"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/burlywood"
+        android:gravity="left" >
+
+        <include
+            android:id="@+id/include1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp"
+            layout="@layout/new_list_select_stock" />
+    </LinearLayout>
+
+    <include
+        android:id="@+id/include2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/select_datalist" />
+
+</LinearLayout>

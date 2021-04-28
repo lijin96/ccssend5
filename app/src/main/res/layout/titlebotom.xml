@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="Deprecated,ContentDescription,HardcodedText,ObsoleteLayoutParam,UnknownIdInLayout,UnknownId">
+
+    <ImageView
+        android:id="@+id/titlebottomimageView"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_x="0dp"
+        android:layout_y="-2dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/titlebackground" />
+
+    <Button
+        android:id="@+id/titlebotom_btn1"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_x="10dp"
+        android:layout_y="4dp"
+        android:background="@drawable/button_background"
+        android:scaleType="fitXY"
+        android:text="提交"
+        android:textColor="@color/white"
+        android:textSize="26dp" />
+
+    <Button
+        android:id="@+id/titlebotom_btn2"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignBottom="@+id/bottombtn1"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/button_background"
+        android:text="其他"
+        android:textColor="@color/white"
+        android:textSize="26dp" />
+
+</RelativeLayout>

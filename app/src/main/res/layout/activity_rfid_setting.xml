@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="HardcodedText" >
+
+    <TextView
+        android:id="@+id/tv_rfid_setting_title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/titlebar_back"
+        android:gravity="center"
+        android:paddingLeft="40dp"
+        android:text="RFID 设置"
+        android:textColor="@color/white"
+        android:textSize="35dp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:id="@+id/middle_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_rfid_setting_title"
+        android:layout_marginTop="70dp"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/tv_pw"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:layout_marginLeft="80dp"
+            android:gravity="center"
+            android:text="功 率（0~150） ："
+            android:textSize="30dp" />
+
+        <EditText
+            android:id="@+id/txtPowerValue"
+            android:layout_width="250dp"
+            android:layout_height="55dp"
+            android:layout_toRightOf="@id/tv_pw"
+            android:imeOptions="flagNoExtractUi"
+            android:inputType="number"
+            android:text="0"
+            android:textSize="30dp" 
+            android:gravity="center"/>
+        <TextView 
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtPowerValue"
+            android:layout_alignLeft="@id/txtPowerValue"
+            android:textSize="14dp"
+            android:text="（数字越小，功率越大）"
+            android:gravity="center_horizontal"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/btn_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/middle_layout"
+        android:layout_marginTop="75dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btnEsc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="75dp"
+            android:layout_weight="1"
+            android:text="@string/Back" 
+            android:textSize="18dp"/>
+
+        <Button
+            android:id="@+id/btnOk"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="60dp"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:text="保存" 
+            android:textSize="18dp"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:background="#73C4FF"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/tv_rfid_ip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="6dp"
+            android:layout_marginRight="60dp"
+            android:layout_marginTop="6dp"
+            android:text="（RFID IP:0.0.0.0）"
+            android:textColor="@color/white"
+            android:textSize="15dp" />
+
+        <TextView
+            android:id="@+id/tv_local_ip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="65dp"
+            android:layout_marginTop="6dp"
+            android:text="（本机IP:0.0.0.0）"
+            android:textColor="@color/white"
+            android:textSize="15dp" />
+    </RelativeLayout>
+
+</RelativeLayout>

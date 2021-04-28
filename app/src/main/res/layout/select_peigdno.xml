@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="UselessLeaf,HardcodedText,Uselesdparent,InefficientWeight,TextFields" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/bottombar_back_button"
+        android:gravity="center"
+        android:paddingLeft="10dp" >
+		<RelativeLayout 
+		    android:layout_width="0dp"
+		    android:layout_weight="1"
+		    android:layout_height="fill_parent"
+		    >
+		      <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="配货单选择"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/white" 
+            android:layout_centerVertical="true"/>
+		    
+		    <TextView 
+            android:id="@+id/tv_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="（共 0 条）"
+            android:textColor="@color/white"
+            android:textSize="12dp"
+            android:layout_marginLeft="15dp"
+            android:layout_centerHorizontal="true"
+           android:layout_alignParentBottom="true"
+           android:layout_alignLeft="@id/textView1"/>
+		</RelativeLayout>
+      
+
+        <EditText
+            android:id="@+id/et_search"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.75"
+            android:inputType="text"
+            android:imeOptions="flagNoExtractUi"/>
+
+        <Button
+            android:id="@+id/btn_search"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="搜索"
+            android:layout_marginRight="10dp" 
+            android:layout_marginLeft="8dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:background="@color/burlywood"
+        >
+
+        <include
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/list_peiglno2"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+    </ListView>
+
+</LinearLayout>

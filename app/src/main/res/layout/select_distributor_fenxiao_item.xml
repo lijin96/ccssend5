@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:focusable="false"
+    android:orientation="vertical"
+    tools:context=".company"
+    tools:ignore="DisableBaselineAlignment,HardcodedText,ScrollViewSize,InefficientWeight,Uselesdparent,NestedWeights,ObsoleteLayoutParam,Deprecated" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+         android:paddingLeft="15dp"
+         >
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" 
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/companyName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="分销店名称"
+                android:textColor="@color/black"
+                android:textSize="30dp" 
+                android:paddingTop="3dp"/>
+
+            <TextView
+                android:id="@+id/tv_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/companyName"
+                android:text="（"
+                android:textSize="28dp" />
+
+            <TextView
+                android:id="@+id/company_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/companyName"
+                android:layout_toRightOf="@id/tv_left"
+                android:text="代号"
+                android:textSize="28dp" 
+                android:paddingBottom="3dp"/>
+
+            <TextView
+                android:id="@+id/tv_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/companyName"
+                android:layout_toRightOf="@id/company_id"
+                android:text="）"
+                android:textSize="28dp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#AEAEAE" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:paddingLeft="5dp" >
+
+            <TextView
+                android:id="@+id/companyLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="联系人"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="30dp"
+                android:paddingLeft="3dp" />
+
+            <TextView
+                android:id="@+id/agent_tel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/companyLink"
+                android:text="（"
+                android:textSize="28dp" />
+
+            <TextView
+                android:id="@+id/companyTel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/companyLink"
+                android:layout_toRightOf="@+id/agent_tel"
+                android:text="联系电话"
+                android:textSize="28dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/companyLink"
+                android:layout_toRightOf="@+id/companyTel"
+                android:text="）"
+                android:textSize="28dp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#AEAEAE" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.1"
+            android:paddingLeft="5dp" 
+            >
+
+            <TextView
+                android:id="@+id/corpaddr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:paddingLeft="5dp"
+                android:text="公司地址"
+                android:textSize="30dp" 
+                />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#AEAEAE" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#AEAEAE" />
+
+</LinearLayout>

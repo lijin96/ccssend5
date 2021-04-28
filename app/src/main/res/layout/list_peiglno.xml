@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText">
+
+    <TextView
+        android:id="@+id/txt_list1"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:text="配货单"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView
+        android:id="@+id/txt_list2"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:text="sap单号"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView
+        android:id="@+id/txt_list3"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:text="客户名称"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView
+        android:id="@+id/txt_list4"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:text="仓库名称"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView
+        android:id="@+id/txt_list5"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:text="客户id"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView
+        android:id="@+id/txt_list6"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:text="仓库id"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+</LinearLayout>

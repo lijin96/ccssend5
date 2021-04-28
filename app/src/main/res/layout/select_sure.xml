@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/settingback"
+    tools:ignore="HardcodedText" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:text="确定要发当前配货单：Dx-000001 的产品吗？"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="50dp" />
+
+    <ImageView
+        android:id="@+id/iv_brand"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_below="@id/textView1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:scaleType="fitXY" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        android:gravity="center" >
+
+        <!-- android:background="@drawable/buttonback2" -->
+
+        <Button
+            android:id="@+id/btn_exit"
+            android:layout_width="250dp"
+            android:layout_height="80dp"
+            android:text="取\t消"
+            android:textSize="30dp" />
+
+        <Button
+            android:id="@+id/btn_ok"
+            android:layout_width="250dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="100dp"
+            android:text="确\t定"
+            android:textSize="30dp" />
+    </LinearLayout>
+
+</RelativeLayout>

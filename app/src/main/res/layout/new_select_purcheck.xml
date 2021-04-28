@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/bottombar_back_button">
+		<RelativeLayout 
+		    android:layout_width="wrap_content"
+		    android:layout_height="fill_parent"
+		    >
+		     <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="品检单选择"
+            android:textColor="@color/white"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:paddingLeft="10dp"
+            android:layout_centerVertical="true"/>
+		     <TextView 
+            android:id="@+id/tv_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="（共 0 条）"
+            android:textColor="@color/white"
+            android:textSize="12dp"
+            android:layout_centerHorizontal="true"
+           android:layout_alignParentBottom="true"/>
+		</RelativeLayout>
+       
+        <EditText
+            android:id="@+id/et_search"
+            android:layout_width="250dp"
+            android:layout_height="fill_parent"
+            android:layout_marginRight="10dp" 
+            android:layout_gravity="right"
+            android:imeOptions="flagNoExtractUi"
+            android:inputType="text"
+            android:layout_alignParentRight="true"
+            />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:background="@color/burlywood">
+
+       
+        <TextView
+            android:id="@+id/txt_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.1"
+            android:padding="5dp"
+            android:text="品检单号"
+            android:textSize="20dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#AEAEAE" />
+
+        <TextView
+            android:id="@+id/txt_pur_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="SAP单号"
+            android:padding="5dp"
+            android:textSize="20dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#AEAEAE" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+			<TextView
+                android:id="@+id/txt_pur_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="2dp"
+                android:text="供应商"
+                android:textSize="20dp" />
+			<LinearLayout 
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:orientation="horizontal">
+			     <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="（"
+                    android:textSize="12dp" />
+			     <TextView
+                    android:id="@+id/txt_pur_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="供应商ID"
+                    android:textSize="12dp" />
+			      <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="）"
+                    android:textSize="12dp" />
+			</LinearLayout>
+               
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#AEAEAE" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+			 <TextView
+                android:id="@+id/txt_pur_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="2dp"
+                android:text="仓库名"
+                android:textSize="20dp" />
+		<LinearLayout 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal">
+		     <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="（"
+                    android:textSize="12dp" />
+                <TextView
+                    android:id="@+id/txt_pur_6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="仓库ID"
+                    android:textSize="12dp" />
+                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="）"
+                    android:textSize="12dp" />
+		</LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </ListView>
+
+</LinearLayout>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/AbsoluteLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="Deprecated,ContentDescription" >
+
+    <TextView
+        android:id="@+id/popuptextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="72dp"
+        android:layout_y="95dp"
+        android:text="正在处理数据，请稍后……"
+        tools:ignore="HardcodedText" />
+
+    <ProgressBar
+        android:id="@+id/popupprogressbar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="106dp"
+        android:layout_y="19dp" />
+
+    <ImageButton
+        android:id="@+id/popupimageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="201dp"
+        android:layout_y="43dp"
+        android:src="@drawable/quit" />
+
+</AbsoluteLayout>

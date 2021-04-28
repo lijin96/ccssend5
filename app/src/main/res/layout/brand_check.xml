@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/RelativeLayout1"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/main"
+    tools:ignore="HardcodedText,UnknownIdInLayout,ContentDescription,TextFields">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="100dp"
+        android:layout_height="61dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:scaleType="fitXY"/>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="27dp"
+        android:text="请输入品牌验证码："
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <Button
+        android:id="@+id/btn_Import"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="35dp"
+        android:layout_toRightOf="@+id/imageView"
+        android:text="还原数据"
+        android:layout_marginLeft="30dp"/>
+
+    <Button
+        android:id="@+id/btn_fix"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btn_Import"
+        android:layout_alignBottom="@+id/btn_Import"
+        android:text="维护"
+        android:layout_toLeftOf="@+id/imageView"
+        android:layout_marginRight="30dp"/>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_Import"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="47dp"
+        android:text="之前有备份的数据可以通过还原数据一次性导入系统"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone"/>
+
+    <EditText
+        android:id="@+id/edtcheck_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_below="@+id/textView1"
+        android:layout_marginTop="13dp"
+        android:layout_toLeftOf="@+id/btn_check"
+        android:layout_marginLeft="35dp"
+        android:imeOptions="flagNoExtractUi"
+        android:inputType="number"
+        />
+
+    <Button
+        android:id="@+id/btn_check"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/edtcheck_code"
+        android:layout_alignBottom="@+id/edtcheck_code"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp"
+        android:text="验证"/>
+    <TextView
+        android:id="@+id/tv_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edtcheck_code"
+        android:layout_alignLeft="@id/textView1"
+        android:text="（需要验证码请加合力思-CCS售后服务QQ群【172747897】联系客服解决，谢谢！）"
+        android:textSize="14dp"
+        android:layout_marginLeft="30dp"
+        android:textColor="@color/black"/>
+
+    <Button
+        android:id="@+id/btnSystemRepair"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignBaseline="@+id/btn_Import"
+        android:layout_alignBottom="@+id/btn_Import"
+        android:layout_centerHorizontal="true"
+        android:text="系统设置" 
+       />
+
+</RelativeLayout>

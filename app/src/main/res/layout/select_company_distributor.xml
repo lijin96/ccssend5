@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:ignore="TextFields,HardcodedText,InefficientWeight,Uselesdparent" >
+
+    <RelativeLayout
+        android:id="@+id/LinearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar_back"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="10dp" >
+
+        <LinearLayout
+            android:id="@+id/lin_company_d1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/TextView02"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dp"
+                android:text="分销店选择"
+                android:textColor="@color/white"
+                android:textSize="30dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/tv_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:text="（共 0 条）"
+                    android:textColor="@color/white"
+                    android:textSize="28dp" />
+
+                <TextView
+                    android:id="@+id/company_store_help"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="找不到资料？"
+                    android:textColor="@color/white"
+                    android:textSize="28dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/et_search"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:hint="输入条件模糊查找"
+            android:imeOptions="flagNoExtractUi" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/burlywood"
+        android:gravity="left" >
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/select_distributor_fenxiao_item" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/elistview_distributor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="#AEAEAE"
+        android:dividerHeight="0.1dp" >
+    </ListView>
+
+</LinearLayout>

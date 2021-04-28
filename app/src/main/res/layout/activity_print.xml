@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/settingback"
+    android:orientation="vertical"
+    tools:ignore="Uselesdparent,ContentDescription,TextFields,HardcodedText,InefficientWeight,DuplicateIds" >
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        >
+
+        <Button
+            android:id="@+id/btn_print_hb"
+            android:layout_width="115dp"
+            android:layout_height="45dp"
+            android:background="@drawable/button_background"
+            android:text="打印盒标"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/btn_print_xp"
+            android:layout_width="115dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/button_background"
+            android:text="打印小票"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

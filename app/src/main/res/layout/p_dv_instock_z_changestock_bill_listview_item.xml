@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/listview_item_bill_tv_bill_allotlno"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.1"
+            android:paddingLeft="5dp"
+            android:text="SD-001400001"
+            android:textSize="18dp" />
+
+        <View
+            android:layout_width="1.2dp"
+            android:layout_height="match_parent"
+            android:background="#9E9E9E" />
+
+        <TextView
+            android:id="@+id/listview_item_bill_tv_sap_no"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.1"
+            android:paddingLeft="5dp"
+            android:text="700116-8344"
+            android:textSize="18dp" />
+
+        <View
+            android:layout_width="1.2dp"
+            android:layout_height="match_parent"
+            android:background="#9E9E9E" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.3"
+            android:orientation="vertical" 
+            android:paddingLeft="5dp">
+
+            <TextView
+                android:id="@+id/listview_item_bill_tv_bill_outstock_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="调出 仓库"
+                android:textSize="18dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="（"
+                    android:textSize="12dp" />
+
+                <TextView
+                    android:id="@+id/listview_item_bill_tv_bill_outstock_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="仓库ID"
+                    android:textSize="12dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="）"
+                    android:textSize="12dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="1.2dp"
+            android:layout_height="match_parent"
+            android:background="#9E9E9E" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.3"
+            android:orientation="vertical" 
+            android:paddingLeft="5dp">
+
+            <TextView
+                android:id="@+id/listview_item_bill_tv_bill_instock_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="调入 仓库"
+                android:textSize="18dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="（"
+                    android:textSize="12dp" />
+
+                <TextView
+                    android:id="@+id/listview_item_bill_tv_bill_instock_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="仓库ID"
+                    android:textSize="12dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="）"
+                    android:textSize="12dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#9E9E9E" />
+
+</LinearLayout>

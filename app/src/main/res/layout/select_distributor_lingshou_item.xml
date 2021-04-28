@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    android:background="#E6CAA5"
+    >
+    <ImageView
+        android:id="@+id/iv_arrow" 
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/s_right"
+        android:layout_centerVertical="true"/>
+    <RelativeLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/iv_arrow"
+        android:layout_centerVertical="true"
+        android:gravity="clip_vertical">
+         <TextView 
+        android:id="@+id/tv_TraderId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="(零售商代号)"
+        android:textSize="12dp"
+       
+        android:layout_marginLeft="10dp"
+        />
+        <TextView 
+        android:id="@+id/tv_TraderName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="零售商名称"
+        android:textSize="16dp"
+        android:layout_below="@id/tv_TraderId"
+        android:textColor="@color/black"
+        android:paddingLeft="10dp"/>
+     
+    </RelativeLayout>
+
+</RelativeLayout>

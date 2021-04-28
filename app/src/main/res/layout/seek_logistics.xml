@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:ignore="TextFields,HardcodedText,InefficientWeight,Uselesdparent,Deprecated">
+	    <TextView 
+	        android:layout_width="match_parent"
+	        android:background="@drawable/titlebar_back"
+	        android:layout_height="40dp"
+	        android:text="物流扫描"
+	        android:gravity="center"
+	        android:textColor="@color/white"
+	        android:textSize="25dp"/>
+    <LinearLayout
+        android:id="@+id/LinearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        
+        android:background="@color/cornflowerblue"
+        android:gravity="left|center_vertical"
+        android:orientation="horizontal">
+
+        <RadioGroup
+            android:id="@+id/radioGroup1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radio0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="防伪码"
+                android:textColor="@color/white"
+                android:layout_marginLeft="20dp"/>
+
+            <RadioButton
+                android:id="@+id/radio1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:checked="true"
+                android:text="防窜码"
+                android:textColor="@color/white"/>
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/txt_barcode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:imeOptions="flagNoExtractUi">
+
+            <requestFocus/>
+        </EditText>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/txt_showmsg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:ems="10"
+        android:gravity="top|left"
+        android:editable="false"/>
+
+    <LinearLayout
+        android:id="@+id/LinearLayout01"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar_back"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_exit"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="返回"/>
+    </LinearLayout>
+
+</LinearLayout>
