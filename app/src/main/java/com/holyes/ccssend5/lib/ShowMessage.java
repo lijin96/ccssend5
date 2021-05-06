@@ -29,6 +29,7 @@ public class ShowMessage {
     public static final int HandCloseLoading=4;
     public static final int HandSuccess=20;
     public static final int HandFailed=21;
+    public static final int HandMakeDressBox=22;
 
 
     /**toast 显示方法

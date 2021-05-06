@@ -343,7 +343,7 @@
                 android:layout_marginLeft="30dp"
                 android:layout_toRightOf="@id/btn_scan_print"
                 android:background="@drawable/button_background2"
-                android:text="打印套标"
+                android:text="补打套标"
                 android:textSize="30dp" />
 
             <Button

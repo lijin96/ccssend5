@@ -12,7 +12,7 @@ import android.device.DeviceManager;
 public class ADevicesManager  {
 
     /**是否是总公司* */
-    public static final boolean CorpCompany = false;//true:总公司;false:代理商
+    public static final boolean CorpCompany = true;//true:总公司;false:代理商
 
     //>>>>>>>>>	箭头包裹中的设置大多是在初次运行时起效  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

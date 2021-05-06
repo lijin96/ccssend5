@@ -733,6 +733,22 @@ public class AccessWeb {
         return result;
     }
 
+    /**
+     * 套餐装盒补打读取套标信息
+     * @throws Exception
+     * */
+    public String GetPackMealBoxLabel( String tBarcode)
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tBarcode", tBarcode);	//已套餐装盒中任一物流码
+        para.add(map);
+        String result = downLoadWebResult("GetPackMealBoxLabel", para);
+
+        return result;
+    }
+
 
 
     /**

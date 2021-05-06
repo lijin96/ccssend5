@@ -8,23 +8,33 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
 
 import androidx.annotation.NonNull;
 
 import com.example.ccssend5.R;
 import com.google.gson.Gson;
 import com.holyes.ccssend5.dao.PackDressBoxDao;
+import com.holyes.ccssend5.entity.PackMealBoxLabel;
 import com.holyes.ccssend5.entity.PackPara;
 import com.holyes.ccssend5.lib.AccessWeb;
 import com.holyes.ccssend5.lib.MySound;
@@ -63,7 +73,7 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
     private MySound sound;
     private SysUserInfo sysUserInfo;
     Gson gson = new Gson();
-    private BoxTag boxTag, testBoxTag;
+    private BoxTag boxTag, testBoxTag,MakeBox;
     private PrintUtil printUtil;
     private SimpleDateFormat simpleDateFormat;
 
@@ -79,7 +89,7 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
     private ListView PackDressBox_list;
     private Button btn_finish, btn_connect, btn_scan_print, btn_test_packing, btn_again_print_boxcode;
 
-
+    private PopupWindow mPopWindow;
     private boolean isConnectedBluetooth = false;
 
     private List<String> code_list = new ArrayList<String>();
@@ -240,7 +250,8 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
                 doPrintModelColorDetail();
                 break;
             case R.id.btn_again_print_boxcode:
-                printBoxCode(boxTag);
+//                printBoxCode(boxTag);
+                showPopListView();
                 break;
             case R.id.btn_test_packing:
                 for (int i = 0; i < 1; i++) {
@@ -258,6 +269,205 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
                 break;
         }
     }
+
+
+    /**
+     * 弹出扫码的输入框
+     * */
+    private void showPopListView(){
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View contentView = inflater.inflate(R.layout.select_pop, null);
+        final View list= LayoutInflater.from(this).inflate(
+                R.layout.activity_p_dv_packdressbox_check, null);
+        if (mPopWindow == null) {
+            mPopWindow = new PopupWindow(contentView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        }
+
+        mPopWindow.update();
+
+        mPopWindow.setFocusable(true);
+        mPopWindow.setOutsideTouchable(false);
+        mPopWindow.setBackgroundDrawable(null);
+//        mPopWindow.getContentView().setFocusable(true); // 这个很重要
+//        mPopWindow.getContentView().setFocusableInTouchMode(true);
+
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = 0.5f;
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        getWindow().setAttributes(lp);
+
+        mPopWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
+        mPopWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        mPopWindow.showAtLocation(
+                list,
+                Gravity.CENTER , 0, 0);
+
+
+        et_barcode.setFocusable(false);
+        final EditText ed_code = (EditText) contentView.findViewById(R.id.ed_code);
+        ed_code.setFocusable(true);
+        ed_code.requestFocus();
+        ed_code.setFocusableInTouchMode(true);
+
+        ed_code.setHint("请扫描物流码");
+
+        Button btn_cancel=(Button) contentView.findViewById(R.id.bt_cancel);
+        btn_cancel.setText("关闭");
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//                WindowManager.LayoutParams lp = getWindow().getAttributes();
+//                lp.alpha = 1f;
+//                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+//                getWindow().setAttributes(lp);
+                mPopWindow.dismiss();
+                et_barcode.setFocusable(true);
+                et_barcode.setFocusableInTouchMode(true);
+                et_barcode.requestFocus();
+
+            }
+        });
+
+
+
+        mPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                hintPopInput(P_Dv_PackDressBoxCheck.this,list);
+                if(getWindow()!=null){
+                    WindowManager.LayoutParams params = getWindow().getAttributes();
+                    params.alpha = 1.0f;
+                    getWindow().setAttributes(params);
+                }
+            }
+        });
+
+        Button bt_pop_ok=contentView.findViewById(R.id.bt_pop_ok);
+        bt_pop_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String code=ed_code.getText().toString().trim();
+                if (code.equals("")) {
+                    ed_code.setText("");
+                    ShowMessage.Show(mContext, "请重新扫描条码");
+
+                }else {
+                    //补打盒标
+                    ed_code.setText("");
+                    startThreadCheckCode(code);
+
+                }
+
+            }
+        });
+
+
+
+//        ed_code.setOnKeyListener(new View.OnKeyListener() {
+//
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if(keyCode == KeyEvent.KEYCODE_ENTER )
+//                {
+//                    if(event.getAction() == KeyEvent.ACTION_DOWN)
+//                    {
+//                        String code=ed_code.getText().toString().trim();
+//                        if (code.equals("")) {
+//                            ed_code.setText("");
+//                            ShowMessage.Show(mContext, "请重新扫描条码");
+//
+//                        }else {
+//                            //补打盒标
+//                            ed_code.setText("");
+//                            startThreadCheckCode(code);
+//
+//                        }
+//                    }
+//                    return true;
+//                }
+//
+//                return false;
+//            }
+//
+//        });
+
+        ed_code.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView text, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    String code=ed_code.getText().toString().trim();
+                    if (code.equals("")) {
+                        ed_code.setText("");
+                        ShowMessage.Show(mContext, "请重新扫描条码");
+                    }else {
+                        //补打盒标
+                        ed_code.setText("");
+                        startThreadCheckCode(code);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
+    }
+
+
+    public void hintPopInput(final Context context, final View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
+
+
+    //补打套标功能
+    private void startThreadCheckCode(final String code) {
+        Thread startCode=new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                String result = "";
+                try {
+
+
+                    result = accWeb.GetPackMealBoxLabel(code);
+
+                    if (result == "")
+                    {
+                        sound.errorSound();
+                        ShowMessage.ShowMsg(hand, "网络不给力，请稍后再试！");
+                        return;
+                    }
+//					   "PackBoxNumber": "P20091700001",    （盒标码)
+//        "PackId": "200916000001",            (套餐代号)
+//        "PackName": "测试套标",              (套餐名称)
+//        "PackNum": "6"                       (已装数量)
+
+                    PackMealBoxLabel mealBoxLabel = gson.fromJson(result, PackMealBoxLabel.class);
+
+
+                    MakeBox=new BoxTag(mealBoxLabel.getPackBoxNumber(), mealBoxLabel.getPackName(), "测试", "测试","测试", mealBoxLabel.getPackNum(),
+                            sysUserInfo.getUserid() ,simpleDateFormat.format(new Date()).substring(0, 10));
+//
+                    ShowMessage.ShowMsg(hand, ShowMessage.HandMakeDressBox, MakeBox);
+
+
+                } catch (Exception e) {
+                    ShowMessage.ShowMsg(hand, ShowMessage.HandShowMessage,
+                            e.getMessage());
+
+
+                }
+            }
+        });
+        startCode.start();
+    }
+
+
 
 
     public void printBoxCode(BoxTag boxTag) {
@@ -453,6 +663,17 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
 
 
                     break;
+
+
+                case ShowMessage.HandMakeDressBox:
+
+                    printBoxCode(MakeBox);
+
+                    MyProgressDialog.close();
+                    ShowMessage.Show(mContext, "正在补打套标...");
+
+                    break;
+
                 case 6:
 //				Log.i("main", "sendMessage--------判断boxTag="+boxTag.toString6());
 
@@ -571,6 +792,9 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
         SomeUtils.isNeedHideAndDo(this, ev);
         return super.dispatchTouchEvent(ev);
     }
+
+
+
 
     //设置字体为默认大小，不随系统字体大小改而改变
     @Override
