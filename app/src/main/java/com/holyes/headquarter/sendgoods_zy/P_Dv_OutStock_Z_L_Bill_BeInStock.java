@@ -493,13 +493,6 @@ public class P_Dv_OutStock_Z_L_Bill_BeInStock extends Activity {
     private void access_send(final String contents) {
 
 
-        if (goodsid.equals("")) {
-            MySound.errorSound();
-            ShowMessage.ShowMsg(handler, "请先扫描产品ID或者手动选择产品");
-            return;
-
-        }
-
         Thread sendCode = new Thread(new Runnable() {
             @Override
             public void run() {

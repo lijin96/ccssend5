@@ -10,9 +10,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -367,6 +369,15 @@ public class P_Dv_InStock_NoBill extends Activity {
         public boolean onKey(View v, int keyCode, KeyEvent event) {
 
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
+
+//
+//                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+//                if (imm.isActive()) {
+//                    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+//                }
+
+
+
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     tv_show_code.setText(et_barcode.getText().toString().trim());
                     if (!SomeUtils.isAllNumber(mContext, et_barcode.getText().toString().trim())) {

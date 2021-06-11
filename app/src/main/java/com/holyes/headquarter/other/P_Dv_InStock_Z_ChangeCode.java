@@ -51,7 +51,7 @@ public class P_Dv_InStock_Z_ChangeCode extends Activity {
 
 
     private EditText et_old_code, et_new_code;
-    private TextView tv_old_mess, tv_old_code, tv_new_code, tv_result, tv_error;
+    private TextView tv_old_mess, tv_old_code, tv_new_code, tv_result, tv_error,tv_information;
     private RadioGroup radioGroup;
     private Button btn_list, btn_print, btn_exit;
 
@@ -61,6 +61,8 @@ public class P_Dv_InStock_Z_ChangeCode extends Activity {
     private final String Lsc_Security = "1";//防伪码
     private final int HandRequestFocus = 3;
     private String changeCodeType = "", OldCode = "", NewBarcode = "", result, sql;
+
+    private String  product_id = "",modelm = "",colors = "";
 
 
     @Override
@@ -86,6 +88,9 @@ public class P_Dv_InStock_Z_ChangeCode extends Activity {
         btn_list = (Button) findViewById(R.id.btn_list);
         btn_print = (Button) findViewById(R.id.btn_print);
         btn_exit = (Button) findViewById(R.id.btn_exit);
+
+
+        tv_information=findViewById(R.id.tv_information);//换标成功显示的型号色号
 
         et_old_code.setOnKeyListener(new EtBarodeOnkeyListener());
         et_new_code.setOnKeyListener(new EtBarodeOnkeyListener());
@@ -260,7 +265,22 @@ public class P_Dv_InStock_Z_ChangeCode extends Activity {
                     codePara.setChangeCodeType(changeCodeType);
 
                     result = accWeb.P_Dv_Scan("P_Dv_InStock_Z_ChangeCode", codePara.toJson());
-                    if (result.equals("成功")) {
+
+
+
+                    String rest[] = result.split(",");
+                    if (rest.length>2){
+
+                        product_id = rest[0].trim();
+                        modelm = rest[1].trim();
+                        colors = rest[2].trim();
+
+
+                    }
+
+
+
+                    if (result.length()>0) {
                         if (changeCodeType.equals("0")) {
                             sql = "insert into newchangecode(newcode,oldcode,oldcodetype)values('" + newBarcode + "','" + oldBarcode + "','" + "物流码" + "')";
 
@@ -288,6 +308,7 @@ public class P_Dv_InStock_Z_ChangeCode extends Activity {
                     tv_result.setText("成功");
                     tv_result.setTextColor(Color.GREEN);
                     tv_error.setText("");
+                    tv_information.setText("型号色号:"+modelm+colors);
                     et_new_code.requestFocus();
                     break;
                 case ShowMessage.HandScanError:
@@ -297,6 +318,7 @@ public class P_Dv_InStock_Z_ChangeCode extends Activity {
                     tv_error.setText(msg.obj.toString());
                     ShowMessage.Show(mContext, msg.obj.toString());
                     et_new_code.requestFocus();
+                    tv_information.setText("");
                     break;
 
                 case HandRequestFocus:

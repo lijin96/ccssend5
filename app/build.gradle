@@ -9,7 +9,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 30
         versionCode 1
-        versionName "V1T9202104161650"
+        versionName "V1T9202106091650"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'

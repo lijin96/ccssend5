@@ -205,11 +205,24 @@
             </RelativeLayout>
         </RelativeLayout>
 
+
+
+        <TextView
+            android:id="@+id/tv_information"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:text=""
+            android:textColor="@color/black"
+            android:layout_marginTop="20dp"
+            android:textSize="40dp" />
+
         <TextView
             android:id="@+id/tv_error"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="80dp"
+            android:layout_marginTop="20dp"
             android:text=""
             android:textColor="@color/red"
             android:textSize="30dp" />

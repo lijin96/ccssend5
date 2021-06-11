@@ -540,6 +540,8 @@ public class P_Dv_ReturnedPurchase_Z_D_Bill extends Activity {
                         mBillNo = rest[5];
                     }
 
+                    nScanCount=rest[6];
+
 
                     ShowMessage.ShowMsg(handler, ShowMessage.HandScanSuccess, "ok");
                     lStar = "";

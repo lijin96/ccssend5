@@ -499,7 +499,6 @@ public class P_Dv_OutStock_Z_D_NoBill_NoInStock extends Activity {
             MySound.errorSound();
             ShowMessage.ShowMsg(handler, "请先扫描产品ID或者手动选择产品");
             return;
-
         }
         Thread sendCode = new Thread(new Runnable() {
             @Override

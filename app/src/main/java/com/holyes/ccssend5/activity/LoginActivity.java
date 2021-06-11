@@ -49,6 +49,7 @@ import com.holyes.headquarter.activity.MainActivity;
 
 import org.xmlpull.v1.XmlPullParser;
 
+import java.io.Console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -206,8 +207,9 @@ public class LoginActivity extends Activity {
         });
 //		Log.d("main", "获取手机型号"+StringUtils.getSystemModel());
 //		Log.d("main", "获取手机厂商"+StringUtils.getDeviceBrand());
-    }
 
+
+    }
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
