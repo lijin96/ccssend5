@@ -170,12 +170,13 @@ public class P_Dv_InStock_Z_ChangeCode extends Activity {
 
                     if (v == et_new_code) {
 
-                        if (et_new_code.getText().toString().trim().indexOf("=") != -1) {
+
+                        if (et_new_code.getText().toString().trim().indexOf("=") != -1||et_new_code.getText().toString().trim().indexOf("http") != -1) {
                             //包含
                             NewBarcode = SomeUtils.InterceptCode(mContext, et_new_code.getText().toString().trim());
                         } else {
                             //不包含
-                            NewBarcode = et_new_code.getText().toString().trim();
+                            NewBarcode = SomeUtils.UpdatefirstString(mContext,et_new_code.getText().toString().trim());
                         }
 
 
@@ -191,12 +192,13 @@ public class P_Dv_InStock_Z_ChangeCode extends Activity {
                         return true;//截止监听事件，不再后续
                     } else if (v == et_old_code) {
 
-                        if (et_old_code.getText().toString().trim().indexOf("=") != -1) {
+                        if (et_old_code.getText().toString().trim().indexOf("=") != -1||et_old_code.getText().toString().trim().indexOf("http") != -1) {
+
                             //包含
                             OldCode = SomeUtils.InterceptCode(mContext, et_old_code.getText().toString().trim());
                         } else {
                             //不包含
-                            OldCode = et_old_code.getText().toString().trim();
+                            OldCode = SomeUtils.UpdatefirstString(mContext,et_old_code.getText().toString().trim());
                         }
 
                         if (!SomeUtils.isAllNumber(mContext, OldCode)) {
@@ -268,13 +270,12 @@ public class P_Dv_InStock_Z_ChangeCode extends Activity {
 
 
 
-                    String rest[] = result.split(",");
+                    String rest[] = result.split(",",-1);
                     if (rest.length>2){
 
                         product_id = rest[0].trim();
                         modelm = rest[1].trim();
                         colors = rest[2].trim();
-
 
                     }
 

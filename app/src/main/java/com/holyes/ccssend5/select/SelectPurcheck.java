@@ -163,6 +163,9 @@ public class SelectPurcheck extends Activity implements View.OnClickListener {
                 else if (lsv_aim.equals("P_Dv_ReturnedPurchase_Z_G_Bill")) {
                     txt_monomial.setText("品检退货单");
                     list = accWeb.GetDowLoadPurOutBill();
+                }else if (lsv_aim.equals("P_Dv_InStock_Lens_Bill")){
+                    //镜片入库
+                    list = accWeb.GetDowLoadPurCheckLensBill(et_search.getText().toString().trim());
                 }
                 ShowMessage.ShowMsg(hand, ShowMessage.HandSuccess, "success");
             } catch (Exception e) {
@@ -272,6 +275,10 @@ public class SelectPurcheck extends Activity implements View.OnClickListener {
                 //入库退回撤销（有单）
                 else if (lsv_aim.equals("P_Dv_ReturnedPurchase_Z_G_Cancel_Bill")) {
                     intent = new Intent(SelectPurcheck.this, P_Dv_ReturnedPurchase_Z_G_Bill_Cancel.class);
+                }
+                else if (lsv_aim.equals("P_Dv_InStock_Lens_Bill")){
+                    //镜片入库
+                    intent = new Intent(SelectPurcheck.this, SelectPurOrderLensDetail.class);
                 }
 
                 intent.putExtra("purchecklno", (String) item.get("purchecklno"));

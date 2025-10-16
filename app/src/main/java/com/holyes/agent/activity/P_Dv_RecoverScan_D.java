@@ -111,7 +111,7 @@ public class P_Dv_RecoverScan_D extends Activity {
 
 
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        scanBillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        scanBillno = sysUserInfo.getUserid() + "S" + SomeUtils.RandomScanOrder();// 系统
 
         tv_totalqty.setText("0");
         tv_curqty.setText("0");
@@ -151,7 +151,7 @@ public class P_Dv_RecoverScan_D extends Activity {
 //				tv_curqty.setText(curcount);
 //				tv_totalqty.setText(nScanCount);
                     try {
-                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tv_billno, curcount, goodsid, modelm, colors, mBillNo);
+                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tv_billno,tv_goodsid, curcount, goodsid, modelm, colors, mBillNo);
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -172,7 +172,7 @@ public class P_Dv_RecoverScan_D extends Activity {
                     //			mark[1] = "供应商："+tv_company_name.getText().toString();
                     //			mark[2] = "仓   库 ："+tv_stock_name.getText().toString();
 
-                    printbill.print(P_Dv_RecoverScan_D.this, "         吊牌回收", mark, slist, sysUserInfo.getUserid());
+                    printbill.print(P_Dv_RecoverScan_D.this, "       代理商吊牌回收", mark, slist, sysUserInfo.getUserid());
                     break;
                 case 9:
                     MyProgressDialog.close();
@@ -287,7 +287,7 @@ public class P_Dv_RecoverScan_D extends Activity {
                         ShowMessage.ShowMsg(handler, "网络不给力，请稍后再试！");
                         return;
                     }
-                    String[] rest = result.split(",");
+                    String[] rest = result.split(",",-1);
                     // true;当前扫描的条码,产品编号,型号,色号,当前型号数量
                     //					true;6247114519411722,HY170001,1.50非球面,+1.00+1.50,1
                     lastSuccessBarcode = rest[0].trim();
@@ -325,6 +325,12 @@ public class P_Dv_RecoverScan_D extends Activity {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
 
                     String tBarcode = et_barcode.getText().toString().trim();
+                    if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
+                        //包含
+                        tBarcode = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
+                    }else{
+                        tBarcode= SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
+                    }
                     if (et_barcode.getText().toString().indexOf(" ") != -1) {
                         //包含
                         tBarcode = SomeUtils.AgentCode(mContext, et_barcode.getText().toString());
@@ -373,7 +379,7 @@ public class P_Dv_RecoverScan_D extends Activity {
         @Override
         public void onClick(View v) {
 
-            MyProgressDialog.show(mContext, "正在打印...", false, true);
+            MyProgressDialog.show(mContext, "正在打印...", true, true);
 
             Thread sendprint = new Thread(new Runnable() {
 

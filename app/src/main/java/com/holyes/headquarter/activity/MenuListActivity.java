@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
@@ -24,24 +25,33 @@ import com.holyes.ccssend5.select.SelectCompanyZY;
 import com.holyes.ccssend5.select.SelectDistribution;
 import com.holyes.ccssend5.select.SelectPeiBill;
 import com.holyes.ccssend5.select.SelectPurcheck;
+import com.holyes.ccssend5.select.SelectStock;
 import com.holyes.ccssend5.select.SelectSupplier;
 import com.holyes.ccssend5.utils.DisplayUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
 import com.holyes.headquarter.adapter.ClickMenuListViewAdapter;
+import com.holyes.headquarter.backgoods_d.P_Dv_ReturnedPurchase_Lens_Z_D_Bill_Cancel;
 import com.holyes.headquarter.backgoods_d.P_Dv_ReturnedPurchase_Z_D_Bill_Cancel;
 import com.holyes.headquarter.backgoods_d.P_Dv_ReturnedPurchase_Z_D_Bill_Detail_Cancel;
 import com.holyes.headquarter.backgoods_d.P_Dv_ReturnedPurchase_Z_D_NoBill_Cancel;
 import com.holyes.headquarter.backgoods_zy.P_Dv_ReturnedMendLabel_HaveNoBill_Cancel;
+import com.holyes.headquarter.backgoods_zy.P_Dv_ReturnedPurchase_Lens_Z_L_Bill_Cancel;
 import com.holyes.headquarter.backgoods_zy.P_Dv_ReturnedPurchase_Z_L_Bill_Cancel;
 import com.holyes.headquarter.backgoods_zy.P_Dv_ReturnedPurchase_Z_L_Bill_Detail_Cancel;
 import com.holyes.headquarter.backgoods_zy.P_Dv_ReturnedPurchase_Z_L_NoBill_Cancel;
+import com.holyes.headquarter.instock_back.P_Dv_ReturnedPurchase_Lens_Z_G_NoBill;
+import com.holyes.headquarter.instock_back.P_Dv_ReturnedPurchase_Lens_Z_G_NoBill_Cancel;
 import com.holyes.headquarter.instock_back.P_Dv_ReturnedPurchase_Z_G_Bill_Cancel;
 import com.holyes.headquarter.instock_back.P_Dv_ReturnedPurchase_Z_G_NoBill;
 import com.holyes.headquarter.instock_back.P_Dv_ReturnedPurchase_Z_G_NoBill_Cancel;
+import com.holyes.headquarter.instock_in.Holyes_Dv_Box_InStock_NoBill_Cancel;
 import com.holyes.headquarter.instock_in.P_Dv_InStock_Bill_Cancel;
+import com.holyes.headquarter.instock_in.P_Dv_InStock_Lens_Bill_Cancel;
 import com.holyes.headquarter.instock_in.P_Dv_InStock_NoBill_Cancel;
+import com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Lens_Z_D_Bill_Cancel;
 import com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Z_D_Bill_Cancel;
 import com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Z_D_NoBill_Cancel;
+import com.holyes.headquarter.sendgoods_zy.P_Dv_OutStock_Lens_Z_L_Bill_Cancel;
 import com.holyes.headquarter.sendgoods_zy.P_Dv_OutStock_Z_L_Bill_Cancel;
 import com.holyes.headquarter.sendgoods_zy.P_Dv_OutStock_Z_L_NoBill_Cancel;
 
@@ -91,7 +101,6 @@ public class MenuListActivity extends Activity {
             }
         });
         btn_confirm = (Button) findViewById(R.id.btn_confirm);
-
         //获取数据
         groups = ininListViewData(lsv_aim);
 
@@ -104,10 +113,7 @@ public class MenuListActivity extends Activity {
         for (int i = 0; i < groupCount; i++) {
             eListView.expandGroup(i);
         }
-
-
     }
-
 
     /**
      * 跳转到下一个扫描界面
@@ -115,7 +121,7 @@ public class MenuListActivity extends Activity {
      * @param menucode 菜单编号
      */
     public void goToNextScanPage(String menucode) {
-        //		Log.i("main", "menucode----"+menucode);
+//        Log.i("main", "menucode----"+menucode);
         Intent intent = null;
         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>---产品入库--->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         //有单入库
@@ -126,7 +132,7 @@ public class MenuListActivity extends Activity {
         }
         //无单入库
         else if ("010102".equals(menucode)) {
-            //先选供应商，再选仓库
+//            //先选供应商，再选仓库
             intent = new Intent(mContext, SelectSupplier.class);
             intent.putExtra("aim", "P_Dv_InStock_NoBill");
         }
@@ -138,7 +144,17 @@ public class MenuListActivity extends Activity {
             intent.putExtra("aim", "P_Dv_InStock_PackBox_List_NoBill");
 
         }
-
+        else if ("010104".equals(menucode)) {
+            //镜片有单入库
+//            intent = new Intent(mContext, CheckLensDegree.class);
+            intent = new Intent(mContext, SelectPurcheck.class);
+            intent.putExtra("aim", "P_Dv_InStock_Lens_Bill");
+        }
+        else if ("010105".equals(menucode)){
+            // 测试无单盒标入库跳转
+            intent=new Intent(mContext, SelectStock.class);
+            intent.putExtra("aim","Holyes_Dv_Box_InStock_NoBill");
+        }
         //有单入库撤销
         else if ("010201".equals(menucode)) {
             intent = new Intent(mContext, P_Dv_InStock_Bill_Cancel.class);
@@ -146,6 +162,14 @@ public class MenuListActivity extends Activity {
         //无单入库撤销
         else if ("010202".equals(menucode)) {
             intent = new Intent(mContext, P_Dv_InStock_NoBill_Cancel.class);
+        }
+        //镜片有单入库撤销
+        else if ("010203".equals(menucode)) {
+            intent = new Intent(mContext, P_Dv_InStock_Lens_Bill_Cancel.class);
+        }
+        else if ("010204".equals(menucode)) {
+            //无单盒标入库撤销
+            intent = new Intent(mContext, Holyes_Dv_Box_InStock_NoBill_Cancel.class);
         }
         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>---入库退回--->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         //入库退回（有单）
@@ -160,17 +184,27 @@ public class MenuListActivity extends Activity {
             intent = new Intent(mContext, P_Dv_ReturnedPurchase_Z_G_NoBill.class);
             intent.putExtra("aim", "P_Dv_ReturnedPurchase_Z_G_NoBill");
         }
+        //镜片入库退回（无单）
+        else if ("020103".equals(menucode)) {
+            intent = new Intent(mContext, P_Dv_ReturnedPurchase_Lens_Z_G_NoBill.class);
+            intent.putExtra("aim", "P_Dv_ReturnedPurchase_Lens_Z_G_NoBill");
+        }
 
         //有单入库退回撤销
         else if ("020201".equals(menucode)) {
             intent = new Intent(mContext, P_Dv_ReturnedPurchase_Z_G_Bill_Cancel.class);
         }
 
-
         //入库退回撤销（无单）
         else if ("020202".equals(menucode)) {
             intent = new Intent(mContext, P_Dv_ReturnedPurchase_Z_G_NoBill_Cancel.class);
         }
+
+        //镜片入库退回撤销（无单）
+        else if ("020203".equals(menucode)) {
+            intent = new Intent(mContext, P_Dv_ReturnedPurchase_Lens_Z_G_NoBill_Cancel.class);
+        }
+
         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>---代销发货--->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         //有单有入库(代销)发货
         else if ("030101".equals(menucode)) {
@@ -189,12 +223,29 @@ public class MenuListActivity extends Activity {
             intent.putExtra("aim", "P_Dv_OutStock_Z_D_NoBill_BeInStock");
         }
 
-
         //无单无入库代销发货
         else if ("030104".equals(menucode)) {
             intent = new Intent(mContext, SelectCompanyD.class);
             intent.putExtra("aim", "P_Dv_OutStock_Z_D_NoBill_NoInStock");
         }
+
+        //镜片有单有入库代销发货
+        else if ("030105".equals(menucode)) {
+            intent = new Intent(mContext, SelectPeiBill.class);
+            intent.putExtra("aim", "P_Dv_OutStock_Lens_Z_D_Bill_BeInStock");
+        }
+
+//        有单有入库代发货
+        else if ("030106".equals(menucode)) {
+            intent = new Intent(mContext, SelectPeiBill.class);
+            intent.putExtra("aim", "P_Dv_OutStock_Z_D_L_Bill_BeInStock");
+        }
+
+        //无单有入库代发货
+        else if ("030107".equals(menucode)) {
+            intent = new Intent(mContext, SelectCompanyD.class);
+            intent.putExtra("aim", "P_Dv_OutStock_Z_D_L_NoBill_BeInStock"); }
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>---代销发货撤销--->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         //有单发货撤销
         else if ("030201".equals(menucode)) {
@@ -207,6 +258,11 @@ public class MenuListActivity extends Activity {
             intent = new Intent(mContext, P_Dv_OutStock_Z_D_NoBill_Cancel.class);
         }
 
+        //镜片有单代销发货撤销
+        else if ("030203".equals(menucode)) {
+            intent = new Intent(mContext, P_Dv_OutStock_Lens_Z_D_Bill_Cancel.class);
+            intent.putExtra("aim", "P_Dv_OutStock_Lens_Z_D_Bill_Cancel");
+        }
 
         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>---代销退货--->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -231,13 +287,18 @@ public class MenuListActivity extends Activity {
             intent = new Intent(mContext, SelectPeiBill.class);
             intent.putExtra("aim", "P_Dv_ReturnedMendLabel_Z_D_HaveNoBill");
         }
+        //镜片有单代销退货
+        else if ("040105".equals(menucode)) {
+            intent = new Intent(mContext, SelectPeiBill.class);
+            intent.putExtra("aim", "P_Dv_ReturnedPurchase_Lens_Z_D_Bill");
+        }
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>---代销退货撤销--->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
         //有单无明细代销退货撤销
         else if ("040201".equals(menucode)) {
             intent = new Intent(mContext, P_Dv_ReturnedPurchase_Z_D_Bill_Cancel.class);
             intent.putExtra("aim", "P_Dv_ReturnedPurchase_Z_D_Bill_Cancel");
         }
-
-
         //有单有明细代销退货撤销
         else if ("040202".equals(menucode)) {
             intent = new Intent(mContext, P_Dv_ReturnedPurchase_Z_D_Bill_Detail_Cancel.class);
@@ -251,7 +312,13 @@ public class MenuListActivity extends Activity {
         //代销补标撤消
         else if ("040204".equals(menucode)) {
             intent = new Intent(mContext, P_Dv_ReturnedMendLabel_HaveNoBill_Cancel.class);
-            intent.putExtra("aim", "040204");
+            intent.putExtra("aim", "P_Dv_ReturnedMendLabel_HaveNoBill_Cancel");
+        }
+
+        //镜片有单代销退货撤销
+        else if ("040205".equals(menucode)) {
+            intent = new Intent(mContext, P_Dv_ReturnedPurchase_Lens_Z_D_Bill_Cancel.class);
+            intent.putExtra("aim", "P_Dv_ReturnedPurchase_Lens_Z_D_Bill_Cancel");
         }
 
 
@@ -282,6 +349,18 @@ public class MenuListActivity extends Activity {
             intent = new Intent(mContext, SelectCompanyZY.class);
             intent.putExtra("aim", "P_Dv_OutStock_Z_L_NoBill_NoInStock");
         }
+        //镜片有单有入库直销发货
+        else if ("050107".equals(menucode)){
+            intent = new Intent(mContext, SelectPeiBill.class);
+            intent.putExtra("aim", "P_Dv_OutStock_Lens_Z_L_Bill_BeInStock");
+        }
+        //镜片有单无入库直销发货
+        else if ("050108".equals(menucode)){
+            intent = new Intent(mContext, SelectPeiBill.class);
+            intent.putExtra("aim", "P_Dv_OutStock_Lens_Z_L_Bill_NoInStock");
+        }
+
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>---直销发货撤消--->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         //有单直销发货撤消
         else if ("050201".equals(menucode)) {
@@ -294,8 +373,12 @@ public class MenuListActivity extends Activity {
             intent.putExtra("aim", "P_Dv_OutStock_Z_L_NoBill_Cancel");
         }
 
-        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>---直销退货--->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        else if ("050203".equals(menucode)) {
+            //镜片有单直销发货撤销
+            intent = new Intent(mContext, P_Dv_OutStock_Lens_Z_L_Bill_Cancel.class);
+        }
 
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>---直销退货--->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         //直营有单无明细退货
         else if ("060101".equals(menucode)) {
@@ -325,7 +408,13 @@ public class MenuListActivity extends Activity {
             intent = new Intent(mContext, SelectPeiBill.class);
             intent.putExtra("aim", "P_Dv_ReturnedMendLabel_Z_L_HaveNoBill");
         }
+        //镜片有单无明细直销退货
+        else if ("060105".equals(menucode)) {
+            intent = new Intent(mContext, SelectPeiBill.class);
+            intent.putExtra("aim", "P_Dv_ReturnedPurchase_Lens_Z_L_Bill");
+        }
 
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>---直销退货撤销--->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         //直营有单无明细退货撤销
         else if ("060201".equals(menucode)) {
@@ -346,7 +435,13 @@ public class MenuListActivity extends Activity {
         //直销补标撤消
         else if ("060204".equals(menucode)) {
             intent = new Intent(mContext, P_Dv_ReturnedMendLabel_HaveNoBill_Cancel.class);
-            intent.putExtra("aim", "060204");
+            intent.putExtra("aim", "P_Dv_ReturnedMendLabel_HaveNoBill_Cancel");
+        }
+
+        //镜片有单直销退货撤销
+        else if ("060205".equals(menucode)) {
+            intent = new Intent(mContext, P_Dv_ReturnedPurchase_Lens_Z_L_Bill_Cancel.class);
+            intent.putExtra("aim", "P_Dv_ReturnedPurchase_Lens_Z_L_Bill_Cancel");
         }
 
         //>>>>>>>>>>>>>>>---其他扫描（下面的功能在另外的OtherMenuListActivity里面--->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

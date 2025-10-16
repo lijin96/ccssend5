@@ -41,6 +41,7 @@ import com.holyes.ccssend5.lib.MySound;
 import com.holyes.ccssend5.lib.ShowMessage;
 import com.holyes.ccssend5.lib.SqliteDataHelper;
 import com.holyes.ccssend5.lib.SysUserInfo;
+import com.holyes.ccssend5.lib.bluetooth.BluetoothManager;
 import com.holyes.ccssend5.lib.bluetooth.BluetoothService;
 import com.holyes.ccssend5.lib.bluetooth.BluetoothUtil;
 import com.holyes.ccssend5.lib.bluetooth.BoxTag;
@@ -95,7 +96,7 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
     private List<String> code_list = new ArrayList<String>();
 
     private BluetoothAdapter mBluetoothAdapter = null;
-    private BluetoothService mService = null;
+    private BluetoothManager bluetoothManager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,10 +160,49 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
         downloadThread.start();
 
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
-            mService = new BluetoothService(this, hand);
-            tryConnectLastBluetooth();
+        // 使用全局蓝牙管理器
+        bluetoothManager = BluetoothManager.getInstance();
+        mBluetoothAdapter = bluetoothManager.getBluetoothAdapter();
+        
+        if (bluetoothManager.isBluetoothAvailable()) {
+            // 如果已经连接，则不需要重新初始化
+            if (!bluetoothManager.isBluetoothConnected()) {
+                // 自动连接上次保存的蓝牙设备
+                boolean isAutoConnecting = bluetoothManager.initBluetoothServiceAndAutoConnect(this, hand);
+                if (isAutoConnecting) {
+                    // 正在自动连接，更新UI状态
+                    connectedDeviceName = sysUserInfo.getConnectedBluetoothName();
+                    tv_connect_state.setText("正在连接:" + connectedDeviceName + "...");
+                    tv_connect_state.setTextColor(Color.BLACK);
+                    btn_connect.setText("连接");
+                } else {
+                    // 没有保存的设备地址，显示未连接状态
+                    tv_connect_state.setText("未连接");
+                    tv_connect_state.setTextColor(Color.RED);
+                    btn_connect.setText("连接");
+                }
+            } else {
+                // 已经连接，从BluetoothManager获取当前连接的设备信息
+                String currentDeviceName = bluetoothManager.getConnectedDeviceName();
+                String currentDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
+                
+                if (currentDeviceName != null && !currentDeviceName.isEmpty()) {
+                    connectedDeviceName = currentDeviceName;
+                    connectedDeviceAddress = currentDeviceAddress;
+                } else {
+                    // 如果BluetoothManager中的设备名称为空，使用保存的设备信息
+                    // 这种情况可能发生在连接成功但设备名称为空的情况下
+                    if (connectedDeviceName == null || connectedDeviceName.isEmpty()) {
+                        connectedDeviceName = "未知设备";
+                    }
+                }
+                
+                // 直接更新UI状态
+                isConnectedBluetooth = true;
+                tv_connect_state.setText("已连接:" + connectedDeviceName);
+                tv_connect_state.setTextColor(Color.parseColor("#008000"));
+                btn_connect.setText("断开");
+            }
         } else {
             ShowMessage.Show(mContext, "蓝牙未打开或不可用，请到系统设置中检查");
         }
@@ -170,31 +210,94 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
     }
 
     /**
-     * 尝试连接上次连接的蓝牙
+     * 尝试连接上次连接的蓝牙（手动连接时使用）
      */
     public void tryConnectLastBluetooth() {
         connectedDeviceName = sysUserInfo.getConnectedBluetoothName();
         connectedDeviceAddress = sysUserInfo.getConnectedBluetoothAddress();
         if (!connectedDeviceAddress.isEmpty()) {
             BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(connectedDeviceAddress);
-            mService.connect(device);
+            bluetoothManager.connect(device);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mService != null) {
-            if (mService.getState() == BluetoothService.STATE_NONE) {
-                mService.start();
+        if (bluetoothManager != null && bluetoothManager.getBluetoothService() != null) {
+            if (bluetoothManager.getBluetoothState() == BluetoothService.STATE_NONE) {
+                bluetoothManager.start();
             }
+        }
+        // 延迟更新蓝牙状态，确保蓝牙服务已经初始化完成
+        new android.os.Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                updateBluetoothConnectionStatus();
+            }
+        }, 200); // 延迟200ms，给更多时间让蓝牙服务初始化
+        
+        // 再次延迟检查，确保状态同步
+        new android.os.Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                updateBluetoothConnectionStatus();
+            }
+        }, 500); // 延迟500ms再次检查
+    }
+    
+    /**
+     * 更新蓝牙连接状态
+     */
+    private void updateBluetoothConnectionStatus() {
+        if (bluetoothManager == null) {
+            return;
+        }
+        
+        // 检查蓝牙服务是否存在
+        if (bluetoothManager.getBluetoothService() == null) {
+            // 如果蓝牙服务不存在，尝试重新初始化
+            bluetoothManager.initBluetoothServiceAndAutoConnect(this, hand);
+        }
+        
+        if (bluetoothManager.isBluetoothConnected()) {
+            // 如果蓝牙已连接，更新界面状态
+            String currentDeviceName = bluetoothManager.getConnectedDeviceName();
+            String currentDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
+            
+            if (currentDeviceName != null && !currentDeviceName.isEmpty()) {
+                connectedDeviceName = currentDeviceName;
+                connectedDeviceAddress = currentDeviceAddress;
+            } else {
+                // 如果BluetoothManager中的设备名称为空，使用保存的设备信息
+                if (connectedDeviceName == null || connectedDeviceName.isEmpty()) {
+                    connectedDeviceName = sysUserInfo.getConnectedBluetoothName();
+                    connectedDeviceAddress = sysUserInfo.getConnectedBluetoothAddress();
+                }
+                if (connectedDeviceName == null || connectedDeviceName.isEmpty()) {
+                    connectedDeviceName = "未知设备";
+                }
+            }
+            
+            // 更新UI状态
+            isConnectedBluetooth = true;
+            tv_connect_state.setText("已连接:" + connectedDeviceName);
+            tv_connect_state.setTextColor(Color.parseColor("#008000"));
+            btn_connect.setText("断开");
+        } else {
+            // 如果蓝牙未连接，更新界面状态
+            isConnectedBluetooth = false;
+            tv_connect_state.setText("未连接");
+            tv_connect_state.setTextColor(Color.RED);
+            btn_connect.setText("连接");
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mService != null) mService.stop();
+        // 注意：不要在这里 stop，因为是全局的蓝牙服务，其他界面可能还在使用
+        // 如果需要断开，应该在应用退出时调用 BluetoothManager.destroy()
 
     }
 
@@ -206,8 +309,22 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
                     if (resultCode == Activity.RESULT_OK) {
                         connectedDeviceAddress = data.getStringExtra("deviceAddress");
                         connectedDeviceName = data.getStringExtra("deviceName");
+                        
+                        // 处理设备名称为空的情况
+                        if (connectedDeviceName == null || connectedDeviceName.isEmpty()) {
+                            connectedDeviceName = connectedDeviceAddress;
+                        }
+                        
                         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(connectedDeviceAddress);
-                        mService.connect(device);
+                        
+                        // 立即更新界面状态为"正在连接"
+                        isConnectedBluetooth = false;
+                        tv_connect_state.setText("正在连接:" + connectedDeviceName + "...");
+                        tv_connect_state.setTextColor(Color.BLACK);
+                        btn_connect.setText("连接");
+                        
+                        // 开始连接
+                        bluetoothManager.connect(device);
                     }
                     break;
 
@@ -242,7 +359,14 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
                     Intent serverIntent = new Intent(mContext, DeviceListActivity.class);
                     startActivityForResult(serverIntent, BluetoothUtil.REQUEST_CONNECT_DEVICE);
                 } else {
-                    mService.stop();
+                    bluetoothManager.disconnectCurrentConnection();
+                    // 立即更新界面状态并清理设备信息
+                    btn_connect.setText("连接");
+                    tv_connect_state.setText("未连接");
+                    tv_connect_state.setTextColor(Color.RED);
+                    isConnectedBluetooth = false;
+                    connectedDeviceName = "";
+                    connectedDeviceAddress = "";
                 }
                 break;
 
@@ -692,9 +816,61 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
                     code_list.clear();
                     break;
 
+                case BluetoothUtil.MESSAGE_DEVICE_NAME:
+                    // 获取连接的设备名称和地址
+                    String deviceName = msg.getData().getString(BluetoothUtil.DEVICE_NAME);
+                    String deviceAddress = msg.getData().getString(BluetoothUtil.DEVICE_ADDRESS);
+                    
+                    // 确保设备名称不为空，如果为空则使用设备地址
+                    if (deviceName == null || deviceName.isEmpty()) {
+                        deviceName = deviceAddress;
+                    }
+                    if (deviceName == null || deviceName.isEmpty()) {
+                        deviceName = "未知设备";
+                    }
+                    
+                    connectedDeviceName = deviceName;
+                    if (deviceAddress != null && !deviceAddress.isEmpty()) {
+                        connectedDeviceAddress = deviceAddress;
+                    } else {
+                        // 如果消息中没有设备地址，从BluetoothManager获取
+                        connectedDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
+                    }
+                    
+                    // 更新UI显示（不依赖连接状态检查，因为消息顺序可能不确定）
+                    tv_connect_state.setText("已连接:" + connectedDeviceName);
+                    tv_connect_state.setTextColor(Color.parseColor("#008000"));
+                    btn_connect.setText("断开");
+                    isConnectedBluetooth = true;
+                    
+                    // 保存连接信息到sysUserInfo
+                    sysUserInfo.setConnectedBluetoothName(connectedDeviceName);
+                    sysUserInfo.setConnectedBluetoothAddress(connectedDeviceAddress);
+                    break;
+                    
                 case BluetoothUtil.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothService.STATE_CONNECTED:
+                            // 连接成功，强制更新界面
+                            // 从BluetoothManager获取设备信息
+                            String currentDeviceName = bluetoothManager.getConnectedDeviceName();
+                            String currentDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
+                            
+                            if (currentDeviceName != null && !currentDeviceName.isEmpty()) {
+                                connectedDeviceName = currentDeviceName;
+                                connectedDeviceAddress = currentDeviceAddress;
+                            } else {
+                                // 如果BluetoothManager中的设备名称为空，使用已设置的设备信息
+                                if (connectedDeviceName == null || connectedDeviceName.isEmpty()) {
+                                    connectedDeviceName = sysUserInfo.getConnectedBluetoothName();
+                                    connectedDeviceAddress = sysUserInfo.getConnectedBluetoothAddress();
+                                }
+                                if (connectedDeviceName == null || connectedDeviceName.isEmpty()) {
+                                    connectedDeviceName = "未知设备";
+                                }
+                            }
+                            
+                            // 强制更新界面状态
                             btn_connect.setText("断开");
                             tv_connect_state.setText("已连接:" + connectedDeviceName);
                             tv_connect_state.setTextColor(Color.parseColor("#008000"));
@@ -703,9 +879,16 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
                             sysUserInfo.setConnectedBluetoothAddress(connectedDeviceAddress);
                             break;
                         case BluetoothService.STATE_CONNECTING:
-                            btn_connect.setText("连接");
-                            tv_connect_state.setText("正在连接:" + connectedDeviceName + "...");
-                            tv_connect_state.setTextColor(Color.BLACK);
+                            // 只有在没有设备名称的情况下才显示"正在连接"
+                            if (connectedDeviceName == null || connectedDeviceName.isEmpty()) {
+                                btn_connect.setText("连接");
+                                tv_connect_state.setText("正在连接...");
+                                tv_connect_state.setTextColor(Color.BLACK);
+                            } else {
+                                btn_connect.setText("连接");
+                                tv_connect_state.setText("正在连接:" + connectedDeviceName + "...");
+                                tv_connect_state.setTextColor(Color.BLACK);
+                            }
                             isConnectedBluetooth = false;
                             break;
                         case BluetoothService.STATE_LISTEN:
@@ -743,7 +926,7 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
      */
     private void sendMessage(String message, BoxTag boxTag) {
 
-        if (mService.getState() != BluetoothService.STATE_CONNECTED) {
+        if (!bluetoothManager.isBluetoothConnected()) {
             ShowMessage.Show(mContext, "未连接蓝牙");
             return;
         }
@@ -766,7 +949,7 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
         byte[] send;
         try {
             send = message.getBytes("GBK");
-            mService.write(send);
+            bluetoothManager.write(send);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

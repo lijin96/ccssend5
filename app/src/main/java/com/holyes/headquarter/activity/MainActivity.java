@@ -21,6 +21,7 @@ import com.holyes.ccssend5.lib.ShowMessage;
 import com.holyes.ccssend5.lib.SqliteDataHelper;
 import com.holyes.ccssend5.lib.SysUserInfo;
 import com.holyes.ccssend5.lib.UpdateManager;
+import com.holyes.ccssend5.lib.bluetooth.BluetoothManager;
 import com.holyes.ccssend5.myview.Loading;
 import com.holyes.ccssend5.utils.DisplayUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
@@ -273,6 +274,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         startCheckNetState();
+        
+        // 返回主界面时断开蓝牙连接
+        BluetoothManager bluetoothManager = BluetoothManager.getInstance();
+        if (bluetoothManager.isBluetoothConnected()) {
+            bluetoothManager.disconnect();
+        }
     }
 
     @Override

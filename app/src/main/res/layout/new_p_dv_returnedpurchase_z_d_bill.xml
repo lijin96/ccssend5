@@ -299,12 +299,35 @@
                 android:text="型号色号 "
                 android:textSize="30dp" />
 
-            <TextView
-                android:layout_width="match_parent"
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:text="(产品ID) "-->
+<!--                android:textSize="28dp" />-->
+
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:gravity="center"
-                android:text="(产品ID) "
-                android:textSize="28dp" />
+                android:layout_gravity="center">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="(产品ID)"
+                    android:textSize="28dp" />
+                <TextView
+                    android:id="@+id/tv_instock_batch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="批号"
+                    android:textSize="26dp"
+                    android:visibility="gone"
+                    android:layout_marginLeft="10dp"></TextView>
+            </LinearLayout>
+
         </LinearLayout>
 
         <View
@@ -317,7 +340,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2.5"
+            android:layout_weight="1.9"
             android:orientation="vertical" >
 
             <TextView
@@ -328,19 +351,61 @@
                 android:text=""
                 android:textSize="30dp" />
 
-            <TextView
-                android:id="@+id/tv_goodsid"
-                android:layout_width="match_parent"
+<!--            <TextView-->
+<!--                android:id="@+id/tv_goodsid"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:paddingLeft="5dp"-->
+<!--                android:text=""-->
+<!--                android:textSize="28dp" />-->
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                android:text=""
-                android:textSize="28dp" />
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                >
+                <TextView
+                    android:id="@+id/tv_goodsid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="28dp" />
+
+                <TextView
+                    android:id="@+id/tv_text_batch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="26dp"
+                    android:visibility="gone"
+                    android:layout_marginLeft="30dp"></TextView>
+            </LinearLayout>
         </LinearLayout>
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="#696969" />
+
+        <LinearLayout
+            android:id="@+id/linear_batch_num"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:gravity="center"
+
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btn_batch_num"
+                android:layout_width="fill_parent"
+                android:layout_height="80dp"
+                android:layout_marginRight="20dp"
+                android:text="添加批号"
+                android:visibility="gone"
+                android:textSize="28dp" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout

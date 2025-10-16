@@ -128,7 +128,7 @@ public class P_Dv_InStock_Z_ChangeProduct extends Activity {
         stock_name = gIntent.getStringExtra("stock_name");
 
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        scanBillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        scanBillno = sysUserInfo.getUserid() + "S" + SomeUtils.RandomScanOrder();// 系统
         sysUserInfo.setIsDownload(true);
 
         tv_totalqty.setText("0");
@@ -169,7 +169,7 @@ public class P_Dv_InStock_Z_ChangeProduct extends Activity {
                     MySound.scanSound();
 
                     try {
-                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tv_billno, curcount, goodsid, modelm, colors, mBillNo);
+                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tv_billno,tv_goodsid, curcount, goodsid, modelm, colors, mBillNo);
                         tv_source_billno.setText(mDocumentNo);
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
@@ -285,7 +285,7 @@ public class P_Dv_InStock_Z_ChangeProduct extends Activity {
 //	}
 
     // 请求服务
-    private void access_send(String contents) {
+    private void access_send(final String contents) {
         if (goodsid.equals("")) {
             MySound.errorSound();
             ShowMessage.ShowMsg(handler, "请先扫描产品ID或者手动选择产品");
@@ -293,76 +293,80 @@ public class P_Dv_InStock_Z_ChangeProduct extends Activity {
 
         }
 
+        new Thread(new Runnable() {
 
-        String result = "";
-        try {
+            @Override
+            public void run() {
+                String result = "";
+                try {
 
-            accWeb.mWebId = lStar + contents;
+                    accWeb.mWebId = lStar + contents;
 
-            //	                 Barcode：扫描的条码(必传)
-            //	                 GoodsId：新产品编号(必传)
-            //	                 SoCompId：供应商代号(必传)
-            //	                 DeCompId：总公司代号(固定值：00)
-            //	                 OaSuserId：扫描人员代号(必传)
-            //	                 StockId：仓库代号(必传)
-            //	                 ScanSn：扫描序号(必传)
-            //	                 ScanBillNo：扫描单号(必传)
-            //	                 BillNo：入库退回单号(首次扫码传空，成功再扫码时传返回的入库退回单号)
-            //	                 DocumentNo：入库单号(首次扫码传空，成功再扫码时传返回的入库单号)
-            //	                 SourceBillNo：来源单号(品检入库单号)(传空)
-            para.setBarcode(contents);
-            para.setGoodsId(goodsid);
-            para.setSoCompId(supplier_id);
-            para.setDeCompId("00");
-            para.setOaSuserId(sysUserInfo.getUserid());
-            para.setStockId(stock_id);
-            para.setScanSn(String.valueOf(nSize));
-            para.setScanBillNo(scanBillno);
-            para.setBillNo(mBillNo);
-            para.setDocumentNo(mDocumentNo);
-            para.setSourceBillNo("");
+                    //	                 Barcode：扫描的条码(必传)
+                    //	                 GoodsId：新产品编号(必传)
+                    //	                 SoCompId：供应商代号(必传)
+                    //	                 DeCompId：总公司代号(固定值：00)
+                    //	                 OaSuserId：扫描人员代号(必传)
+                    //	                 StockId：仓库代号(必传)
+                    //	                 ScanSn：扫描序号(必传)
+                    //	                 ScanBillNo：扫描单号(必传)
+                    //	                 BillNo：入库退回单号(首次扫码传空，成功再扫码时传返回的入库退回单号)
+                    //	                 DocumentNo：入库单号(首次扫码传空，成功再扫码时传返回的入库单号)
+                    //	                 SourceBillNo：来源单号(品检入库单号)(传空)
+                    para.setBarcode(contents);
+                    para.setGoodsId(goodsid);
+                    para.setSoCompId(supplier_id);
+                    para.setDeCompId("00");
+                    para.setOaSuserId(sysUserInfo.getUserid());
+                    para.setStockId(stock_id);
+                    para.setScanSn(String.valueOf(nSize));
+                    para.setScanBillNo(scanBillno);
+                    para.setBillNo(mBillNo);
+                    para.setDocumentNo(mDocumentNo);
+                    para.setSourceBillNo("");
 
-            result = accWeb.P_Dv_Scan("P_Dv_InStock_Z_ChangeProduct", para.toJson());
+                    result = accWeb.P_Dv_Scan("P_Dv_InStock_Z_ChangeProduct", para.toJson());
 
-            if (result == "") {
-                MySound.errorSound();
-                ShowMessage.ShowMsg(handler, "网络不给力，请稍后再试！");
-                return;
-            }
-            //					true;产品编号,型号,色号,当前型号数量,当前扫描的条码,入库退回单号,入库单号
-            String[] rest = result.split(",");
+                    if (result == "") {
+                        MySound.errorSound();
+                        ShowMessage.ShowMsg(handler, "网络不给力，请稍后再试！");
+                        return;
+                    }
+                    //					true;产品编号,型号,色号,当前型号数量,当前扫描的条码,入库退回单号,入库单号
+                    String[] rest = result.split(",",-1);
 
-            if (rest.length < 6) {
-                MySound.errorSound();
-                ShowMessage.ShowMsg(handler, "服务器返回参数不足，当前" + rest.length + "位！");
-                return;
-            }
-            nSize++;
-            //goodsid = rest[0].trim();
-            modelm = rest[1].trim();
-            colors = rest[2].trim();
-            curcount = rest[3].trim();
-            lastSuccessBarcode = rest[4].trim();
-            if (mBillNo == null || mBillNo.isEmpty()) {
-                mBillNo = rest[5];
-                mDocumentNo = rest[6];
-            }
+                    if (rest.length < 6) {
+                        MySound.errorSound();
+                        ShowMessage.ShowMsg(handler, "服务器返回参数不足，当前" + rest.length + "位！");
+                        return;
+                    }
+                    nSize++;
+                    //goodsid = rest[0].trim();
+                    modelm = rest[1].trim();
+                    colors = rest[2].trim();
+                    curcount = rest[3].trim();
+                    lastSuccessBarcode = rest[4].trim();
+                    if (mBillNo == null || mBillNo.isEmpty()) {
+                        mBillNo = rest[5];
+                        mDocumentNo = rest[6];
+                    }
 //			if (Integer.parseInt(nScanCount)<Integer.parseInt(rest[7].trim())) {
 //				nScanCount=rest[7].trim() ;
 //			}
 
-            //			ScanDataDao.updateDataAndUi(mContext,curcount, goodsid, modelm, colors, mBillNo);
+                    //			ScanDataDao.updateDataAndUi(mContext,curcount, goodsid, modelm, colors, mBillNo);
 
-            ShowMessage.ShowMsg(handler, ShowMessage.HandScanSuccess, "ok");
-            lStar = "";
+                    ShowMessage.ShowMsg(handler, ShowMessage.HandScanSuccess, "ok");
+                    lStar = "";
 
-        } catch (Exception e) {
-            ShowMessage.ShowMsg(handler, ShowMessage.HandScanError,
-                    e.getMessage());
-            lStar = SomeUtils.isNotFromServiceError(e.getMessage());
+                } catch (Exception e) {
+                    ShowMessage.ShowMsg(handler, ShowMessage.HandScanError,
+                            e.getMessage());
+                    lStar = SomeUtils.isNotFromServiceError(e.getMessage());
+                }
 
-        }
-
+            }
+        }).start();
     }
 
     /**
@@ -377,12 +381,12 @@ public class P_Dv_InStock_Z_ChangeProduct extends Activity {
 
 
                     String tBarcode = "";
-                    if (et_barcode.getText().toString().trim().indexOf("=") != -1) {
+                    if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
                         //包含
                         tBarcode = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
                     } else {
                         //不包含
-                        tBarcode = et_barcode.getText().toString().trim();
+                        tBarcode = SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
                     }
 
                     tv_show_code.setText(tBarcode);

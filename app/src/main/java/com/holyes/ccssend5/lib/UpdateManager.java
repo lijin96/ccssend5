@@ -152,7 +152,6 @@ public class UpdateManager {
                     SysUserInfo sysinfo = new SysUserInfo(mContext);
 
                     URL url = new URL(sysinfo.getApkUrl());
-
                     HttpURLConnection conn = (HttpURLConnection)url.openConnection();
                     conn.connect();
                     int length = conn.getContentLength();

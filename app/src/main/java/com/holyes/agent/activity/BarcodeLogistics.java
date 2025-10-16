@@ -75,12 +75,10 @@ public class BarcodeLogistics extends Activity {
 
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
-
+                    tCode=SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
                     if (et_barcode.getText().toString().indexOf(" ") != -1) {
                         //包含
                         tCode = SomeUtils.AgentCode(mContext, et_barcode.getText().toString());
-                    } else {
-                        tCode = et_barcode.getText().toString().trim();
                     }
 
 //					if(!SomeUtils.isAllNumber(mContext,tCode))

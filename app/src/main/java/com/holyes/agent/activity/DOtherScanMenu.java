@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 
 import com.example.ccssend5.R;
 import com.holyes.ccssend5.lib.ShowMessage;
+import com.holyes.ccssend5.lib.SysUserInfo;
 import com.holyes.ccssend5.utils.SomeUtils;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class DOtherScanMenu extends Activity {
     private ListView listview;
     String[] menuArray = new String[]{"物流查询", "吊牌回收", "调货单"};//
     private Intent intent = null;
+    private SysUserInfo sysUserInfo;
 
 
     //{{系统事件
@@ -49,6 +51,7 @@ public class DOtherScanMenu extends Activity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.otherscan_menu6);
         mContext = this;
+        sysUserInfo=new SysUserInfo(mContext);
         hand = new handShowMsg();
         ((Button) findViewById(R.id.btn_exit)).setOnClickListener(new btn_exit_click());
         listview = (ListView) findViewById(R.id.lst_menu);
@@ -101,23 +104,29 @@ public class DOtherScanMenu extends Activity {
 
 
             ListView listView = (ListView) parent;
-            @SuppressWarnings("unchecked")
+
             Map<String, Object> map = (Map<String, Object>) listView
                     .getItemAtPosition(position);
-            String menuName = map.get("menu").toString();
 
-            if (menuArray[0].equals(menuName)) {
-                //物流查询
-                intent = new Intent(mContext, BarcodeLogistics.class);
-            } else if (menuArray[1].equals(menuName)) {
-                //吊牌回收
-                intent = new Intent(mContext, P_Dv_RecoverScan_D.class);
-            } else if (menuArray[2].equals(menuName)) {
-                //调货单
-                intent = new Intent(mContext, SelectShippingOrder.class);
+
+            if (sysUserInfo.getAgentVersionNum().equals("V17")){
+                ShowMessage.Show(mContext,"第七代代理商功能正在开发中");
+            }else {
+                String menuName = map.get("menu").toString();
+                if (menuArray[0].equals(menuName)) {
+                    //物流查询
+                    intent = new Intent(mContext, BarcodeLogistics.class);
+                } else if (menuArray[1].equals(menuName)) {
+                    //吊牌回收
+                    intent = new Intent(mContext, P_Dv_RecoverScan_D.class);
+                } else if (menuArray[2].equals(menuName)) {
+                    //调货单
+                    intent = new Intent(mContext, SelectShippingOrder.class);
+                }
+                if (intent != null) {
+                    startActivity(intent);
+                }
             }
-            if (intent != null)
-                startActivity(intent);
         }
     }
 

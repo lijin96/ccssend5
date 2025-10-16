@@ -121,7 +121,7 @@ public class P_Dv_ReturnedMendLabel_HaveNoBill_Cancel extends Activity {
         et_barcode.setOnKeyListener(new EtBarodeOnkeyListener());
 
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        scanBillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        scanBillno = sysUserInfo.getUserid() + "C1T" + SomeUtils.RandomScanOrder();// 系统
 
         tv_totalqty.setText("0");
         tv_curqty.setText("0");
@@ -299,7 +299,7 @@ public class P_Dv_ReturnedMendLabel_HaveNoBill_Cancel extends Activity {
                 return false;
             }
             //true;产品编号,型号,色号,当前型号数量,当前扫描的条码,退货单号
-            String[] rest = result.split(",");
+            String[] rest = result.split(",",-1);
 
             if (rest.length < 6) {
                 MySound.errorSound();

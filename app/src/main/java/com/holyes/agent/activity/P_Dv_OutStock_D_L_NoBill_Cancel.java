@@ -92,7 +92,7 @@ public class P_Dv_OutStock_D_L_NoBill_Cancel extends Activity {
         hand = new handShowMsg();
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         sysUserInfo = new SysUserInfo(getApplicationContext());
-        Scanbillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        Scanbillno = sysUserInfo.getUserid() + "C1F" + SomeUtils.RandomScanOrder();// 系统
         Intent gIntent = this.getIntent();
 
         ((Button) findViewById(R.id.btn_list))
@@ -168,7 +168,7 @@ public class P_Dv_OutStock_D_L_NoBill_Cancel extends Activity {
                 case ShowMessage.HandScanSuccess:
                     MySound.scanSound();
                     try {
-                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tvBillno, curcount, product_id, modelm, colors, mBillNo);
+                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tvBillno,tv_product_id, curcount, product_id, modelm, colors, mBillNo);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -215,16 +215,16 @@ public class P_Dv_OutStock_D_L_NoBill_Cancel extends Activity {
         @Override
         public void onClick(View v) {
 
-            List<Map<String, Object>> sacnDataList = SqliteDataHelper.getHelper(getApplicationContext()).QueryDbList(
-                    "select modelm,colors,sum(curcount) as curcount from newscandate GROUP BY goodsid",
-                    null);
+//            List<Map<String, Object>> sacnDataList = SqliteDataHelper.getHelper(getApplicationContext()).QueryDbList(
+//                    "select modelm,colors,sum(curcount) as curcount from newscandate GROUP BY goodsid",
+//                    null);
             Intent intent = new Intent(P_Dv_OutStock_D_L_NoBill_Cancel.this,
                     QueryScanDetail.class);
-            if (sacnDataList.size() == 0) {
+//            if (sacnDataList.size() == 0) {
                 intent.putExtra("mBillNo", Scanbillno);
-            } else {
-                intent.putExtra("mBillNo", "");
-            }
+//            } else {
+//                intent.putExtra("mBillNo", "");
+//            }
 
             startActivity(intent);
         }
@@ -234,7 +234,7 @@ public class P_Dv_OutStock_D_L_NoBill_Cancel extends Activity {
 
         @Override
         public void onClick(View v) {
-            MyProgressDialog.show(mContext, "正在打印...", false, true);
+            MyProgressDialog.show(mContext, "正在打印...", true, true);
 
             Thread sendprint = new Thread(new Runnable() {
 
@@ -242,16 +242,16 @@ public class P_Dv_OutStock_D_L_NoBill_Cancel extends Activity {
                 public void run() {
                     try {
 
-                        List<Map<String, Object>> sacnDataList = SqliteDataHelper.getHelper(getApplicationContext()).QueryDbList(
-                                "select modelm,colors,sum(curcount) as curcount from newscandate GROUP BY goodsid",
-                                null);
-                        if (sacnDataList.size() == 0) {
+//                        List<Map<String, Object>> sacnDataList = SqliteDataHelper.getHelper(getApplicationContext()).QueryDbList(
+//                                "select modelm,colors,sum(curcount) as curcount from newscandate GROUP BY goodsid",
+//                                null);
+//                        if (sacnDataList.size() == 0) {
                             slist = AccessWeb.getHelper(mContext).GetDowLoadBilldetail(sysUserInfo.getLoginid(), Scanbillno);
-                        } else {
-                            slist = SqliteDataHelper.getHelper(getApplicationContext()).QueryDbList(
-                                    "select modelm,colors,sum(curcount) as curcount from newscandate GROUP BY goodsid",
-                                    null);
-                        }
+//                        } else {
+//                            slist = SqliteDataHelper.getHelper(getApplicationContext()).QueryDbList(
+//                                    "select modelm,colors,sum(curcount) as curcount from newscandate GROUP BY goodsid",
+//                                    null);
+//                        }
                         if (slist.size() == 0) {
                             ShowMessage.ShowMsg(hand, 9, "没有可打印的数据");
                             return;
@@ -354,7 +354,7 @@ public class P_Dv_OutStock_D_L_NoBill_Cancel extends Activity {
                     }
                     //产品编号,型号,色号,当前型号数量,当前扫描的条码,发货单号(无作用)
                     //CS170001,1.50非球面,+1.75+0.50,1,6222323912072181,DF-CS001-17000001
-                    String rest[] = result.split(",");
+                    String rest[] = result.split(",",-1);
 
                     if (rest.length < 6) {
                         MySound.errorSound();
@@ -394,6 +394,12 @@ public class P_Dv_OutStock_D_L_NoBill_Cancel extends Activity {
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     String tBarcode = et_barcode.getText().toString().trim();
+                    if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
+                        //包含
+                        tBarcode = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
+                    }else{
+                        tBarcode=SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
+                    }
                     if (et_barcode.getText().toString().indexOf(" ") != -1) {
                         //包含
                         tBarcode = SomeUtils.AgentCode(mContext, et_barcode.getText().toString());

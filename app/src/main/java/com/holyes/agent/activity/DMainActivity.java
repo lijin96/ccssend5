@@ -23,6 +23,7 @@ import com.example.ccssend5.R;
 import com.holyes.ccssend5.lib.GetNetStateRunnable;
 import com.holyes.ccssend5.lib.ShowMessage;
 import com.holyes.ccssend5.lib.SysUserInfo;
+import com.holyes.ccssend5.lib.bluetooth.BluetoothManager;
 import com.holyes.ccssend5.utils.SomeUtils;
 
 import java.io.File;
@@ -64,7 +65,7 @@ public class DMainActivity extends Activity {
             }
         });
         SysUserInfo sysinfo = new SysUserInfo(DMainActivity.this);
-        String savePath = "/data/data/com.holyes.ccsdevs5/";
+        String savePath = "/sdcard/com.holyes.ccssend5/";
         String filepath = savePath + sysinfo.getClientId() + ".png";
         File file = new File(filepath);
 
@@ -154,6 +155,12 @@ public class DMainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         startCheckNetState();//开始检查网络状态
+        
+        // 返回主界面时断开蓝牙连接
+        BluetoothManager bluetoothManager = BluetoothManager.getInstance();
+        if (bluetoothManager.isBluetoothConnected()) {
+            bluetoothManager.disconnect();
+        }
     }
 
     @Override

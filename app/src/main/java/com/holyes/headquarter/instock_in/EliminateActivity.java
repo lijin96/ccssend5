@@ -73,9 +73,20 @@ public class EliminateActivity extends Activity {
 
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                    barcode = et_barcode.getText().toString().trim();
+
+
+                    String barcodeStr = "";
+
+                    if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
+                        //包含
+                        barcodeStr = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
+                    } else {
+                        //不包含
+                        barcodeStr =SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
+                    }
+
                     et_barcode.setText("");
-                    deleteLocalPacking(mContext, barcode);
+                    deleteLocalPacking(mContext, barcodeStr);
 
                 }
 

@@ -162,7 +162,7 @@ public class P_Dv_OutStock_Z_D_NoBill_BeInStock extends Activity {
         company_name = gIntent.getStringExtra("company_name");
 
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        scanBillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        scanBillno = sysUserInfo.getUserid() + "DF" + SomeUtils.RandomScanOrder();// 系统
 
         tv_title.setText("【无单有入库代销发货】");
         tv_totalqty.setText("0");
@@ -405,7 +405,7 @@ public class P_Dv_OutStock_Z_D_NoBill_BeInStock extends Activity {
                         ShowMessage.ShowMsg(handler, "网络不给力，请稍后再试！");
                     }
                     //true;产品编号,型号,色号,当前型号数量,当前扫描的条码,发货单号
-                    String[] rest = result.split(",");
+                    String[] rest = result.split(",",-1);
 
                     if (rest.length < 6) {
                         MySound.errorSound();
@@ -555,17 +555,13 @@ public class P_Dv_OutStock_Z_D_NoBill_BeInStock extends Activity {
 
                     nSize++;
                     if (contents.startsWith("P")) {
-
                         JSONArray listjson = new JSONArray(result);
-
-
-                        //                "GoodsId": "C00001",
-                        //                "Modelm": "1357",
-                        //                "Colors": "C01",
-                        //                "CurNum": "80",
-                        //                "PackNumber": "P200917000001",
-                        //                "TranLno" :"DX-00-200000001"
-
+                        //"GoodsId": "C00001",
+                        //"Modelm": "1357",
+                        //"Colors": "C01",
+                        // "CurNum": "80",
+                        //"PackNumber": "P200917000001",
+                        // "TranLno" :"DX-00-200000001"
                         for (int i = 0; i < listjson.length(); i++) {
                             JSONObject jsonObject1 = (JSONObject) listjson.opt(i);
 
@@ -577,7 +573,6 @@ public class P_Dv_OutStock_Z_D_NoBill_BeInStock extends Activity {
                             colors = jsonObject2.getString("Colors");
                             curcount = jsonObject2.getString("CurNum");
                             //					lastSuccessBarcode = rest[4].trim();
-
                             if (mBillNo == null || mBillNo.isEmpty()) {
                                 mBillNo = jsonObject2.getString("TranLno");
                             }
@@ -592,7 +587,7 @@ public class P_Dv_OutStock_Z_D_NoBill_BeInStock extends Activity {
                         }
                     } else {
                         //true;产品编号,型号,色号,当前型号数量,当前扫描的条码,入库单号
-                        String[] rest = result.split(",");
+                        String[] rest = result.split(",",-1);
 
                         if (rest.length < 6) {
                             MySound.errorSound();
@@ -637,15 +632,27 @@ public class P_Dv_OutStock_Z_D_NoBill_BeInStock extends Activity {
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
 
-                    tv_show_code.setText(et_barcode.getText().toString().trim());
 
-                    if (!SomeUtils.isAllNumber(mContext, et_barcode.getText().toString().trim())) {
+                    String tBarcode = "";
+
+                    if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
+                        //包含
+                        tBarcode = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
+                    } else {
+                        //不包含
+                        tBarcode = SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
+                    }
+
+
+                    tv_show_code.setText(tBarcode);
+
+                    if (!SomeUtils.isAllNumber(mContext, tBarcode)) {
                         MySound.errorSound();
-                        ShowMessage.Show(mContext, "请扫描正确的物流码【" + et_barcode.getText().toString().trim() + "】");
+                        ShowMessage.Show(mContext, "请扫描正确的物流码【" + tBarcode + "】");
                         et_barcode.setText("");
                         return true;
                     }
-                    access_send(et_barcode.getText().toString().trim());
+                    access_send(tBarcode);
                     et_barcode.setText("");
 
                 }

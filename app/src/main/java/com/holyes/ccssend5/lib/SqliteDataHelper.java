@@ -21,7 +21,7 @@ import java.util.Map;
 public class SqliteDataHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "scan.db";
-        public static final int DATABASE_VERSION = 19;
+        public static final int DATABASE_VERSION = 20;
         private static SQLiteDatabase database = null;
         private static boolean ifopen = false;
         private static Context myContext;
@@ -747,8 +747,7 @@ public class SqliteDataHelper extends SQLiteOpenHelper {
             db.beginTransaction();
             try {
                 // db.execSQL("ALTER TABLE company ADD COLUMN brand nvarchar(30)");
-                db.execSQL("ALTER TABLE newtpeinomx ADD COLUMN amount nvarchar(10)");//增加一个单号数量字段
-
+                db.execSQL("ALTER TABLE newtpeinomx ADD COLUMN batchno nvarchar(32)");//金大合需求，配货单下载增加一个产品批号显示
                 initDatabase();
 
                 database.setTransactionSuccessful();
@@ -812,10 +811,50 @@ public class SqliteDataHelper extends SQLiteOpenHelper {
             return list;
         }
 
+    /**
+     * 分页查询
+     * */
+    public   List<Map<String, Object>> findPart(String sql,int index) {
+
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        Cursor cursor = null;
+        try {
+            cursor = database.rawQuery(sql, new String[]{index + ""});
+
+            int colums = cursor.getColumnCount();
+            while (cursor.moveToNext()) {
+                Map<String, Object> map = new HashMap<String, Object>();
+                for (int i = 0; i < colums; i++) {
+                    String cols_name = cursor.getColumnName(i);
+
+                    String cols_value = cursor.getString(cursor
+                            .getColumnIndex(cols_name));
+
+                    if (cols_value == null)
+                    {
+                        cols_value = "";
+                    }
+                    map.put(cols_name, cols_value);
+                }
+
+                list.add(map);
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+                cursor = null;
+            }
+        }
+        return list;
+    }
+
         /**
          * 查询多条记录 String sql = "select * from  person";
          * */
-
         public   List<Map<String, Object>> QueryDbList(String sql,
                                                        String[] selectionArgs) {
 

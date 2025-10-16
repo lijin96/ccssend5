@@ -1,0 +1,332 @@
+# BluetoothManager 使用说明
+
+## 概述
+`BluetoothManager` 是一个全局单例类，用于管理蓝牙连接。使用它可以在多个界面之间共享同一个蓝牙连接，避免重复连接和断开。
+
+## 主要功能
+1. **全局单例模式**：整个应用只有一个 BluetoothService 实例
+2. **状态检测**：可以判断蓝牙是否已连接
+3. **连接复用**：如果已连接，其他界面可以直接使用，无需重新连接
+4. **自动连接**：未连接时自动尝试连接上次保存的蓝牙设备
+
+## 使用方法
+
+### 1. 在 Activity 中初始化蓝牙
+
+```java
+public class YourActivity extends Activity {
+    
+    private BluetoothManager bluetoothManager;
+    private BluetoothAdapter mBluetoothAdapter;
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.your_layout);
+        
+        // 获取全局蓝牙管理器实例
+        bluetoothManager = BluetoothManager.getInstance();
+        mBluetoothAdapter = bluetoothManager.getBluetoothAdapter();
+        
+        // 检查蓝牙是否可用
+        if (bluetoothManager.isBluetoothAvailable()) {
+            // 检查是否已经连接
+            if (!bluetoothManager.isBluetoothConnected()) {
+                // 未连接，自动连接上次保存的设备
+                boolean isAutoConnecting = bluetoothManager.initBluetoothServiceAndAutoConnect(this, mHandler);
+                if (isAutoConnecting) {
+                    // 正在自动连接，更新UI状态
+                    updateConnectingUI();
+                } else {
+                    // 没有保存的设备地址，显示未连接状态
+                    updateDisconnectedUI();
+                }
+            } else {
+                // 已经连接，直接更新UI状态
+                updateConnectedUI();
+            }
+        } else {
+            ShowMessage.Show(this, "蓝牙未打开或不可用，请到系统设置中检查");
+        }
+    }
+    
+    // Handler 处理蓝牙消息
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case BluetoothUtil.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothService.STATE_CONNECTED:
+                            // 连接成功
+                            updateConnectedUI();
+                            break;
+                        case BluetoothService.STATE_CONNECTING:
+                            // 正在连接
+                            break;
+                        case BluetoothService.STATE_LISTEN:
+                        case BluetoothService.STATE_NONE:
+                            // 未连接
+                            updateDisconnectedUI();
+                            break;
+                    }
+                    break;
+            }
+            return false;
+        }
+    });
+}
+```
+
+### 2. 自动连接功能
+
+BluetoothManager 提供了自动连接功能，可以在初始化时自动尝试连接上次保存的蓝牙设备：
+
+```java
+// 方法1：初始化并自动连接（推荐）
+boolean isAutoConnecting = bluetoothManager.initBluetoothServiceAndAutoConnect(this, mHandler);
+if (isAutoConnecting) {
+    // 正在自动连接
+    tv_status.setText("正在连接...");
+} else {
+    // 没有保存的设备地址
+    tv_status.setText("未连接");
+}
+
+// 方法2：单独尝试自动连接
+boolean isConnecting = bluetoothManager.tryAutoConnectLastDevice(this);
+```
+
+**自动连接的优势：**
+- 用户无需手动选择设备
+- 提升用户体验
+- 减少操作步骤
+
+### 3. 判断蓝牙连接状态
+
+```java
+// 方法1：判断是否已连接
+if (bluetoothManager.isBluetoothConnected()) {
+    // 已连接，可以直接使用
+} else {
+    // 未连接，需要先连接
+}
+
+// 方法2：获取具体的连接状态
+int state = bluetoothManager.getBluetoothState();
+switch (state) {
+    case BluetoothService.STATE_CONNECTED:
+        // 已连接
+        break;
+    case BluetoothService.STATE_CONNECTING:
+        // 正在连接
+        break;
+    case BluetoothService.STATE_LISTEN:
+        // 监听中
+        break;
+    case BluetoothService.STATE_NONE:
+        // 未连接
+        break;
+}
+```
+
+### 3. 连接蓝牙设备
+
+```java
+// 连接指定的蓝牙设备
+BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(deviceAddress);
+bluetoothManager.connect(device);
+```
+
+### 4. 发送数据到蓝牙设备
+
+```java
+// 检查是否已连接
+if (bluetoothManager.isBluetoothConnected()) {
+    try {
+        byte[] data = message.getBytes("GBK");
+        bluetoothManager.write(data);
+    } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+    }
+} else {
+    ShowMessage.Show(this, "蓝牙未连接");
+}
+```
+
+### 5. 生命周期管理
+
+```java
+@Override
+protected void onResume() {
+    super.onResume();
+    if (bluetoothManager != null && bluetoothManager.getBluetoothService() != null) {
+        if (bluetoothManager.getBluetoothState() == BluetoothService.STATE_NONE) {
+            bluetoothManager.start();
+        }
+    }
+}
+
+@Override
+protected void onDestroy() {
+    super.onDestroy();
+    // 注意：不要在这里调用 bluetoothManager.stop()
+    // 因为是全局的蓝牙服务，其他界面可能还在使用
+    // 如果需要断开，应该在应用退出时调用 BluetoothManager.destroy()
+}
+```
+
+### 6. 断开蓝牙连接
+
+```java
+// 断开当前连接但保持服务可用（用于用户手动断开，推荐使用）
+bluetoothManager.disconnectCurrentConnection();
+
+// 临时断开（其他界面还可以重新连接）
+bluetoothManager.stop();
+
+// 断开连接（用于返回主界面时）
+bluetoothManager.disconnect();
+
+// 完全销毁（谨慎使用，一般在应用退出时调用）
+BluetoothManager.destroy();
+```
+
+**重要说明：**
+- 使用 `disconnectCurrentConnection()` 断开连接后，可以立即重新连接
+- 使用 `stop()` 或 `disconnect()` 断开连接后，需要重新初始化服务才能连接
+
+### 7. 主界面自动断开蓝牙
+
+当用户返回到主界面时，系统会自动断开蓝牙连接：
+
+```java
+@Override
+protected void onResume() {
+    super.onResume();
+    
+    // 返回主界面时断开蓝牙连接
+    BluetoothManager bluetoothManager = BluetoothManager.getInstance();
+    if (bluetoothManager.isBluetoothConnected()) {
+        bluetoothManager.disconnect();
+    }
+}
+```
+
+**主界面断开蓝牙的优势：**
+- 节省蓝牙资源
+- 避免不必要的连接占用
+- 用户重新进入功能界面时会自动重新连接
+
+## 优势
+
+### 使用全局 BluetoothManager 的优势：
+1. **避免重复连接**：多个界面可以共享同一个蓝牙连接
+2. **状态同步**：所有界面都能获取到最新的连接状态
+3. **资源节省**：不需要每个界面都创建自己的 BluetoothService
+4. **简化代码**：减少重复的蓝牙管理代码
+
+### 对比传统方式：
+
+#### 传统方式（每个界面都创建 BluetoothService）：
+```java
+// 界面1
+private BluetoothService mService = null;
+mService = new BluetoothService(this, mHandler);
+mService.connect(device);
+
+// 界面2
+private BluetoothService mService = null;
+mService = new BluetoothService(this, mHandler); // 重复创建
+mService.connect(device); // 重复连接
+```
+
+#### 使用 BluetoothManager：
+```java
+// 界面1
+BluetoothManager bluetoothManager = BluetoothManager.getInstance();
+if (!bluetoothManager.isBluetoothConnected()) {
+    bluetoothManager.initBluetoothService(this, mHandler);
+    bluetoothManager.connect(device);
+}
+
+// 界面2
+BluetoothManager bluetoothManager = BluetoothManager.getInstance();
+if (bluetoothManager.isBluetoothConnected()) {
+    // 直接使用，无需重新连接
+    bluetoothManager.write(data);
+}
+```
+
+## 注意事项
+
+1. **Handler 的处理**：每个界面都需要提供自己的 Handler 来处理蓝牙消息。如果需要切换 Handler，可以调用 `resetBluetoothService(context, handler)`
+
+2. **生命周期管理**：在 `onDestroy()` 中不要调用 `stop()`，因为其他界面可能还在使用蓝牙连接
+
+3. **应用退出时清理**：在应用完全退出时（如主 Activity 的 onDestroy），可以调用 `BluetoothManager.destroy()` 来释放资源
+
+4. **线程安全**：BluetoothManager 使用了 `synchronized` 关键字确保线程安全
+
+## 示例：在其他界面中使用
+
+假设你有另一个界面 `OtherActivity.java`，需要使用蓝牙：
+
+```java
+public class OtherActivity extends Activity {
+    
+    private BluetoothManager bluetoothManager;
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.other_layout);
+        
+        // 获取全局蓝牙管理器
+        bluetoothManager = BluetoothManager.getInstance();
+        
+        // 判断蓝牙是否已连接
+        if (bluetoothManager.isBluetoothConnected()) {
+            // 已连接，直接使用
+            Toast.makeText(this, "蓝牙已连接，可以直接使用", Toast.LENGTH_SHORT).show();
+            tv_status.setText("已连接");
+        } else {
+            // 未连接，需要先连接
+            Toast.makeText(this, "蓝牙未连接，请先连接", Toast.LENGTH_SHORT).show();
+            tv_status.setText("未连接");
+        }
+    }
+    
+    // 打印数据
+    private void printData(String data) {
+        if (bluetoothManager.isBluetoothConnected()) {
+            try {
+                byte[] bytes = data.getBytes("GBK");
+                bluetoothManager.write(bytes);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        } else {
+            ShowMessage.Show(this, "蓝牙未连接，无法打印");
+        }
+    }
+}
+```
+
+## 完整的应用退出处理
+
+在主 Activity 或 Application 中：
+
+```java
+@Override
+protected void onDestroy() {
+    super.onDestroy();
+    
+    // 判断是否是应用真正退出（而不是界面切换）
+    if (isFinishing()) {
+        // 销毁全局蓝牙管理器
+        BluetoothManager.destroy();
+    }
+}
+```
+

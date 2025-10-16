@@ -30,6 +30,7 @@ public class ShowMessage {
     public static final int HandSuccess=20;
     public static final int HandFailed=21;
     public static final int HandMakeDressBox=22;
+    public static final int HandUploadDetail=23;
 
 
     /**toast 显示方法
@@ -192,7 +193,7 @@ public class ShowMessage {
                                   DialogInterface.OnClickListener EscClick)
     {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context,android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
         builder.setIcon(R.drawable.ccs);
         builder.setTitle(title);
         builder.setMessage(msg);

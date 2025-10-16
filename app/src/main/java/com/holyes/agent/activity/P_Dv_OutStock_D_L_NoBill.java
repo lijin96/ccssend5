@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -95,7 +96,9 @@ public class P_Dv_OutStock_D_L_NoBill extends Activity {
         hand = new handShowMsg();
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         sysUserInfo = new SysUserInfo(getApplicationContext());
-        Scanbillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        Scanbillno = sysUserInfo.getUserid() + "1F" + SomeUtils.RandomScanOrder();
+//        Log.d("main---",Scanbillno);
+        // 系统
         Intent gIntent = this.getIntent();
 
         mSpinner = (Spinner) findViewById(R.id.spinner_type);
@@ -201,7 +204,7 @@ public class P_Dv_OutStock_D_L_NoBill extends Activity {
                 case ShowMessage.HandSuccess:
                     MySound.scanSound();
                     try {
-                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tvBillno, curcount, product_id, modelm, colors, mBillNo);
+                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tvBillno,tv_product_id, curcount, product_id, modelm, colors, mBillNo);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -268,7 +271,7 @@ public class P_Dv_OutStock_D_L_NoBill extends Activity {
 
         @Override
         public void onClick(View v) {
-            MyProgressDialog.show(mContext, "正在打印...", false, true);
+            MyProgressDialog.show(mContext, "正在打印...", true, true);
 
             Thread sendprint = new Thread(new Runnable() {
 
@@ -439,7 +442,7 @@ public class P_Dv_OutStock_D_L_NoBill extends Activity {
 
                         //CS170001,1.50非球面,+1.75+0.50,1,6222323912072181,DF-CS001-17000001
                         //产品编号,型号,色号,当前型号数量,当前扫描的条码,发货单号
-                        String rest[] = result.split(",");
+                        String rest[] = result.split(",",-1);
 
                         if (rest.length < 6) {
                             MySound.errorSound();
@@ -490,6 +493,13 @@ public class P_Dv_OutStock_D_L_NoBill extends Activity {
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     String tBarcode = edtBarcode.getText().toString().trim();
+
+                    if (edtBarcode.getText().toString().trim().indexOf("=") != -1||edtBarcode.getText().toString().trim().indexOf("http") != -1) {
+                        //包含
+                        tBarcode = SomeUtils.InterceptCode(mContext, edtBarcode.getText().toString().trim());
+                    }else {
+                        tBarcode= SomeUtils.UpdatefirstString(mContext,edtBarcode.getText().toString().trim());
+                    }
                     if (edtBarcode.getText().toString().indexOf(" ") != -1) {
                         //包含
                         tBarcode = SomeUtils.AgentCode(mContext, edtBarcode.getText().toString());

@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,6 +33,7 @@ import com.holyes.headquarter.backgoods_d.P_Dv_ReturnedPurchase_Z_D_NoBill;
 import com.holyes.headquarter.backgoods_zy.P_Dv_ReturnedPurchase_Z_L_NoBill;
 import com.holyes.headquarter.backgoods_zy.P_Dv_ReturnedPurchase_Z_S_NoBill;
 import com.holyes.headquarter.instock_back.P_Dv_ReturnedPurchase_Z_G_NoBill;
+import com.holyes.headquarter.instock_in.Holyes_Dv_Box_InStock_NoBill;
 import com.holyes.headquarter.instock_in.P_Dv_InStock_NoBill;
 import com.holyes.headquarter.instock_in.P_Dv_InStock_PackBox_List_NoBill;
 import com.holyes.headquarter.other.P_Dv_InStock_Z_ChangeProduct;
@@ -148,9 +150,12 @@ public class SelectStock extends Activity {
             //无单入库
             if ("P_Dv_InStock_NoBill".equals(lsv_aim)) {
                 intent = new Intent(SelectStock.this, P_Dv_InStock_NoBill.class);
+            }else if ("Holyes_Dv_Box_InStock_NoBill".equals(lsv_aim)){
+                //无单盒标入库
+                intent = new Intent(SelectStock.this, Holyes_Dv_Box_InStock_NoBill.class);
             }
             //装盒入库
-            if ("P_Dv_InStock_PackBox_List_NoBill".equals(lsv_aim)) {
+            else if ("P_Dv_InStock_PackBox_List_NoBill".equals(lsv_aim)) {
                 intent = new Intent(SelectStock.this, P_Dv_InStock_PackBox_List_NoBill.class);
             }
             //代理无入库无单发货

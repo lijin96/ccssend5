@@ -34,8 +34,8 @@
             <RelativeLayout
                 android:id="@+id/relayout_billno"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/relayout_source_billno" >
+                android:layout_height="wrap_content">
+<!--                android:layout_below="@+id/relayout_source_billno" >-->
 
                 <TextView
                     android:id="@+id/tv_billno_str"
@@ -270,13 +270,34 @@
                 android:text="型号色号 "
                 android:textSize="@dimen/show_title_size" />
 
-            <TextView
-                android:layout_width="match_parent"
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:paddingTop="10dp"-->
+<!--                android:text="(产品代号)"-->
+<!--                android:textSize="28dp" />-->
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:gravity="center"
-                android:paddingTop="10dp"
-                android:text="(产品代号)"
-                android:textSize="28dp" />
+                android:layout_gravity="center">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="(产品ID)"
+                    android:textSize="28dp" />
+                <TextView
+                    android:id="@+id/tv_instock_batch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="批号"
+                    android:textSize="26dp"
+                    android:visibility="gone"
+                    android:layout_marginLeft="10dp"></TextView>
+            </LinearLayout>
         </LinearLayout>
 
         <View

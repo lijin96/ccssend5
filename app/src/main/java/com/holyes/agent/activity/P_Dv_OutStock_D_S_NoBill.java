@@ -21,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.ccssend5.R;
 import com.holyes.ccssend5.dao.ScanDataDao;
@@ -35,6 +36,9 @@ import com.holyes.ccssend5.myview.MyProgressDialog;
 import com.holyes.ccssend5.select.QueryScanDetail;
 import com.holyes.ccssend5.utils.PrintUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -83,6 +87,7 @@ public class P_Dv_OutStock_D_S_NoBill extends Activity {
 //
 //	Thread send ;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     // {{系统事件
     @Override
@@ -96,7 +101,7 @@ public class P_Dv_OutStock_D_S_NoBill extends Activity {
         hand = new handShowMsg();
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         sysUserInfo = new SysUserInfo(getApplicationContext());
-        Scanbillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        Scanbillno = sysUserInfo.getUserid() + "1F" + SomeUtils.RandomScanOrder();// 系统
 
         mSpinner = (Spinner) findViewById(R.id.spinner_type);
 
@@ -218,7 +223,7 @@ public class P_Dv_OutStock_D_S_NoBill extends Activity {
                 case ShowMessage.HandSuccess:
                     MySound.scanSound();
                     try {
-                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tvBillno, curcount, product_id, modelm, colors, mBillNo);
+                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tvBillno,tv_product_id, curcount, product_id, modelm, colors, mBillNo);
                         tv_product_id.setText("(" + product_id + ")");
                         tv_shopbillno.setText(pShopBillNo);
                     } catch (Exception e) {
@@ -287,7 +292,7 @@ public class P_Dv_OutStock_D_S_NoBill extends Activity {
         @Override
         public void onClick(View v) {
 
-            MyProgressDialog.show(mContext, "正在打印...", false, true);
+            MyProgressDialog.show(mContext, "正在打印...", true, true);
 
             Thread sendprint = new Thread(new Runnable() {
 
@@ -350,34 +355,7 @@ public class P_Dv_OutStock_D_S_NoBill extends Activity {
         return false;
     }
 
-    //	private class SendDatas extends Thread
-//	{
-//		@Override
-//		public void run() {
-//			try
-//			{
-//				while(!Thread.currentThread().isInterrupted()){
-//					if(codesList.size()>0)
-//					{
-//						if (access_send(codesList.get(0).toString())){
-//							codesList.remove(0);
-//						}
-//						else
-//						{
-//							codesList.clear();
-//						}
-//					}
-//
-//				}
-//
-//			}
-//			catch(Exception e)
-//			{
-//				Log.d("main","thread end");
-//			}
-//
-//		}
-//	}
+
     // {{自定义函数
     @SuppressLint("NewApi")
     private void access_send(final String contents) {
@@ -424,39 +402,87 @@ public class P_Dv_OutStock_D_S_NoBill extends Activity {
                         ShowMessage.ShowMsg(hand, 3, "");
                         return;
                     }
-                    //CS170001,1.50非球面,+1.75+0.50,1,6222323912072181,DF-CS001-17000001,DF-CS001-1700000101
-                    // true;产品编号,型号,色号,当前型号数量,当前扫描的条码,零售商发货单号,分销店发货单号
-                    String rest[] = result.split(",");
 
-                    if (rest.length < 7) {
-                        MySound.errorSound();
-                        ShowMessage.ShowMsg(hand, "服务器翻译参数个数不够，当前"
-                                + rest.length + "位！");
-                        return;
-                    }
                     nSize++;
-                    //true;产品编号,型号,色号,当前型号数量,当前扫描的条码,零售商发货单号,分销店发货单号
-                    if (mBillNo.isEmpty()) {
-                        mBillNo = rest[5];
-                    }
-                    if (pShopBillNo.isEmpty()) {
-                        pShopBillNo = rest[6];
-                    }
-                    product_id = rest[0].trim();
-                    modelm = rest[1].trim();
-                    colors = rest[2].trim();
-                    curcount = rest[3].trim();
-                    lastSuccessBarcode = contents;//rest[4].trim();
+                    if (contents.startsWith("P")) {
 
-                    if (rest.length > 7) {
-                        if (Integer.parseInt(nScanCount) < Integer.parseInt(rest[7].trim())) {
-                            nScanCount = rest[7].trim();
+                        JSONArray listjson = new JSONArray(result);
+
+                        //                "GoodsId": "C00001",
+                        //                "Modelm": "1357",
+                        //                "Colors": "C01",
+                        //                "CurNum": "80",
+                        //                "PackNumber": "P200917000001",
+                        //                "TranLno" :"DX-00-200000001"
+
+                        for (int i = 0; i < listjson.length(); i++)
+                        {
+                            JSONObject jsonObject1 = (JSONObject) listjson.opt(i);
+
+                            JSONObject jsonObject2 = (JSONObject) listjson.opt(0);
+
+
+                            product_id = jsonObject2.getString("GoodsId");
+                            modelm = jsonObject2.getString("Modelm");
+                            colors = jsonObject2.getString("Colors");
+                            curcount = jsonObject2.getString("CurNum");
+                            //					lastSuccessBarcode = rest[4].trim();
+
+                            if(mBillNo==null||mBillNo.isEmpty())
+                            {
+                                mBillNo = jsonObject2.getString("TranLno");
+                            }
+                            if(pShopBillNo.isEmpty())
+                            {
+                                pShopBillNo =  jsonObject2.getString("ShopLno");
+                            }
+
+                            if (listjson.length()==1) {
+                                nScanCount=jsonObject1.getString("CurNum");
+                            } else {
+                                nScanCount=String.valueOf(Integer.parseInt(curcount)+Integer.parseInt(jsonObject1.getString("CurNum"))) ;
+                            }
+
                         }
-                        //第五代返回结果处理
-                        ShowMessage.ShowMsg(hand, ShowMessage.HandScanSuccess, "");
+                        ShowMessage.ShowMsg(hand, ShowMessage.HandScanSuccess,"");
                     } else {
-                        //第四代返回结果处理
-                        ShowMessage.ShowMsg(hand, ShowMessage.HandSuccess, "");
+
+
+
+                        //CS170001,1.50非球面,+1.75+0.50,1,6222323912072181,DF-CS001-17000001,DF-CS001-1700000101
+                        // true;产品编号,型号,色号,当前型号数量,当前扫描的条码,零售商发货单号,分销店发货单号
+                        String rest[] = result.split(",",-1);
+
+                        if (rest.length < 7) {
+                            MySound.errorSound();
+                            ShowMessage.ShowMsg(hand, "服务器翻译参数个数不够，当前"
+                                    + rest.length + "位！");
+                            return;
+                        }
+
+                        //true;产品编号,型号,色号,当前型号数量,当前扫描的条码,零售商发货单号,分销店发货单号
+                        if (mBillNo.isEmpty()) {
+                            mBillNo = rest[5];
+                        }
+                        if (pShopBillNo.isEmpty()) {
+                            pShopBillNo = rest[6];
+                        }
+                        product_id = rest[0].trim();
+                        modelm = rest[1].trim();
+                        colors = rest[2].trim();
+                        curcount = rest[3].trim();
+                        lastSuccessBarcode = contents;//rest[4].trim();
+
+                        if (rest.length > 7) {
+                            if (Integer.parseInt(nScanCount) < Integer.parseInt(rest[7].trim())) {
+                                nScanCount = rest[7].trim();
+                            }
+                            //第五代返回结果处理
+                            ShowMessage.ShowMsg(hand, ShowMessage.HandScanSuccess, "");
+                        } else {
+                            //第四代返回结果处理
+                            ShowMessage.ShowMsg(hand, ShowMessage.HandSuccess, "");
+                        }
                     }
                     lStar = "";
 
@@ -481,6 +507,12 @@ public class P_Dv_OutStock_D_S_NoBill extends Activity {
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     String tBarcode = edtBarcode.getText().toString().trim();
+                    if (edtBarcode.getText().toString().trim().indexOf("=") != -1||edtBarcode.getText().toString().trim().indexOf("http") != -1) {
+                        //包含
+                        tBarcode = SomeUtils.InterceptCode(mContext, edtBarcode.getText().toString().trim());
+                    }else{
+                        tBarcode=SomeUtils.UpdatefirstString(mContext,edtBarcode.getText().toString().trim());
+                    }
                     if (edtBarcode.getText().toString().indexOf(" ") != -1) {
                         //包含
                         tBarcode = SomeUtils.AgentCode(mContext, edtBarcode.getText().toString());

@@ -164,7 +164,7 @@ public class SharePrefenceUtils {
                 return;
             }
             Bitmap bitmap = stringToBitmap(bitmapStr);
-            String  savePath = "/data/data/com.holyes.ccsdevs5/";
+            String  savePath = "/data/data/com.example.ccssend5/";
             String Image_icon =savePath + businessid  + ".png";
             try {
                 ImageUtils.SaveBitmapToFile(Image_icon,bitmap);

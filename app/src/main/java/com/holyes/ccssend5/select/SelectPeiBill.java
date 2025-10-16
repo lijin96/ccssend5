@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,16 +30,24 @@ import com.holyes.ccssend5.myview.MyProgressDialog;
 import com.holyes.ccssend5.utils.DisplayUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
 import com.holyes.headquarter.backgoods_d.P_Dv_ReturnedMendLabel_Z_D_HaveNoBill;
+import com.holyes.headquarter.backgoods_d.P_Dv_ReturnedPurchase_Lens_Z_D_Bill;
 import com.holyes.headquarter.backgoods_d.P_Dv_ReturnedPurchase_Z_D_Bill;
 import com.holyes.headquarter.backgoods_d.P_Dv_ReturnedPurchase_Z_D_Bill_Detail;
 import com.holyes.headquarter.backgoods_zy.P_Dv_ReturnedMendLabel_Z_L_HaveNoBill;
+import com.holyes.headquarter.backgoods_zy.P_Dv_ReturnedPurchase_Lens_Z_L_Bill;
 import com.holyes.headquarter.backgoods_zy.P_Dv_ReturnedPurchase_Z_L_Bill;
 import com.holyes.headquarter.backgoods_zy.P_Dv_ReturnedPurchase_Z_L_Bill_Detail;
 import com.holyes.headquarter.other.P_Dv_L_Return_Z_Bill;
+import com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Lens_Z_D_Bill_BeInStock;
+import com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Lens_Z_D_Bill_NoInStock;
 import com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Z_D_Bill_BeInStock;
 import com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Z_D_Bill_NoInStock;
+import com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Z_D_L_Bill_BeInStock;
+import com.holyes.headquarter.sendgoods_zy.P_Dv_OutStock_Lens_Z_L_Bill_BeInStock;
+import com.holyes.headquarter.sendgoods_zy.P_Dv_OutStock_Lens_Z_L_Bill_NoInStock;
 import com.holyes.headquarter.sendgoods_zy.P_Dv_OutStock_Z_L_Bill_BeInStock;
 import com.holyes.headquarter.sendgoods_zy.P_Dv_OutStock_Z_L_Bill_NoInStock;
+import com.holyes.headquarter.sendgoods_zy.P_Dv_OutStock_Z_L_S_HaveBill_BeInStock;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,18 +99,25 @@ public class SelectPeiBill extends Activity implements View.OnClickListener {
         }
         tv_trade = (TextView) findViewById(R.id.txt_pur_3);
         tv_code = (TextView) findViewById(R.id.txt_pur_5);
-        if (lsv_aim.equals("P_Dv_OutStock_Z_L_Bill_BeInStock")) {
+        if (lsv_aim.equals("P_Dv_OutStock_Z_L_Bill_BeInStock")||lsv_aim.equals("P_Dv_OutStock_Lens_Z_L_Bill_BeInStock")||lsv_aim.equals("P_Dv_OutStock_Lens_Z_L_Bill_NoInStock")) {
             tv_trade.setText("直营店");
             tv_code.setText("直营店ID");
+        }
+        //有单有入库直销分店
+        if (lsv_aim.equals("P_Dv_OutStock_Z_L_S_HaveBill_BeInStock")) {
+            tv_trade.setText("分销店");
+            tv_code.setText("分销店ID");
         }
         //有代无明细退货  、、退货直通车
         if (lsv_aim.equals("P_Dv_ReturnedPurchase_Z_D_Bill")
                 || "P_Dv_L_Return_Z_Bill".equals(lsv_aim)
-                || "P_Dv_ReturnedMendLabel_Z_D_HaveNoBill".equals(lsv_aim)) {
+                || "P_Dv_ReturnedMendLabel_Z_D_HaveNoBill".equals(lsv_aim)
+                || "P_Dv_ReturnedPurchase_Lens_Z_D_Bill".equals(lsv_aim)) {
             tv_title.setText("退货配货单");
         }
         if (lsv_aim.equals("P_Dv_ReturnedPurchase_Z_L_Bill")
-                || lsv_aim.equals("P_Dv_ReturnedPurchase_Z_L_Bill_Detail")) {
+                || lsv_aim.equals("P_Dv_ReturnedPurchase_Z_L_Bill_Detail")||lsv_aim.equals("P_Dv_ReturnedPurchase_Lens_Z_L_Bill")) {
+
             tv_trade.setText("直营店");
             tv_code.setText("直营店ID");
             tv_title.setText("退货配货单");
@@ -170,6 +186,8 @@ public class SelectPeiBill extends Activity implements View.OnClickListener {
                     || lsv_aim.equals("P_Dv_ReturnedPurchase_Z_L_Bill_Detail")
                     || lsv_aim.equals("P_Dv_ReturnedPurchase_Z_D_Bill_Detail")
                     || lsv_aim.equals("P_Dv_L_Return_Z_Bill")
+                    || lsv_aim.equals("P_Dv_ReturnedPurchase_Lens_Z_L_Bill")
+                    || lsv_aim.equals("P_Dv_ReturnedPurchase_Lens_Z_D_Bill")
             ) {
                 intent.putExtra("title", "确定选择退货配货单：" + item.get("purchecklno")
                         + "的产品吗？");
@@ -189,13 +207,19 @@ public class SelectPeiBill extends Activity implements View.OnClickListener {
             }
             try {
                 //有单有入库代销发货
-                if (lsv_aim.equals("P_Dv_OutStock_Z_D_Bill_BeInStock") || lsv_aim.equals("P_Dv_OutStock_Z_D_Bill_NoInStock")) {
+                if (lsv_aim.equals("P_Dv_OutStock_Z_D_Bill_BeInStock") || lsv_aim.equals("P_Dv_OutStock_Z_D_Bill_NoInStock")||lsv_aim.equals("P_Dv_OutStock_Z_D_L_Bill_BeInStock")) {
                     list = accWeb.GetDowLoadAgentInvoiceBill();
+//                    Log.d("BeInStock",list.toString());
+                }
+                else if (lsv_aim.equals("P_Dv_OutStock_Z_L_S_HaveBill_BeInStock")){
+                    list = accWeb.GetDowLoadDirectStoreInvoiceBill();
+
                 }
                 //有单有入库直销发货
                 else if (lsv_aim.equals("P_Dv_OutStock_Z_L_Bill_BeInStock")
                         || lsv_aim.equals("P_Dv_OutStock_Z_L_Bill_NoInStock")) {
                     list = accWeb.GetDowLoadDirectInvoiceBill();
+                    //                    Log.d("BeInStock",list.toString());
                 }
                 //有单无明细代销退货||有单有明细代销退货||退货直通车
                 else if (lsv_aim.equals("P_Dv_ReturnedPurchase_Z_D_Bill")
@@ -209,7 +233,20 @@ public class SelectPeiBill extends Activity implements View.OnClickListener {
                         || lsv_aim.equals("P_Dv_ReturnedPurchase_Z_L_Bill_Detail")
                         || lsv_aim.equals("P_Dv_ReturnedMendLabel_Z_L_HaveNoBill")) {
                     list = accWeb.GetDowLoadDirectReturnBill();
+                }else if (lsv_aim.equals("P_Dv_OutStock_Lens_Z_D_Bill_BeInStock")||lsv_aim.equals("P_Dv_OutStock_Lens_Z_D_Bill_NoInStock")){
+                    //镜片代销有单有明细发货
+                    list = accWeb.GetDowLoadAgentLensInvoiceBill();
+                }else if (lsv_aim.equals("P_Dv_OutStock_Lens_Z_L_Bill_BeInStock")||lsv_aim.equals("P_Dv_OutStock_Lens_Z_L_Bill_NoInStock")){
+                    //镜片直销有单有明细发货
+                    list = accWeb.GetDowLoadDirectLensInvoiceBill();
+                }else if (lsv_aim.equals("P_Dv_ReturnedPurchase_Lens_Z_L_Bill")){
+                    //镜片直销有单无明细退货
+                    list = accWeb.GetDowLoadDirectLensReturnBill();
+                }else if (lsv_aim.equals("P_Dv_ReturnedPurchase_Lens_Z_D_Bill")){
+                    //镜片代销有单无明细退货
+                    list = accWeb.GetDowLoadAgentLensReturnBill();
                 }
+
                 ShowMessage.ShowMsg(hand, ShowMessage.HandSuccess, "success");
             } catch (Exception e) {
                 ShowMessage.ShowMsg(hand, "下载出错" + e.getMessage());
@@ -311,10 +348,21 @@ public class SelectPeiBill extends Activity implements View.OnClickListener {
                 else if (lsv_aim.equals("P_Dv_OutStock_Z_D_Bill_NoInStock")) {
                     intent = new Intent(SelectPeiBill.this, P_Dv_OutStock_Z_D_Bill_NoInStock.class);
                 }
+
+                //有单有入库代销零售发货
+                else  if (lsv_aim.equals("P_Dv_OutStock_Z_D_L_Bill_BeInStock")) {
+                    intent = new Intent(SelectPeiBill.this, P_Dv_OutStock_Z_D_L_Bill_BeInStock.class);
+                }
+
                 //有单有入库直销发货
                 else if (lsv_aim.equals("P_Dv_OutStock_Z_L_Bill_BeInStock")) {
                     intent = new Intent(SelectPeiBill.this, P_Dv_OutStock_Z_L_Bill_BeInStock.class);
                 }
+                //有单有入库直销分店发货
+                else if (lsv_aim.equals("P_Dv_OutStock_Z_L_S_HaveBill_BeInStock")) {
+                    intent = new Intent(SelectPeiBill.this, P_Dv_OutStock_Z_L_S_HaveBill_BeInStock.class);
+                }
+
                 //有单无入库直销发货
                 else if (lsv_aim.equals("P_Dv_OutStock_Z_L_Bill_NoInStock")) {
                     intent = new Intent(SelectPeiBill.this, P_Dv_OutStock_Z_L_Bill_NoInStock.class);
@@ -348,6 +396,31 @@ public class SelectPeiBill extends Activity implements View.OnClickListener {
                 //退货直通车
                 else if (lsv_aim.equals("P_Dv_L_Return_Z_Bill")) {
                     intent = new Intent(SelectPeiBill.this, P_Dv_L_Return_Z_Bill.class);
+                }
+
+                else if (lsv_aim.equals("P_Dv_OutStock_Lens_Z_D_Bill_BeInStock")){
+                    //镜片代销有单有入库发货
+                    intent = new Intent(SelectPeiBill.this, P_Dv_OutStock_Lens_Z_D_Bill_BeInStock.class);
+                }
+                else if (lsv_aim.equals("P_Dv_OutStock_Lens_Z_L_Bill_BeInStock")){
+                    //镜片直销有单有入库发货
+                    intent = new Intent(SelectPeiBill.this, P_Dv_OutStock_Lens_Z_L_Bill_BeInStock.class);
+                }
+                else if (lsv_aim.equals("P_Dv_ReturnedPurchase_Lens_Z_L_Bill")){
+                    //镜片直销有单无明细退货
+                    intent = new Intent(SelectPeiBill.this, P_Dv_ReturnedPurchase_Lens_Z_L_Bill.class);
+                }
+                else if (lsv_aim.equals("P_Dv_ReturnedPurchase_Lens_Z_D_Bill")){
+                    //镜片代销有单无明细退货
+                    intent = new Intent(SelectPeiBill.this, P_Dv_ReturnedPurchase_Lens_Z_D_Bill.class);
+                }
+                else if (lsv_aim.equals("P_Dv_OutStock_Lens_Z_D_Bill_NoInStock")){
+                    //镜片有单无入库代销发货
+                    intent = new Intent(SelectPeiBill.this, P_Dv_OutStock_Lens_Z_D_Bill_NoInStock.class);
+                }
+                else if (lsv_aim.equals("P_Dv_OutStock_Lens_Z_L_Bill_NoInStock")){
+                    //镜片有单无入库直销发货
+                    intent = new Intent(SelectPeiBill.this, P_Dv_OutStock_Lens_Z_L_Bill_NoInStock.class);
                 }
 
                 intent.putExtra("purchecklno", (String) item.get("purchecklno"));

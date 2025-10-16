@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="80dp"
         android:background="@drawable/titlebar_back"
         android:gravity="center_vertical"
         android:orientation="horizontal" >
@@ -32,18 +32,28 @@
 
         <RelativeLayout
             android:id="@+id/relayout_right"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:gravity="center" >
+            android:gravity="center"
+            android:layout_gravity="center">
 
             <TextView
                 android:id="@+id/tv_value2"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="代理商吊牌回收"
+                android:gravity="center"
                 android:textColor="@color/white"
                 android:textSize="30dp" />
+            <TextView
+                android:layout_below="@+id/tv_value2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="吊牌回收会影响到红包兑换，请谨慎操作"
+                android:gravity="center"
+                android:textColor="@color/red"
+                ></TextView>
         </RelativeLayout>
     </LinearLayout>
 
@@ -84,6 +94,7 @@
             android:focusableInTouchMode="true"
             android:gravity="center_vertical"
             android:inputType="text"
+            android:imeOptions="actionSend"
             android:textSize="30dp" >
 
             <requestFocus />

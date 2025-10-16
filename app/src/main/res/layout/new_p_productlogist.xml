@@ -68,7 +68,7 @@
             android:layout_marginRight="10dp"
             android:layout_toRightOf="@+id/radio_group"
             android:hint="请选择再扫描条码"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionSend"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:singleLine="true"
@@ -82,6 +82,14 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#AEAEAE" />
+
+<!--    <TextView-->
+<!--        android:id="@+id/TestSize"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="20dp"-->
+<!--        android:textSize="30dp"-->
+<!--        />-->
 
     <ScrollView
         android:layout_width="match_parent"

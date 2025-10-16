@@ -5,14 +5,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,6 +33,7 @@ import com.holyes.ccssend5.lib.ShowMessage;
 import com.holyes.ccssend5.lib.SqliteDataHelper;
 import com.holyes.ccssend5.lib.SysUserInfo;
 import com.holyes.ccssend5.myview.MyProgressDialog;
+import com.holyes.ccssend5.select.QueryScanBatchDetail;
 import com.holyes.ccssend5.select.QueryScanDetail;
 import com.holyes.ccssend5.select.SelectProductModelColor;
 import com.holyes.ccssend5.utils.PrintUtil;
@@ -53,8 +61,10 @@ public class P_Dv_MendLable_Z extends Activity {
     private MyHandler handler;
     private Intent gIntent;
 
+    private Button btn_batch_num;//点击输入批号
+    private LinearLayout linear_batch_num;
     private TextView tv_curqty, tv_totalqty, tv_company_name, tv_source_billno,
-            tv_billno, tv_model_colors, tv_stock_name, tv_title, tv_goodsid;
+            tv_billno, tv_model_colors, tv_stock_name, tv_title, tv_goodsid,tv_instock_batch,tv_text_batch;
     private EditText et_barcode;
     private TextView tv_show_code;
 
@@ -63,11 +73,13 @@ public class P_Dv_MendLable_Z extends Activity {
     private String scanBillno = "", mBillNo = "", company_id = "", supplier_name = "";
     private String curcount = "0", goodsid = "", stock_id = "", stock_name, sourceBillNo;
     private String lastSuccessBarcode = "", lStar = "";
-    private String modelm = "", colors = "";
+    private String modelm = "", colors = "",batch_num="";
 
     private final int Lic_SelectModel = 2;
     private String nScanCount = "0";//合计
     private int nSize = 0;//次数
+
+    private PopupWindow mPopWindow;
 
 //
 //	private List<String> codesList= new ArrayList<String>();
@@ -121,6 +133,22 @@ public class P_Dv_MendLable_Z extends Activity {
         et_barcode = (EditText) findViewById(R.id.et_barcode);
         et_barcode.setOnKeyListener(new EtBarodeOnkeyListener());
 
+        tv_instock_batch=findViewById(R.id.tv_instock_batch);
+        tv_text_batch=findViewById(R.id.tv_text_batch);
+        linear_batch_num=findViewById(R.id.linear_batch_num);
+
+        btn_batch_num=findViewById(R.id.btn_batch_num);
+        btn_batch_num.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (goodsid.equals("")) {
+                    ShowMessage.ShowMsg(handler, "请先手动选择产品");
+                }else {
+                    showPopBatchView();
+                }
+            }
+        });
+
         company_id = gIntent.getStringExtra("supplier_id");
         supplier_name = gIntent.getStringExtra("supplier_name");
         stock_id = gIntent.getStringExtra("stock_id");
@@ -128,8 +156,15 @@ public class P_Dv_MendLable_Z extends Activity {
         sourceBillNo = gIntent.getStringExtra("purchecklno");
 
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        scanBillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        scanBillno = sysUserInfo.getUserid() + "S" + SomeUtils.RandomScanOrder();// 系统
         sysUserInfo.setIsDownload(true);
+
+        if (sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("08")){
+            tv_instock_batch.setVisibility(View.VISIBLE);
+            tv_text_batch.setVisibility(View.VISIBLE);
+            btn_batch_num.setVisibility(View.VISIBLE);
+        }
+
 
         tv_totalqty.setText("0");
         tv_curqty.setText("0");
@@ -142,6 +177,129 @@ public class P_Dv_MendLable_Z extends Activity {
 //		send.start();
 
     }
+
+
+
+
+    /**
+     * 弹出输入批号的输入框
+     */
+    private void showPopBatchView() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View contentView = inflater.inflate(R.layout.select_pop_addbatch, null);
+        View list = LayoutInflater.from(this).inflate(
+                R.layout.new_p_dv_mendlable_z, null);
+        if (mPopWindow == null) {
+            mPopWindow = new PopupWindow(contentView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        }
+
+        mPopWindow.setFocusable(true);
+        mPopWindow.setOutsideTouchable(false);
+        mPopWindow.setBackgroundDrawable(null);
+        mPopWindow.getContentView().setFocusable(true); // 这个很重要
+        mPopWindow.getContentView().setFocusableInTouchMode(true);
+
+        ColorDrawable dw = new ColorDrawable(0x00000000);
+        //设置SelectPicPopupWindow弹出窗体的背景
+        mPopWindow.setBackgroundDrawable(dw);
+
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = 0.5f;
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        getWindow().setAttributes(lp);
+
+        mPopWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
+        mPopWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        mPopWindow.showAtLocation(
+                list,
+                Gravity.CENTER, 0, 0);
+        mPopWindow.update();
+        et_barcode.setFocusable(false);
+        final EditText ed_code = (EditText) contentView.findViewById(R.id.ed_addbatch_code);
+        ed_code.setFocusable(true);
+        ed_code.setFocusableInTouchMode(true);
+        ed_code.requestFocus();
+        ed_code.setHint("请输入要添加的批号");
+        Button btn_ok = (Button) contentView.findViewById(R.id.bt_addbatch_ok);
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ed_code.getText().toString().trim().equals("")){
+                    ShowMessage.Show(mContext, "请输入要添加的批号");
+                }else{
+                    batch_num=ed_code.getText().toString().trim();
+                    tv_text_batch.setText("批号："+batch_num);
+                    ed_code.setText("");
+                    WindowManager.LayoutParams lp = getWindow().getAttributes();
+                    lp.alpha = 1f;
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                    getWindow().setAttributes(lp);
+                    mPopWindow.dismiss();
+                    et_barcode.setFocusable(true);
+                    et_barcode.setFocusableInTouchMode(true);
+                    et_barcode.requestFocus();
+                }
+            }
+        });
+        Button btn_cancel = (Button) contentView.findViewById(R.id.bt_addbatch_cancel);
+        btn_cancel.setText("关闭");
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WindowManager.LayoutParams lp = getWindow().getAttributes();
+                lp.alpha = 1f;
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                getWindow().setAttributes(lp);
+                mPopWindow.dismiss();
+                et_barcode.setFocusable(true);
+                et_barcode.setFocusableInTouchMode(true);
+                et_barcode.requestFocus();
+            }
+        });
+        ed_code.setOnKeyListener(new View.OnKeyListener() {
+
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                        String code = ed_code.getText().toString().trim();
+                        if (code.equals("")) {
+                            ed_code.setText("");
+                            ShowMessage.Show(mContext, "请输入要添加的批号");
+                        }
+//                        else if (!SomeUtils.TextJudgmentSize(code)) {
+//                            ed_code.setText("");
+//                            ShowMessage.Show(mContext, "请扫描正确的条码");
+//
+//                        }
+                        else {
+                            //输入批号后回车显示在界面
+                            ed_code.setText("");
+                            batch_num=code;
+                            tv_text_batch.setText("批号："+code);
+//                            startThreadCheckCode(code);
+                            WindowManager.LayoutParams lp = getWindow().getAttributes();
+                            lp.alpha = 1f;
+                            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                            getWindow().setAttributes(lp);
+                            mPopWindow.dismiss();
+                            et_barcode.setFocusable(true);
+                            et_barcode.setFocusableInTouchMode(true);
+                            et_barcode.requestFocus();
+                        }
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+
+        });
+    }
+
+
+
+
 
     @Override
     protected void onDestroy() {
@@ -170,7 +328,7 @@ public class P_Dv_MendLable_Z extends Activity {
                 case ShowMessage.HandScanSuccess:
                     MySound.scanSound();
                     try {
-                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tv_billno, curcount, goodsid, modelm, colors, mBillNo);
+                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tv_billno,tv_goodsid, curcount, goodsid, modelm, colors, mBillNo);
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -312,6 +470,7 @@ public class P_Dv_MendLable_Z extends Activity {
                     para.setScanBillNo(scanBillno);
                     para.setBillNo("");
                     para.setSourceBillNo("");
+                    para.setBatchno(batch_num.trim());
 
                     result = accWeb.P_Dv_Scan("P_Dv_MendLable_Z", para.toJson());
 
@@ -321,7 +480,7 @@ public class P_Dv_MendLable_Z extends Activity {
                         return;
                     }
                     // true;产品编号,型号,色号,当前型号数量,当前扫描的条码,单号(该单号值不用显示)
-                    String[] rest = result.split(",");
+                    String[] rest = result.split(",",-1);
 
                     //			if (rest.length < 6)
                     //			{
@@ -369,12 +528,13 @@ public class P_Dv_MendLable_Z extends Activity {
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     String tBarcode = "";
-                    if (et_barcode.getText().toString().trim().indexOf("=") != -1) {
+                    if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
+
                         //包含
                         tBarcode = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
                     } else {
                         //不包含
-                        tBarcode = et_barcode.getText().toString().trim();
+                        tBarcode = SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
                     }
 
                     tv_show_code.setText(tBarcode);
@@ -385,6 +545,14 @@ public class P_Dv_MendLable_Z extends Activity {
                         return true;
                     }
 
+//                    if (sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("08")) {
+//                        if (batch_num.isEmpty()) {
+//                            MySound.errorSound();
+//                            ShowMessage.Show(mContext, "请先添加产品批号");
+//                            et_barcode.setText("");
+//                            return true;
+//                        }
+//                    }
                     access_send(tBarcode);
                     et_barcode.setText("");
 
@@ -406,8 +574,15 @@ public class P_Dv_MendLable_Z extends Activity {
         public void onClick(View v) {
 
 
-            Intent intent = new Intent(mContext,
-                    QueryScanDetail.class);
+//            Intent intent = new Intent(mContext,
+//                    QueryScanDetail.class);
+            Intent intent = null;
+            if (sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("08")){
+                intent = new Intent(mContext, QueryScanBatchDetail.class);
+            }else{
+                intent = new Intent(mContext,QueryScanDetail.class);
+            }
+
             intent.putExtra("mBillNo", scanBillno);
             startActivity(intent);
         }

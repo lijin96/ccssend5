@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/relat_tophead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/titlebar_back"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择镜片产品"
+            android:textColor="@color/white"
+            android:textSize="22dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="8dp"
+            />
+        <TextView
+            android:id="@+id/tv_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="（共0条）"
+            android:layout_below="@id/tv_title"
+            android:layout_marginLeft="40dp"
+            android:textColor="@color/white"
+            android:textSize="20dp"/>
+        <EditText
+            android:id="@+id/et_search"
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:layout_toLeftOf="@+id/btn_seach"
+            android:layout_marginRight="10dp"
+            android:imeOptions="flagNoExtractUi"
+            android:layout_centerVertical="true"/>
+
+        <Button
+            android:id="@+id/btn_seach"
+            android:layout_width="90dp"
+            android:layout_height="50dp"
+            android:text="确定"
+            android:textSize="16sp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            ></Button>
+    </RelativeLayout>
+
+    <LinearLayout
+
+        android:id="@+id/Linear_Tilte"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/burlywood"
+        android:orientation="horizontal"
+        android:layout_below="@+id/relat_tophead"
+        android:gravity="center">
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/list_goods_lens_detail"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Linear_Tilte"></ListView>
+
+
+</RelativeLayout>

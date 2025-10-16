@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import com.example.ccssend5.R;
 import com.holyes.ccssend5.lib.ShowMessage;
 import com.holyes.ccssend5.lib.SysUserInfo;
+import com.holyes.ccssend5.select.SelectCompanyRetailer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ import java.util.Map;
 public class DBackGoodsMenuListActivity extends Activity {
     private Handler hand;
     private ListView listview;
-    private String[] menu = new String[]{"零售退货", "退货撤销"};//,"分销退货","分销退货撤销"
+    private String[] menu = new String[]{"零售退货", "退货撤销"};//,"分销退货","分销退货撤销" ,"零售退货直通车"
     private SysUserInfo sysUserInfo;
 
     //{{系统事件
@@ -46,10 +47,19 @@ public class DBackGoodsMenuListActivity extends Activity {
         hand = new handShowMsg();
         sysUserInfo = new SysUserInfo(this);
         //不是新版本就没有撤销功能
-        if (!sysUserInfo.getIsNewVerSoft()) {
-            menu = new String[]{"零售退货"};
+//        if (!sysUserInfo.getIsNewVerSoft()) {
+//            if(sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("19")||sysUserInfo.getEnterpriseId().equals("88")){
+//                menu = new String[]{"零售退货","镜片零售退货"};//,"零售退货直通车"
+//            }else{
+//                menu = new String[]{"零售退货"};//,"零售退货直通车"
+//            }
+//        }else{
+        if(sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("19")||sysUserInfo.getEnterpriseId().equals("88")){
+            menu = new String[]{"零售退货","镜片零售退货", "退货撤销","镜片退货撤销"};//,"零售退货直通车"
+        }else{
+            menu = new String[]{"零售退货", "退货撤销"};//,"零售退货直通车"
         }
-
+//        }
 
         ((Button) findViewById(R.id.btn_exit)).setOnClickListener(new btn_exit_click());
         listview = (ListView) findViewById(R.id.lst_menu);
@@ -99,22 +109,39 @@ public class DBackGoodsMenuListActivity extends Activity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,
                                 long id) {
-
-
             ListView listView = (ListView) parent;
-            @SuppressWarnings("unchecked")
             Map<String, Object> map = (Map<String, Object>) listView
                     .getItemAtPosition(position);
-            String menuName = map.get("menu").toString();
-            if (menuName.equals("零售退货")) // 零售退货
-            {
-                Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_L_NoBill.class);
-                startActivity(itent);
-            } else if (menuName.equals("退货撤销")) // 退货撤销（零售）
-            {
-                Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_L_NoBill_Cancel.class);
-                startActivity(itent);
+            if (sysUserInfo.getAgentVersionNum().equals("V17")){
+                ShowMessage.Show(DBackGoodsMenuListActivity.this,"第七代代理商功能正在开发中");
+            }else {
+                String menuName = map.get("menu").toString();
+                if (menuName.equals("零售退货")) // 零售退货
+                {
+                    Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_L_NoBill.class);
+                    startActivity(itent);
+                } else if (menuName.equals("退货撤销")) // 退货撤销（零售）
+                {
+                    Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_L_NoBill_Cancel.class);
+                    startActivity(itent);
+                } else if (menuName.equals("镜片零售退货")) //镜片零售退货
+                {
+                    Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_L_Lens_NoBill.class);
+                    startActivity(itent);
+                } else if (menuName.equals("镜片退货撤销")) //镜片退货撤销
+                {
+                    Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_L_Lens_NoBill_Cancel.class);
+                    startActivity(itent);
+                } else if (menuName.equals("零售退货直通车")) //零售退货直通车
+                {
+                    Intent intent = new Intent(DBackGoodsMenuListActivity.this, SelectCompanyRetailer.class);
+                    intent.putExtra("aim", "P_Dv_ReturnedPurchase_D_L_TransferGoods");//零售退货直通车
+                    startActivity(intent);
+                }
             }
+
+
+
 //			else if (menuName.equals(menu[2])) // 分销退货
 //			{
 //				Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_F_NoBill.class);

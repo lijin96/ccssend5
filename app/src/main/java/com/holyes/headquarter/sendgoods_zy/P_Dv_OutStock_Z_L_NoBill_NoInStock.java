@@ -39,6 +39,9 @@ import com.holyes.ccssend5.utils.DisplayUtil;
 import com.holyes.ccssend5.utils.PrintUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -142,7 +145,7 @@ public class P_Dv_OutStock_Z_L_NoBill_NoInStock extends Activity {
         stock_name = gIntent.getStringExtra("stock_name");
 
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        scanBillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        scanBillno = sysUserInfo.getUserid() + "ZF" + SomeUtils.RandomScanOrder();// 系统
 
         tv_totalqty.setText("0");
         tv_curqty.setText("0");
@@ -298,7 +301,7 @@ public class P_Dv_OutStock_Z_L_NoBill_NoInStock extends Activity {
                         ShowMessage.ShowMsg(handler, "网络不给力，请稍后再试！");
                     }
                     //true;产品编号,型号,色号,当前型号数量,当前扫描的条码,发货单号
-                    String[] rest = result.split(",");
+                    String[] rest = result.split(",",-1);
 
                     if (rest.length < 6) {
                         MySound.errorSound();
@@ -530,29 +533,68 @@ public class P_Dv_OutStock_Z_L_NoBill_NoInStock extends Activity {
                         ShowMessage.ShowMsg(handler, "网络不给力，请稍后再试！");
                         return;
                     }
-                    //true;产品编号,型号,色号,当前型号数量,当前扫描的条码,入库单号
-                    String[] rest = result.split(",");
 
-                    if (rest.length < 6) {
-                        MySound.errorSound();
-                        ShowMessage.ShowMsg(handler, "服务器返回参数不足，当前" + rest.length + "位！");
-                        return;
-                    }
+
                     nSize++;
-                    //true;产品编号,型号,色号,当前型号数量,当前扫描的条码,入库单号
-                    //goodsid = rest[0].trim();
-                    modelm = rest[1].trim();
-                    colors = rest[2].trim();
-                    curcount = rest[3].trim();
-                    lastSuccessBarcode = rest[4].trim();
+                    if (contents.startsWith("P")) {
 
-                    if (mBillNo == null || mBillNo.isEmpty()) {
-                        mBillNo = rest[5];
-                    }
-                    if (Integer.parseInt(nScanCount) < Integer.parseInt(rest[6].trim())) {
-                        nScanCount = rest[6].trim();
-                    }
+                        JSONArray listjson = new JSONArray(result);
 
+
+                        //                "GoodsId": "C00001",
+                        //                "Modelm": "1357",
+                        //                "Colors": "C01",
+                        //                "CurNum": "80",
+                        //                "PackNumber": "P200917000001",
+                        //                "TranLno" :"DX-00-200000001"
+
+                        for (int i = 0; i < listjson.length(); i++) {
+                            JSONObject jsonObject1 = (JSONObject) listjson.opt(i);
+
+                            JSONObject jsonObject2 = (JSONObject) listjson.opt(0);
+
+                            modelm = jsonObject2.getString("Modelm");
+                            colors = jsonObject2.getString("Colors");
+                            curcount = jsonObject2.getString("CurNum");
+                            //					lastSuccessBarcode = rest[4].trim();
+
+                            if (mBillNo == null || mBillNo.isEmpty()) {
+                                mBillNo = jsonObject2.getString("TranLno");
+                            }
+
+                            if (listjson.length() == 1) {
+                                nScanCount = jsonObject1.getString("CurNum");
+                            } else {
+                                nScanCount = String.valueOf(Integer.parseInt(curcount) + Integer.parseInt(jsonObject1.getString("CurNum")));
+                            }
+
+                        }
+                    } else {
+
+
+                        //true;产品编号,型号,色号,当前型号数量,当前扫描的条码,入库单号
+                        String[] rest = result.split(",",-1);
+
+                        if (rest.length < 6) {
+                            MySound.errorSound();
+                            ShowMessage.ShowMsg(handler, "服务器返回参数不足，当前" + rest.length + "位！");
+                            return;
+                        }
+
+                        //true;产品编号,型号,色号,当前型号数量,当前扫描的条码,入库单号
+
+                        modelm = rest[1].trim();
+                        colors = rest[2].trim();
+                        curcount = rest[3].trim();
+                        lastSuccessBarcode = rest[4].trim();
+
+                        if (mBillNo == null || mBillNo.isEmpty()) {
+                            mBillNo = rest[5];
+                        }
+                        if (Integer.parseInt(nScanCount) < Integer.parseInt(rest[6].trim())) {
+                            nScanCount = rest[6].trim();
+                        }
+                    }
                     ShowMessage.ShowMsg(handler, ShowMessage.HandScanSuccess, "ok");
                     lStar = "";
                 } catch (Exception e) {
@@ -577,7 +619,16 @@ public class P_Dv_OutStock_Z_L_NoBill_NoInStock extends Activity {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
 
 
-                    String tBarcode = et_barcode.getText().toString().trim();
+                    String tBarcode = "";
+
+                    if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
+                        //包含
+                        tBarcode = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
+                    } else {
+                        //不包含
+                        tBarcode = SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
+                    }
+
 //					ShowMessage.Show(mContext, tBarcode);
                     tv_show_code.setText(tBarcode);
                     if (!SomeUtils.isAllNumber(mContext, tBarcode)) {

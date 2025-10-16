@@ -2,6 +2,7 @@ package com.holyes.ccssend5.lib;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,7 +34,6 @@ public class AccessWeb {
     public String mWebId = "",port="9521";//测试9520，客户的9521
 
     private String webservice_url = "http://test.4006889521.cn:9520/androidDv/Android.asmx";//测试服务，客户的端口是9521
-
     private String webdownload_url = "http://test.4006889521.cn:9520/androidDv/DownLoadWebService.asmx";//9520
 
     private String namespace ="http://www.holyes.net/ccsUserLogin/";
@@ -60,13 +60,13 @@ public class AccessWeb {
      * 更新url，这个方法主要是在输入更换网址的时候要更新网址，否则网址用的还是之前的那个，就会登录失败
      */
     public void updateurl() {
-        //		if(sysUserInfo.getServerip().equals("test.4006889521.cn"))
-        //		{
-        //			port = "9520";
-        //		}else{
-        //			port = "9521";
-        //		}
         port = sysUserInfo.getServerport();
+        if(sysUserInfo.getServerip().equals("test.4006889521.cn"))
+        {
+            port = "9520";
+        }else{
+            port = "9521";
+        }
         webservice_url = String.format(
                 "http://%1$s:%2$s/androidDv/Android.asmx",
                 sysUserInfo.getServerip(),port);
@@ -132,6 +132,73 @@ public class AccessWeb {
             map1.put("GoodsYear", jsonObject2.getString("GoodsYear"));
             map1.put("ProdType", jsonObject2.getString("ProdType"));
             map1.put("Uprecndate", jsonObject2.getString("Uprecndate"));
+            list.add(map1);
+        }
+        return list;
+    }
+
+    /**
+     * 供应商装盒入库获取下载产品资料
+     * @throws Exception
+     * */
+    public List<Map<String, Object>> GetSearchGoodsInfor(String cUpdate)
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tCondition", cUpdate);
+        para.add(map);
+        String result = downLoadWebResult("GetSearchGoodsInfor", para);
+        JSONArray listjson = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < listjson.length(); i++) {
+            JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
+            Map<String, Object> map1 = new HashMap<String, Object>();
+            map1.put("GoodsType", jsonObject2.getString("GoodsType"));//品类
+            map1.put("BrandName", jsonObject2.getString("BrandName"));//品牌
+            map1.put("GoodsYear", jsonObject2.getString("GoodsYear"));//年份
+            map1.put("SeriesName", jsonObject2.getString("SeriesName"));//系列
+            map1.put("Modelm", jsonObject2.getString("Modelm"));//型号
+            map1.put("Colors", jsonObject2.getString("Colors"));//色号
+            map1.put("GoodsId", jsonObject2.getString("GoodsId"));//代号
+            list.add(map1);
+        }
+        return list;
+    }
+
+
+
+    /**
+     * 获取下载镜片产品资料
+     * @throws Exception
+     * */
+    public List<Map<String, Object>> GetDownLoadGoodsLensInfor(String tSearchWord)
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tGoodsTypeName", "镜片");
+        map.put("tSearchWord", tSearchWord);
+        map.put("tPageIndex", "0");
+        map.put("tPageNum", "200");
+        para.add(map);
+        String result = downLoadWebResult("GetDownLoadGoodsInforV2", para);
+//        Log.d("mian",result);
+        JSONArray listjson = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < listjson.length(); i++) {
+            JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
+            Map<String, Object> map1 = new HashMap<String, Object>();
+            map1.put("BrandName", jsonObject2.getString("BrandName"));
+            map1.put("GoodsId", jsonObject2.getString("GoodsId"));
+            map1.put("GoodsDescription", jsonObject2.getString("GoodsDescription"));
+            map1.put("Modelm", jsonObject2.getString("Modelm"));
+            map1.put("Colors", jsonObject2.getString("Colors"));
+            map1.put("GoodsYear", jsonObject2.getString("GoodsYear"));
+            map1.put("ProdType", jsonObject2.getString("ProdType"));
+            map1.put("Uprecndate", jsonObject2.getString("Uprecndate"));
+            map1.put("RefractiveIndex", jsonObject2.getString("RefractiveIndex"));
+
             list.add(map1);
         }
         return list;
@@ -388,7 +455,32 @@ public class AccessWeb {
         return list;
     }
 
-
+    /**
+     * 总公司下载零售商函数
+     * @throws Exception
+     * */
+    public List<Map<String, Object>> GetSearchRetailerInfor(String tAgentId, String cUpdate)
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tAgentId", tAgentId);
+        map.put("tCondition", cUpdate);
+        para.add(map);
+        String result = downLoadWebResult("GetSearchRetailerInfor", para);
+        JSONArray listjson = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < listjson.length(); i++) {
+            JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
+            Map<String, Object> map1 = new HashMap<String, Object>();
+            map1.put("CustId", jsonObject2.getString("CustId"));
+            map1.put("CustName", jsonObject2.getString("CustName"));
+            map1.put("Link", jsonObject2.getString("Link"));
+            map1.put("Mobile", jsonObject2.getString("Mobile"));
+            list.add(map1);
+        }
+        return list;
+    }
 
     /**
      * 获取下载直营分销店记录数
@@ -459,6 +551,9 @@ public class AccessWeb {
         return list;
     }
 
+
+
+
     /**
      * 下载品检入库明细函数
      * @throws Exception
@@ -471,6 +566,7 @@ public class AccessWeb {
         map.put("tBillNo", tBillNo);
         para.add(map);
         String result = downLoadWebResult("GetDowLoadPurCheckDetail", para);
+//        Log.d("main",result);
         JSONArray listjson = new JSONArray(result);
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < listjson.length(); i++) {
@@ -482,10 +578,171 @@ public class AccessWeb {
             map1.put("colors", jsonObject2.getString("Colors"));
             map1.put("noscanqty", jsonObject2.getString("NoInGoodQty"));
             map1.put("amount", jsonObject2.getString("NoInGoodQty"));//增加一个字段
+            map1.put("batchno", jsonObject2.getString("BatchNo"));//增加批号字段
             list.add(map1);
         }
         return list;
     }
+
+    /**
+     * 获取镜片采购品检单表头信息（有单入库）
+     * @throws Exception
+     * */
+    public List<Map<String, Object>> GetDowLoadPurCheckLensBill(String tSearchWord)
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tBillGoodsType", "镜片");
+        map.put("tSearchWord", tSearchWord);
+        para.add(map);
+
+        String result = downLoadWebResult("GetDowLoadPurCheckLensBill", para);
+//        Log.d("main",result);
+        JSONArray listjson = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < listjson.length(); i++) {
+            JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
+            Map<String, Object> map1 = new HashMap<String, Object>();
+            map1.put("PurCheckLno", jsonObject2.getString("PurCheckLno")); //采购品鉴单号
+            map1.put("SapLno", jsonObject2.getString("SapLno"));  //SAP第三方单号
+            map1.put("SupplierName", jsonObject2.getString("SupplierName"));//供应商名称
+            map1.put("StockName", jsonObject2.getString("StockName")); //仓库名称
+            map1.put("SupplierId", jsonObject2.getString("SupplierId")); //供应商代号
+            map1.put("StockId", jsonObject2.getString("StockId")); //仓库代号
+            list.add(map1);
+        }
+        return list;
+    }
+
+
+
+
+    /**
+     * 获取镜片采购订单明细折射率信息（镜片有单入库）
+     * @throws Exception
+     * */
+    public List<Map<String, Object>> GetDowLoadPurCheckLensDetail(String tBillNo,String tSearchWord)
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tBillNo", tBillNo);
+        map.put("tSearchWord", tSearchWord);
+        para.add(map);
+//        Log.d("main",para.toString());
+        String result = downLoadWebResult("GetDowLoadPurCheckLensDetail", para);
+//        Log.d("main",result);
+        JSONArray listjson = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < listjson.length(); i++) {
+            JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
+            Map<String, Object> map1 = new HashMap<String, Object>();
+            map1.put("Product_id", jsonObject2.getString("Product_id"));  //产品代号
+            map1.put("productdescription", jsonObject2.getString("productdescription"));//产品描述
+            map1.put("RefractiveIndex", jsonObject2.getString("RefractiveIndex"));//折射率
+            map1.put("modelm", jsonObject2.getString("modelm"));//型号
+            map1.put("colors", jsonObject2.getString("colors"));//色号
+            map1.put("BatchNo", jsonObject2.getString("BatchNo"));//批次号
+            map1.put("NoInGoodQty", jsonObject2.getString("NoInGoodQty"));//未入库数
+            map1.put("PurQty", jsonObject2.getString("PurQty"));//订单数
+            list.add(map1);
+        }
+        return list;
+    }
+
+
+    /**
+     * 获取镜片采购品检单指定球镜下柱镜明细列表
+     * @throws Exception
+     * */
+    public List<Map<String, Object>> GetPurCheckAstigmatism(String tBillNo,String tProductId,String tDiopter)
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tBillNo", tBillNo);
+        map.put("tProductId", tProductId);
+        map.put("tDiopter", tDiopter);
+        para.add(map);
+
+        String result = downLoadWebResult("GetPurCheckAstigmatism", para);
+//        Log.d("main",result);
+        JSONArray listjson = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < listjson.length(); i++) {
+            JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
+            Map<String, Object> map1 = new HashMap<String, Object>();
+            map1.put("Astigmatism", jsonObject2.getString("Astigmatism"));
+            map1.put("PurQty", jsonObject2.getString("PurQty"));
+            map1.put("ScanQty", jsonObject2.getString("ScanQty"));
+            list.add(map1);
+        }
+        return list;
+    }
+
+    /**
+     * 获取镜片采购订单球镜列表
+     * @throws Exception
+     * */
+    public List<Map<String, Object>> GetPurCheckDiopter(String tBillNo,String tProductId,String tAstigmatism)
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tBillNo", tBillNo);
+        map.put("tProductId", tProductId);
+        map.put("tAstigmatism", tAstigmatism);
+
+        para.add(map);
+//        Log.d("main",para.toString());
+        String result = downLoadWebResult("GetPurCheckDiopter", para);
+//        Log.d("main",result);
+        JSONArray listjson = new JSONArray(result);
+
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < listjson.length(); i++) {
+            JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
+            Map<String, Object> map1 = new HashMap<String, Object>();
+            map1.put("Diopter", jsonObject2.getString("Diopter"));
+            map1.put("PurQty", jsonObject2.getString("PurQty"));//采购订单数
+            map1.put("ScanQty", jsonObject2.getString("ScanQty"));//已扫描数量
+            list.add(map1);
+        }
+        return list;
+    }
+
+
+
+
+    /**
+     * 下载销售配货直发分店表头函数
+     * @throws Exception
+     * */
+    public List<Map<String, Object>> GetDowLoadDirectStoreInvoiceBill()
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        para.add(map);
+        String result = downLoadWebResult("GetDowLoadDirectStoreInvoiceBill", para);
+//        Log.d("BeInStock",result.toString());
+        JSONArray listjson = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < listjson.length(); i++) {
+            JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
+            Map<String, Object> map1 = new HashMap<String, Object>();
+            map1.put("PeiGoodLno", jsonObject2.getString("PeiGoodLno"));
+            map1.put("SapLno", jsonObject2.getString("SapLno"));
+            map1.put("AgentName", jsonObject2.getString("StoreName"));
+            map1.put("StockName", jsonObject2.getString("StockName"));
+            map1.put("AgentId", jsonObject2.getString("StoreId"));
+            map1.put("StockId", jsonObject2.getString("StockId"));
+            list.add(map1);
+        }
+        return list;
+    }
+
     /**
      * 下载销售配货代销表头函数
      * @throws Exception
@@ -508,10 +765,167 @@ public class AccessWeb {
             map1.put("StockName", jsonObject2.getString("StockName"));
             map1.put("AgentId", jsonObject2.getString("AgentId"));
             map1.put("StockId", jsonObject2.getString("StockId"));
+//            map1.put("BatchNo", jsonObject2.getString("BatchNo"));
             list.add(map1);
         }
         return list;
     }
+
+
+
+
+
+    /**
+     * 下载镜片销售配货代销表头函数
+     * @throws Exception
+     * */
+    public List<Map<String, Object>> GetDowLoadAgentLensInvoiceBill()
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        para.add(map);
+        String result = downLoadWebResult("GetDowLoadAgentLensInvoiceBill", para);
+        JSONArray listjson = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < listjson.length(); i++) {
+            JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
+            Map<String, Object> map1 = new HashMap<String, Object>();
+            map1.put("PeiGoodLno", jsonObject2.getString("PeiGoodLno"));
+            map1.put("SapLno", jsonObject2.getString("SapLno"));
+            map1.put("AgentName", jsonObject2.getString("AgentName"));
+            map1.put("StockName", jsonObject2.getString("StockName"));
+            map1.put("AgentId", jsonObject2.getString("AgentId"));
+            map1.put("StockId", jsonObject2.getString("StockId"));
+//            map1.put("BatchNo", jsonObject2.getString("BatchNo"));
+            list.add(map1);
+        }
+        return list;
+    }
+
+
+    /**
+     * 下载镜片销售配货直销表头函数
+     * @throws Exception
+     * */
+    public List<Map<String, Object>> GetDowLoadDirectLensInvoiceBill()
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        para.add(map);
+        String result = downLoadWebResult("GetDowLoadDirectLensInvoiceBill", para);
+        JSONArray listjson = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < listjson.length(); i++) {
+            JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
+            Map<String, Object> map1 = new HashMap<String, Object>();
+            map1.put("PeiGoodLno", jsonObject2.getString("PeiGoodLno"));
+            map1.put("SapLno", jsonObject2.getString("SapLno"));
+            map1.put("AgentName", jsonObject2.getString("TraderName"));
+            map1.put("StockName", jsonObject2.getString("StockName"));
+            map1.put("AgentId", jsonObject2.getString("TraderId"));
+            map1.put("StockId", jsonObject2.getString("StockId"));
+//            map1.put("BatchNo", jsonObject2.getString("BatchNo"));
+            list.add(map1);
+        }
+        return list;
+    }
+
+
+    /**
+     * 下载镜片销售退货有单无明细代销表头函数
+     * @throws Exception
+     * */
+    public List<Map<String, Object>> GetDowLoadAgentLensReturnBill()
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        para.add(map);
+        String result = downLoadWebResult("GetDowLoadAgentLensReturnBill", para);
+        JSONArray listjson = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < listjson.length(); i++) {
+            JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
+            Map<String, Object> map1 = new HashMap<String, Object>();
+            map1.put("PeiGoodLno", jsonObject2.getString("PeiGoodLno"));
+            map1.put("SapLno", jsonObject2.getString("SapLno"));
+            map1.put("AgentName", jsonObject2.getString("AgentName"));
+            map1.put("StockName", jsonObject2.getString("StockName"));
+            map1.put("AgentId", jsonObject2.getString("AgentId"));
+            map1.put("StockId", jsonObject2.getString("StockId"));
+//            map1.put("BatchNo", jsonObject2.getString("BatchNo"));
+            list.add(map1);
+        }
+        return list;
+    }
+
+
+    /**
+     * 下载镜片销售退货有单无明细直销表头函数
+     * @throws Exception
+     * */
+    public List<Map<String, Object>> GetDowLoadDirectLensReturnBill()
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        para.add(map);
+        String result = downLoadWebResult("GetDowLoadDirectLensReturnBill", para);
+        JSONArray listjson = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < listjson.length(); i++) {
+            JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
+            Map<String, Object> map1 = new HashMap<String, Object>();
+            map1.put("PeiGoodLno", jsonObject2.getString("PeiGoodLno"));
+            map1.put("SapLno", jsonObject2.getString("SapLno"));
+            map1.put("AgentName", jsonObject2.getString("TraderName"));
+            map1.put("StockName", jsonObject2.getString("StockName"));
+            map1.put("AgentId", jsonObject2.getString("TraderId"));
+            map1.put("StockId", jsonObject2.getString("StockId"));
+//            map1.put("BatchNo", jsonObject2.getString("BatchNo"));
+            list.add(map1);
+        }
+        return list;
+    }
+
+
+    /**
+     * 下载销售配货代销或者直销明细函数
+     * @throws Exception
+     * */
+    public List<Map<String, Object>> GetDowLoadLensInvoiceDetail(String tBillNo)
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tBillNo", tBillNo);
+        map.put("tSearchWord", "");
+        para.add(map);
+        String result = downLoadWebResult("GetDowLoadLensInvoiceDetail", para);
+//        Log.d("main",result);
+        JSONArray listjson = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < listjson.length(); i++) {
+            JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
+            Map<String, Object> map1 = new HashMap<String, Object>();
+            map1.put("Product_id", jsonObject2.getString("Product_id"));
+            map1.put("productdescription", jsonObject2.getString("productdescription"));
+            map1.put("RefractiveIndex", jsonObject2.getString("RefractiveIndex"));
+            map1.put("Diopter", jsonObject2.getString("Diopter"));
+            map1.put("Astigmatism", jsonObject2.getString("Astigmatism"));
+            map1.put("NoSendGoodQty", jsonObject2.getString("nosendgoodqty"));//未发货数量
+            map1.put("amount", jsonObject2.getString("nosendgoodqty"));//未发货数量// 增加一个数量字段
+            map1.put("peigoodqty", jsonObject2.getString("peigoodqty"));//配货数据
+            if (sysUserInfo.getEnterpriseId().equals("08")) {
+                map1.put("batchno", jsonObject2.getString("BatchNo"));//增加批号字段
+            }
+            list.add(map1);
+        }
+        return list;
+    }
+
     /**
      * 下载销售配货代销明细函数
      * @throws Exception
@@ -524,6 +938,7 @@ public class AccessWeb {
         map.put("tBillNo", tBillNo);
         para.add(map);
         String result = downLoadWebResult("GetDowLoadAgentInvoiceDetail", para);
+//        Log.d("main",result);
         JSONArray listjson = new JSONArray(result);
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < listjson.length(); i++) {
@@ -535,6 +950,7 @@ public class AccessWeb {
             map1.put("colors", jsonObject2.getString("Colors"));
             map1.put("noscanqty", jsonObject2.getString("NoSendGoodQty"));
             map1.put("amount", jsonObject2.getString("NoSendGoodQty"));//增加一个数量字段
+            map1.put("batchno", jsonObject2.getString("BatchNo"));//增加批号字段
             list.add(map1);
         }
         return list;
@@ -565,6 +981,39 @@ public class AccessWeb {
         }
         return list;
     }
+
+
+    /**
+     * 下载销售配货直发分店明细函数
+     * @throws Exception
+     * */
+    public List<Map<String, Object>> GetDowLoadDirectStoreInvoiceDetail(String tBillNo)
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tBillNo", tBillNo);
+        para.add(map);
+        String result = downLoadWebResult("GetDowLoadDirectStoreInvoiceDetail", para);
+        JSONArray listjson = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < listjson.length(); i++) {
+            JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
+            Map<String, Object> map1 = new HashMap<String, Object>();
+            map1.put("goodsid", jsonObject2.getString("GoodsId"));
+            map1.put("goodsdescription", jsonObject2.getString("GoodsDescription"));
+            map1.put("modelm", jsonObject2.getString("Modelm"));
+            map1.put("colors", jsonObject2.getString("Colors"));
+            map1.put("noscanqty", jsonObject2.getString("NoSendGoodQty"));
+            map1.put("amount", jsonObject2.getString("NoSendGoodQty"));//增加一个字段
+            list.add(map1);
+        }
+        return list;
+    }
+
+
+
+
     /**
      * 下载销售配货直销明细函数
      * @throws Exception
@@ -577,6 +1026,7 @@ public class AccessWeb {
         map.put("tBillNo", tBillNo);
         para.add(map);
         String result = downLoadWebResult("GetDowLoadDirectInvoiceDetail", para);
+//        Log.d("main11",result);
         JSONArray listjson = new JSONArray(result);
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < listjson.length(); i++) {
@@ -588,6 +1038,7 @@ public class AccessWeb {
             map1.put("colors", jsonObject2.getString("Colors"));
             map1.put("noscanqty", jsonObject2.getString("NoSendGoodQty"));
             map1.put("amount", jsonObject2.getString("NoSendGoodQty"));//增加一个字段
+            map1.put("batchno", jsonObject2.getString("BatchNo"));//增加批号字段
             list.add(map1);
         }
         return list;
@@ -750,6 +1201,21 @@ public class AccessWeb {
     }
 
 
+    /**
+     * 修改镜片入库品检单明细信息
+     */
+    public String P_Dv_EditPurcheckDetail(String tPara) throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tPara", tPara);
+        para.add(map);
+        String data = getWebResult("P_Dv_EditPurcheckDetail", para);
+//        Log.d("main",data);
+        return data;
+    }
+
+
 
     /**
      * 扫描操作函数
@@ -780,7 +1246,10 @@ public class AccessWeb {
         map.put("tWebId", mWebId);
         map.put("tPara", tPara);
         para.add(map);
+//        Log.d("main11",methodName);
+        Log.d("main11",para.toString());
         String result = getWebResult(methodName, para);
+//        Log.d("main11",result);
         return result;
     }
 
@@ -927,6 +1396,7 @@ public class AccessWeb {
         map.put("tBillNo", tBillNo);
         para.add(map);
         String result = downLoadWebResult("GetDowLoadPurOutDetail", para);
+//        Log.d("main11",result);
         JSONArray listjson = new JSONArray(result);
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < listjson.length(); i++) {
@@ -938,6 +1408,7 @@ public class AccessWeb {
             map1.put("colors", jsonObject2.getString("Colors"));
             map1.put("noscanqty", jsonObject2.getString("NoOutGoodQty"));
             map1.put("amount", jsonObject2.getString("NoOutGoodQty"));//增加一个字段
+            map1.put("batchno", jsonObject2.getString("BatchNo"));//增加批号字段
             list.add(map1);
         }
         return list;
@@ -974,7 +1445,7 @@ public class AccessWeb {
         return list;
     }
     /**
-     * 下载入库退出明细函数
+     * 下载仓库调拨明细函数
      * @author van van.shu@magic-point.com
      * @version 创建时间：2017-9-16 下午5:36:53
      * @return
@@ -988,6 +1459,7 @@ public class AccessWeb {
         map.put("tBillNo", tBillNo);
         para.add(map);
         String result = downLoadWebResult("GetDowLoadAllotsdetail", para);
+//        Log.d("main11",result);
         JSONArray listjson = new JSONArray(result);
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < listjson.length(); i++) {
@@ -999,6 +1471,7 @@ public class AccessWeb {
             map1.put("colors", jsonObject2.getString("Colors"));
             map1.put("noscanqty", jsonObject2.getString("NoAllotGoodQty"));
             map1.put("amount", jsonObject2.getString("NoAllotGoodQty"));//增加一个字段
+            map1.put("batchno", jsonObject2.getString("BatchNo"));//增加批号字段
             list.add(map1);
         }
         return list;
@@ -1033,8 +1506,9 @@ public class AccessWeb {
             transport.call(SOAP_ACTION, envelope);
             // 获取返回的数据
             SoapObject object = (SoapObject) envelope.bodyIn;
-            //			SoapObject object = (SoapObject) envelope.getResponse();
+//            			SoapObject object = (SoapObject) envelope.getResponse();
             // 获取返回的结果
+//            Log.d("main",object.toString());
             result = object.getProperty(0).toString();
         } catch (IOException e) {
             throw new Exception("服务器:（IOException网络超时）"+e);
@@ -1100,7 +1574,7 @@ public class AccessWeb {
 //				SoapObject object = (SoapObject) envelope.getResponse();
                 // 获取返回的结果
                 result = object.getProperty(0).toString();
-
+//                Log.d("main", result);
 
             } catch (IOException e) {
                 throw new Exception("服务器连接超时"+e.getMessage());
@@ -1186,7 +1660,7 @@ public class AccessWeb {
                 // 调用WebService
                 transport.call(SOAP_ACTION, envelope);
                 SoapObject object = (SoapObject) envelope.bodyIn;
-                //				SoapObject object = (SoapObject) envelope.getResponse();
+//                				SoapObject object = (SoapObject) envelope.getResponse();
                 // 获取返回的结果
                 result = object.getProperty(0).toString();
 
@@ -1194,7 +1668,7 @@ public class AccessWeb {
             } catch (IOException e) {
                 throw new Exception("服务器连接超时");
             } catch (Exception e) {
-                throw new Exception("服务器:" + e.getCause());
+                throw new Exception("服务器:" + e);
             }
             if (result == null || result == "") {
                 throw new Exception("网络超时");
@@ -1302,12 +1776,13 @@ public class AccessWeb {
 
     /**
      * 判断版本第四代还是第五代
-     * 返回True是第五代、返回false是第四代
+     * 返回True是第五代、返回false是第四代 以前的判断
+     * 优化 V17新版 V16保留原先的版本
      * @param tBrandNessCode 品牌代号
      * @return
      * @throws Exception
      */
-    public boolean JudgeBrandNessVer(String tBrandNessCode){
+    public String JudgeBrandNessVer(String tBrandNessCode)throws Exception{
         try{
             String result = "";
             // SOAP Action
@@ -1332,10 +1807,18 @@ public class AccessWeb {
             //			SoapObject object = (SoapObject) envelope.getResponse();
             // 获取返回的结果
             result = object.getProperty(0).toString().trim();
-            return  Boolean.parseBoolean(result.split(";")[0]);
+//            Log.d("mian","版本号"+Boolean.parseBoolean(result.split(";")[0]));
+//            return  Boolean.parseBoolean(result.split(";")[0]);
+            if(result.split(";")[0].equals("true"))
+            {
+                return result.split(";")[1];
+            }else{
+                throw new Exception("服务器：" + result.split(";")[1]);
+            }
         }catch (Exception e){
-            e.printStackTrace();
-            return false;
+//            e.printStackTrace();
+//            return false;
+            throw new Exception("服务器:" + e);
         }
 
 
@@ -1375,10 +1858,12 @@ public class AccessWeb {
             //			SoapObject object = (SoapObject) envelope.getResponse();
             // 获取返回的结果
             result = object.getProperty(0).toString();
+//            Log.d("main",result);
             if (result == null || result == "") {
                 throw new Exception("网络超时");
             }
-            if (result.split(";").length < 2) {
+//            Log.d("main",result.split(";")[0]);
+            if (result.split(";").length < 1) {
                 throw new Exception("本地处理:返回的值格式不正确.\r\n" + result);
             }
 
@@ -1394,13 +1879,13 @@ public class AccessWeb {
                     }
                     return res;
                 }
-                return result.split(";")[1];
+                return result.split(";")[0];
             } else {
                 throw new Exception("服务器：" + result.split(";")[1]);
             }
 
         } catch (Exception e) {
-            throw new Exception("服务器:" + e.getCause());
+            throw new Exception("服务器:" + e);
         }
     }
 
@@ -1521,6 +2006,38 @@ public class AccessWeb {
         String data = getWebResult("P_Dv_OutStock_D_L_NoBillv1", para);
         return data;
     }
+
+
+
+    /** 代理商镜片扫描发货零售商
+     * */
+    public String P_Dv_OutStock_D_L_Lens_NoBill(String tPara) throws Exception {
+
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tWebId", mWebId);
+        map.put("tPara", tPara);
+        para.add(map);
+        String data = getWebResult("P_Dv_OutStock_D_L_Lens_NoBill", para);
+        return data;
+    }
+
+
+    /** 零售商镜片扫描退货代理商
+     * */
+    public String P_Dv_ReturnedPurchase_D_L_Lens_NoBill(String tPara) throws Exception {
+
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tWebId", mWebId);
+        map.put("tPara", tPara);
+        para.add(map);
+        String data = getWebResult("P_Dv_ReturnedPurchase_D_L_Lens_NoBill", para);
+        return data;
+    }
+
 
 
     /** 代理商给分销店发货
@@ -1753,6 +2270,7 @@ public class AccessWeb {
         map.put("tScanBillNo", tScanBillNo);
         para.add(map);
         String result = downLoadWebResult("GetDowLoadBilldetail", para);
+//        Log.d("main",result);
         JSONArray jsonArray = new JSONArray(result);
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         Map<String, Object> maps;
@@ -1760,10 +2278,147 @@ public class AccessWeb {
         {
             JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
             maps = new HashMap<String, Object>();
-            maps.put("goodsid", jsonObject.getString("GoodsId"));
-            maps.put("modelm", jsonObject.getString("Modelm"));
-            maps.put("colors", jsonObject.getString("Colors"));
-            maps.put("curcount", jsonObject.getString("Num"));
+            maps.put("oddno", jsonObject.optString("OddNo",""));
+            maps.put("custid", jsonObject.optString("CustId",""));
+            maps.put("custname", jsonObject.optString("CustName",""));
+
+            maps.put("goodsid", jsonObject.optString("GoodsId",""));
+            maps.put("modelm", jsonObject.optString("Modelm",""));
+            maps.put("colors", jsonObject.optString("Colors",""));
+            maps.put("curcount", jsonObject.optString("Num",""));
+            maps.put("scandate", jsonObject.optString("ScanDate",""));
+            if(sysUserInfo.getEnterpriseId().equals("08")){
+                maps.put("batchno", jsonObject.optString("BatchNo",""));
+            }
+            list.add(maps);
+        }
+        return list;
+    }
+
+    /**
+     * 查看镜片单据明细
+     * @return
+     * @throws Exception
+     */
+    public List<Map<String, Object>> GetDowLoadLensBillDetail(String tLoginId, String tScanBillNo) throws Exception
+    {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", tLoginId);
+        map.put("tScanBillNo", tScanBillNo);
+        para.add(map);
+//        Log.d("main",tScanBillNo);
+        String result = downLoadWebResult("GetDowLoadLensBillDetail", para);
+
+        JSONArray jsonArray = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        Map<String, Object> maps;
+        for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+            maps = new HashMap<String, Object>();
+
+            maps.put("product_id", jsonObject.getString("product_id"));
+            maps.put("RefractiveIndex", jsonObject.getString("RefractiveIndex"));
+            maps.put("Diopter", jsonObject.getString("Diopter"));
+            maps.put("Astigmatism", jsonObject.getString("Astigmatism"));
+            maps.put("Num", jsonObject.getString("Num"));
+            maps.put("Scandate", jsonObject.getString("Scandate"));
+
+
+            list.add(maps);
+        }
+        return list;
+    }
+
+
+    /**
+     * 下载我的装盒明细函数
+     * @return
+     * @throws Exception
+     */
+    public List<Map<String, Object>> GetOwnPackingBoxDeail(String tCondition) throws Exception
+    {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tCondition", tCondition);
+        para.add(map);
+        String result = downLoadWebResult("GetOwnPackingBoxDeail", para);
+        JSONArray jsonArray = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        Map<String, Object> maps;
+        for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+            maps = new HashMap<String, Object>();
+            maps.put("BoxDate", jsonObject.optString("BoxDate",""));//装盒日期
+            maps.put("GoodsName", jsonObject.optString("GoodsName",""));//产品
+            maps.put("GoodsNum", jsonObject.optString("GoodsNum",""));//产品数
+            maps.put("BoxNum", jsonObject.optString("BoxNum",""));//盒数
+
+            list.add(maps);
+        }
+        return list;
+    }
+
+    /**
+     * 下载所有用户的装盒明细函数
+     * @return
+     * @throws Exception
+     */
+    public List<Map<String, Object>> GetAllPackingBoxDeail(String tCondition) throws Exception
+    {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tCondition", tCondition);
+        para.add(map);
+//        Log.d("main", para.toString());
+        String result = downLoadWebResult("GetAllPackingBoxDeail", para);
+        JSONArray jsonArray = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        Map<String, Object> maps;
+        for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+            maps = new HashMap<String, Object>();
+            maps.put("BoxDate", jsonObject.optString("BoxDate",""));//(装盒日期)
+            maps.put("GoodsName", jsonObject.optString("GoodsName",""));//(产品)
+            maps.put("GoodsNum", jsonObject.optString("GoodsNum",""));//(产品数)
+            maps.put("BoxNum", jsonObject.optString("BoxNum",""));//(盒数)
+            maps.put("UserName", jsonObject.optString("UserName",""));//用户
+            list.add(maps);
+        }
+        return list;
+    }
+
+    /**
+     * 下载所有用户装盒汇总
+     * @return
+     * @throws Exception
+     */
+    public List<Map<String, Object>> GetAllPackingGather(String tCondition) throws Exception
+    {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tCondition", tCondition);
+        para.add(map);
+//        Log.d("main", para.toString());
+        String result = downLoadWebResult("GetAllPackingGather", para);
+//        Log.d("main", result);
+        JSONArray jsonArray = new JSONArray(result);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        Map<String, Object> maps;
+        for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+            maps = new HashMap<String, Object>();
+            maps.put("BrandName", jsonObject.optString("BrandName",""));//(品牌)
+            maps.put("Modelm", jsonObject.optString("Modelm",""));//(型号)
+            maps.put("GoodsNum", jsonObject.optString("GoodsNum",""));//(产品数)
+            maps.put("BoxNum", jsonObject.optString("BoxNum",""));//(盒数)
 
             list.add(maps);
         }
@@ -1960,6 +2615,102 @@ public class AccessWeb {
         map.put("tPara", tPara);
         para.add(map);
         String data = getWebResult("P_Dv_TransferGoods_D", para);
+        return data;
+    }
+
+
+    /**
+     * 读取未满盒盒标码信息（上一次未完成扫码入库的装盒）
+     * @author
+     * @version 创建时间：2025年7月31日16:33:50
+     * @return
+     * @throws Exception
+     */
+    public String Holyes_Dv_Factory_GetUnFillBox(String tPara) throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tWebId", "");
+        map.put("tPara", tPara);
+        para.add(map);
+        String data = getWebResult("Holyes_Dv_Factory_GetUnFillBox", para);
+        return data;
+    }
+
+    /**
+     * 供应商扫码装盒入库
+     * @author
+     * @version 创建时间：2025年7月31日16:31:30
+     * @return
+     * @throws Exception
+     */
+    public String Holyes_Dv_Factory_PackBox_NoBill( String tPara) throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tWebId", mWebId);
+        map.put("tPara", tPara);
+        para.add(map);
+        Log.d("main", para.toString());
+        String data = getWebResult("Holyes_Dv_Factory_PackBox_NoBill", para);
+        return data;
+    }
+
+    /**
+     * 设置盒装数信息
+     * @author
+     * @version 创建时间：2025年7月31日16:38:17
+     * @return
+     * @throws Exception
+     */
+    public String Holyes_Dv_Factory_SetFillBoxNum(String tPara) throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tWebId", mWebId);
+        map.put("tPara", tPara);
+        para.add(map);
+//        Log.d("mainset", para.toString());
+        String data = getWebResult("Holyes_Dv_Factory_SetFillBoxNum", para);
+        return data;
+    }
+
+    /**
+     * 读取已装盒标码信息
+     * @author
+     * @version 创建时间：2025年7月31日16:38:22
+     * @return
+     * @throws Exception
+     */
+    public String Holyes_Dv_Factory_GetFillBoxInfor( String tPara) throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tWebId", mWebId);
+        map.put("tPara", tPara);
+        para.add(map);
+//        Log.d("mainget", para.toString());
+        String data = getWebResult("Holyes_Dv_Factory_GetFillBoxInfor", para);
+        return data;
+    }
+
+    /**
+     * 装盒剔除
+     * @author
+     * @version 创建时间：2025年7月31日16:38:27
+     * @return
+     * @throws Exception
+     */
+    public String Holyes_Dv_Factory_WeedOutFillBox( String tPara) throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tWebId", mWebId);
+        map.put("tPara", tPara);
+        para.add(map);
+        Log.d("mainWeedOut", para.toString());
+        String data = getWebResult("Holyes_Dv_Factory_WeedOutFillBox", para);
+        Log.d("mainresult", data);
         return data;
     }
 

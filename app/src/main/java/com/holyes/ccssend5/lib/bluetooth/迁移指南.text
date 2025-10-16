@@ -1,0 +1,379 @@
+# 迁移到 BluetoothManager 快速指南
+
+## 需要修改的文件列表
+根据搜索结果，以下文件需要迁移：
+1. ✅ `P_Dv_InStock_PackBox_List_NoBill.java` (已完成)
+2. `Holyes_Dv_Factory_PackBox_NoBill.java`
+3. `P_Dv_PackDressBoxCheck.java`
+4. `P_Dv_InStock_PackBox_Search.java`
+
+## 迁移步骤
+
+### 步骤1：添加导入
+在文件顶部添加：
+```java
+import com.holyes.ccssend5.lib.bluetooth.BluetoothManager;
+```
+
+### 步骤2：替换成员变量
+**原来的代码：**
+```java
+private BluetoothAdapter mBluetoothAdapter = null;
+private BluetoothService mService = null;
+```
+
+**改为：**
+```java
+private BluetoothAdapter mBluetoothAdapter = null;
+private BluetoothManager bluetoothManager = null;
+```
+
+### 步骤3：修改 onCreate 中的初始化代码
+**原来的代码：**
+```java
+mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
+    mService = new BluetoothService(this, mHandler);
+    tryConnectLastBluetooth();
+} else {
+    ShowMessage.Show(mContext, "蓝牙未打开或不可用，请到系统设置中检查");
+}
+```
+
+**改为：**
+```java
+// 使用全局蓝牙管理器
+bluetoothManager = BluetoothManager.getInstance();
+mBluetoothAdapter = bluetoothManager.getBluetoothAdapter();
+
+if (bluetoothManager.isBluetoothAvailable()) {
+    // 如果已经连接，则不需要重新初始化
+    if (!bluetoothManager.isBluetoothConnected()) {
+        // 自动连接上次保存的蓝牙设备
+        boolean isAutoConnecting = bluetoothManager.initBluetoothServiceAndAutoConnect(this, mHandler);
+        if (isAutoConnecting) {
+            // 正在自动连接，更新UI状态
+            connectedDeviceName = sysUserInfo.getConnectedBluetoothName();
+            tv_connect_state.setText("正在连接:" + connectedDeviceName + "...");
+            tv_connect_state.setTextColor(Color.BLACK);
+            btn_connect.setText("连接");
+        } else {
+            // 没有保存的设备地址，显示未连接状态
+            tv_connect_state.setText("未连接");
+            tv_connect_state.setTextColor(Color.RED);
+            btn_connect.setText("连接");
+        }
+    } else {
+        // 已经连接，直接更新UI状态
+        connectedDeviceName = sysUserInfo.getConnectedBluetoothName();
+        isConnectedBluetooth = true;
+        tv_connect_state.setText("已连接:" + connectedDeviceName);
+        tv_connect_state.setTextColor(Color.parseColor("#008000"));
+        btn_connect.setText("断开");
+    }
+} else {
+    ShowMessage.Show(mContext, "蓝牙未打开或不可用，请到系统设置中检查");
+}
+```
+
+### 步骤4：修改 tryConnectLastBluetooth 方法
+**原来的代码：**
+```java
+public void tryConnectLastBluetooth() {
+    connectedDeviceName = sysUserInfo.getConnectedBluetoothName();
+    connectedDeviceAddress = sysUserInfo.getConnectedBluetoothAddress();
+    if (!connectedDeviceAddress.isEmpty()) {
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(connectedDeviceAddress);
+        mService.connect(device);
+    }
+}
+```
+
+**改为：**
+```java
+public void tryConnectLastBluetooth() {
+    connectedDeviceName = sysUserInfo.getConnectedBluetoothName();
+    connectedDeviceAddress = sysUserInfo.getConnectedBluetoothAddress();
+    if (!connectedDeviceAddress.isEmpty()) {
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(connectedDeviceAddress);
+        bluetoothManager.connect(device);
+    }
+}
+```
+
+### 步骤5：修改 onResume 方法
+**原来的代码：**
+```java
+@Override
+protected void onResume() {
+    super.onResume();
+    if (mService != null) {
+        if (mService.getState() == BluetoothService.STATE_NONE) {
+            mService.start();
+        }
+    }
+}
+```
+
+**改为：**
+```java
+@Override
+protected void onResume() {
+    super.onResume();
+    if (bluetoothManager != null && bluetoothManager.getBluetoothService() != null) {
+        if (bluetoothManager.getBluetoothState() == BluetoothService.STATE_NONE) {
+            bluetoothManager.start();
+        }
+    }
+}
+```
+
+### 步骤6：修改 onDestroy 方法
+**原来的代码：**
+```java
+@Override
+protected void onDestroy() {
+    super.onDestroy();
+    if (mService != null) mService.stop();
+}
+```
+
+**改为：**
+```java
+@Override
+protected void onDestroy() {
+    super.onDestroy();
+    // 注意：不要在这里 stop，因为是全局的蓝牙服务，其他界面可能还在使用
+    // 如果需要断开，应该在应用退出时调用 BluetoothManager.destroy()
+}
+```
+
+### 步骤7：修改 onActivityResult 中的连接代码
+**原来的代码：**
+```java
+case BluetoothUtil.REQUEST_CONNECT_DEVICE:
+    if (resultCode == Activity.RESULT_OK) {
+        connectedDeviceAddress = data.getStringExtra("deviceAddress");
+        connectedDeviceName = data.getStringExtra("deviceName");
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(connectedDeviceAddress);
+        mService.connect(device);
+    }
+    break;
+```
+
+**改为：**
+```java
+case BluetoothUtil.REQUEST_CONNECT_DEVICE:
+    if (resultCode == Activity.RESULT_OK) {
+        connectedDeviceAddress = data.getStringExtra("deviceAddress");
+        connectedDeviceName = data.getStringExtra("deviceName");
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(connectedDeviceAddress);
+        bluetoothManager.connect(device);
+    }
+    break;
+```
+
+### 步骤8：修改按钮点击事件（断开连接）
+**原来的代码：**
+```java
+case R.id.btn_connect:
+    if (btn_connect.getText().equals("连接")) {
+        Intent serverIntent = new Intent(mContext, DeviceListActivity.class);
+        startActivityForResult(serverIntent, BluetoothUtil.REQUEST_CONNECT_DEVICE);
+    } else {
+        mService.stop();
+    }
+    break;
+```
+
+**改为：**
+```java
+case R.id.btn_connect:
+    if (btn_connect.getText().equals("连接")) {
+        Intent serverIntent = new Intent(mContext, DeviceListActivity.class);
+        startActivityForResult(serverIntent, BluetoothUtil.REQUEST_CONNECT_DEVICE);
+    } else {
+        bluetoothManager.stop();
+    }
+    break;
+```
+
+### 步骤9：修改发送数据的方法
+**原来的代码：**
+```java
+private void sendMessage(String message, BoxTag boxTag) {
+    if (mService.getState() != BluetoothService.STATE_CONNECTED) {
+        ShowMessage.Show(mContext, "未连接蓝牙");
+        return;
+    }
+    // ... 其他代码 ...
+    byte[] send;
+    try {
+        send = message.getBytes("GBK");
+        mService.write(send);
+    } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+    }
+}
+```
+
+**改为：**
+```java
+private void sendMessage(String message, BoxTag boxTag) {
+    if (!bluetoothManager.isBluetoothConnected()) {
+        ShowMessage.Show(mContext, "未连接蓝牙");
+        return;
+    }
+    // ... 其他代码 ...
+    byte[] send;
+    try {
+        send = message.getBytes("GBK");
+        bluetoothManager.write(send);
+    } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+    }
+}
+```
+
+## 查找替换清单
+
+为了快速迁移，可以使用以下查找替换：
+
+| 查找内容 | 替换为 | 说明 |
+|---------|--------|------|
+| `private BluetoothService mService = null;` | `private BluetoothManager bluetoothManager = null;` | 替换成员变量 |
+| `mService.connect(` | `bluetoothManager.connect(` | 替换连接方法 |
+| `mService.start()` | `bluetoothManager.start()` | 替换启动方法 |
+| `mService.stop()` | `bluetoothManager.stop()` | 替换停止方法 |
+| `mService.write(` | `bluetoothManager.write(` | 替换写入方法 |
+| `mService.getState()` | `bluetoothManager.getBluetoothState()` | 替换获取状态方法 |
+| `mService != null` | `bluetoothManager != null && bluetoothManager.getBluetoothService() != null` | 替换判空条件 |
+
+## 注意事项
+
+1. **不要在 onDestroy 中停止蓝牙服务**
+   - 因为是全局服务，其他界面可能还在使用
+   - 只在应用完全退出时调用 `BluetoothManager.destroy()`
+
+2. **检查是否已连接**
+   - 在初始化时，先检查 `bluetoothManager.isBluetoothConnected()`
+   - 如果已连接，直接更新UI，不需要重新连接
+
+3. **Handler 的处理**
+   - 每个界面仍然需要自己的 Handler
+   - 如果需要切换 Handler，可以调用 `resetBluetoothService(context, handler)`
+
+4. **状态判断**
+   - 使用 `bluetoothManager.isBluetoothConnected()` 比直接判断状态更简洁
+   - 使用 `bluetoothManager.isBluetoothAvailable()` 判断蓝牙是否可用
+
+5. **主界面断开蓝牙**
+   - 在主界面的 `onResume()` 方法中添加断开蓝牙的逻辑
+   - 这样可以节省蓝牙资源，避免不必要的连接占用
+
+## 迁移检查清单
+
+迁移完成后，检查以下内容：
+
+- [ ] 已添加 `BluetoothManager` 的导入
+- [ ] 已将 `mService` 替换为 `bluetoothManager`
+- [ ] 已在初始化时检查是否已连接
+- [ ] 已修改 `tryConnectLastBluetooth` 方法
+- [ ] 已修改 `onResume` 方法
+- [ ] 已修改 `onDestroy` 方法（移除 stop 调用）
+- [ ] 已修改 `onActivityResult` 中的连接代码
+- [ ] 已修改按钮点击事件
+- [ ] 已修改发送数据的方法
+- [ ] 已测试蓝牙连接和数据发送功能
+- [ ] 已测试多个界面切换时蓝牙状态是否正常
+
+## 示例：完整的迁移对比
+
+### 迁移前的文件结构：
+```java
+public class YourActivity extends Activity {
+    private BluetoothService mService = null;
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // ...
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
+            mService = new BluetoothService(this, mHandler);
+            tryConnectLastBluetooth();
+        }
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mService != null) mService.stop();
+    }
+    
+    private void sendData(byte[] data) {
+        if (mService.getState() == BluetoothService.STATE_CONNECTED) {
+            mService.write(data);
+        }
+    }
+}
+```
+
+### 迁移后的文件结构：
+```java
+public class YourActivity extends Activity {
+    private BluetoothManager bluetoothManager = null;
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // ...
+        bluetoothManager = BluetoothManager.getInstance();
+        mBluetoothAdapter = bluetoothManager.getBluetoothAdapter();
+        
+        if (bluetoothManager.isBluetoothAvailable()) {
+            if (!bluetoothManager.isBluetoothConnected()) {
+                bluetoothManager.initBluetoothService(this, mHandler);
+                tryConnectLastBluetooth();
+            } else {
+                // 已连接，更新UI
+                updateConnectedUI();
+            }
+        }
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 不要在这里 stop
+    }
+    
+    private void sendData(byte[] data) {
+        if (bluetoothManager.isBluetoothConnected()) {
+            bluetoothManager.write(data);
+        }
+    }
+}
+```
+
+## 验证迁移是否成功
+
+### 测试步骤：
+1. **第一个界面连接蓝牙**
+   - 打开第一个使用蓝牙的界面
+   - 连接蓝牙设备
+   - 确认连接成功
+
+2. **切换到第二个界面**
+   - 打开第二个使用蓝牙的界面
+   - 检查蓝牙状态显示是否为"已连接"
+   - 不需要重新连接即可使用
+
+3. **测试数据发送**
+   - 在不同界面发送数据
+   - 确认都能正常发送
+
+4. **测试断开连接**
+   - 在任意界面断开蓝牙
+   - 检查其他界面是否能正确显示"未连接"状态
+
+如果以上测试都通过，说明迁移成功！
+

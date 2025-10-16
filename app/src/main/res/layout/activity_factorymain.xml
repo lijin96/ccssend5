@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <!-- 蓝色标题栏 -->
+    <TextView
+        android:id="@+id/tv_header"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#2196F3"
+        android:gravity="center"
+        android:text="工厂装盒扫描功能菜单"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"/>
+
+    <!-- 装盒扫码按钮 -->
+
+    <!-- 我的装盒按钮 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
+        >
+
+        <Button
+            android:id="@+id/btn_scan_box"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/button_selector"
+            android:text="装盒扫码"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toStartOf="@+id/btn_my_box"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="MissingConstraints" />
+
+        <Button
+            android:id="@+id/btn_my_box"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/button_selector"
+            android:text="我的装盒"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_scan_box"
+            tools:ignore="MissingConstraints" />
+
+        <!-- 装盒明细按钮 -->
+        <Button
+            android:id="@+id/btn_box_details"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/button_selector"
+            android:text="装盒明细"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toStartOf="@+id/btn_box_summary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_scan_box" />
+
+        <!-- 装盒汇总按钮 -->
+        <Button
+            android:id="@+id/btn_box_summary"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/button_selector"
+            android:text="装盒汇总"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_box_details"
+            app:layout_constraintTop_toBottomOf="@+id/btn_my_box" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

@@ -24,7 +24,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:hint="请扫描要退货的条码"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionSend"
             android:maxLines="1"
             android:inputType="text"
             android:textSize="30dp"

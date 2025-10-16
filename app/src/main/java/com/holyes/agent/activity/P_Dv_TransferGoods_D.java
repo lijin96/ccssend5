@@ -121,7 +121,7 @@ public class P_Dv_TransferGoods_D extends Activity {
         InAgentName = gIntent.getStringExtra("InAgentName");
 
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        scanBillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        scanBillno = sysUserInfo.getUserid() + "S" + SomeUtils.RandomScanOrder();// 系统
         sysUserInfo.setIsDownload(true);
 
         tv_totalqty.setText("0");
@@ -276,7 +276,7 @@ public class P_Dv_TransferGoods_D extends Activity {
                         return;
                     }
                     //true;产品编号,型号,色号,当前型号数量,调入单号,调出单号,已扫描总数量
-                    String[] rest = result.split(",");
+                    String[] rest = result.split(",",-1);
                     if (rest.length < 5) {
                         MySound.errorSound();
                         ShowMessage.ShowMsg(handler, "服务器返回参数不足，当前" + rest.length + "位！");
@@ -318,6 +318,12 @@ public class P_Dv_TransferGoods_D extends Activity {
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     String tBarcode = et_barcode.getText().toString().trim();
+                    if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
+                        //包含
+                        tBarcode = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
+                    }else{
+                        tBarcode=SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
+                    }
                     if (et_barcode.getText().toString().indexOf(" ") != -1) {
                         //包含
                         tBarcode = SomeUtils.AgentCode(mContext, et_barcode.getText().toString());
@@ -359,7 +365,7 @@ public class P_Dv_TransferGoods_D extends Activity {
 
         @Override
         public void onClick(View v) {
-            MyProgressDialog.show(mContext, "正在打印...", false, true);
+            MyProgressDialog.show(mContext, "正在打印...", true, true);
             Thread sendprint = new Thread(new Runnable() {
 
                 @Override

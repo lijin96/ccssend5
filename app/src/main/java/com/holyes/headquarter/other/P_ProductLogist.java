@@ -22,6 +22,7 @@ import com.holyes.ccssend5.lib.AccessWeb;
 import com.holyes.ccssend5.lib.MySound;
 import com.holyes.ccssend5.lib.ShowMessage;
 import com.holyes.ccssend5.lib.SysUserInfo;
+import com.holyes.ccssend5.myview.MyProgressDialog;
 import com.holyes.ccssend5.utils.SomeUtils;
 
 import java.util.List;
@@ -56,6 +57,10 @@ public class P_ProductLogist extends Activity {
     private String tUnitId;//用户所在公司代号(总公司用户为：00，代理商用户为所在代理商代号)
     private String message = "";
 
+//    private int count = 0;
+//    private Handler handlers = new android.os.Handler();
+//    private TextView TestSize;
+//    private Runnable runnableV1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +80,40 @@ public class P_ProductLogist extends Activity {
 
         radio_group.setOnCheckedChangeListener(new RadioGroupChangeListener());
         et_barcode.setOnKeyListener(new EtBarodeOnkeyListener());
+
+
+//        TestSize=findViewById(R.id.TestSize);
+//
+//         runnableV1 = new Runnable() {
+//            @Override
+//            public void run() {
+//                //要做的事情
+//                Log.d("mian",count+"");
+//
+//                TestSize.setText(count+"");
+//
+//
+//                if (!P_ProductLogist.this.isFinishing())//xActivity即为本界面的Activity
+//                {
+//                    MyProgressDialog.show(mContext, count+"", false, true);
+//                }
+//
+//
+//                access_send(tCodeType, "3002925119021022", tUnitId);
+//                //为什么是>=2，因为count为0时执行一次M，1时执行一次M，2时执行一次M，然后移除，不再执行(共执行3次M)
+//                if (count >= 18000) {
+//                    handlers.removeCallbacks(this);//删除指定Runnable ，停止运行
+//                } else {
+//                    handlers.postDelayed(this, 1000);//一秒后执行
+//                    count++;
+//                }
+//            }
+//        };
+//
+//        handlers.post(runnableV1);//启动定时器
+
+
+
 //        et_barcode.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 //            @Override
 //            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -107,18 +146,18 @@ public class P_ProductLogist extends Activity {
     class EtBarodeOnkeyListener implements View.OnKeyListener {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-
+//            Log.d("回车===",keyCode+"");
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
 //					tCodeValue = et_barcode.getText().toString().trim();
 
+                    if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
 
-                    if (et_barcode.getText().toString().trim().indexOf("=") != -1) {
                         //包含
                         tCodeValue = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
                     } else {
                         //不包含
-                        tCodeValue = et_barcode.getText().toString().trim();
+                        tCodeValue = SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
                     }
 
 
@@ -170,6 +209,7 @@ public class P_ProductLogist extends Activity {
             switch (msg.what) {
                 case ShowMessage.HandScanSuccess:
 //                    MySound.scanSound();
+//                    MyProgressDialog.close();
                     MySound.scanSound();
 
                     tv_message.setText(message);
@@ -177,6 +217,7 @@ public class P_ProductLogist extends Activity {
                     break;
                 case ShowMessage.HandScanError:
 //                    MySound.errorSound();
+//                    MyProgressDialog.close();
                     MySound.errorSound();
                     tv_message.setText(message);
                     et_barcode.setText("");
@@ -221,7 +262,9 @@ public class P_ProductLogist extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+//        if (handlers != null) {
+//            handlers.removeCallbacks(runnableV1);
+//        }
     }
 
     /**

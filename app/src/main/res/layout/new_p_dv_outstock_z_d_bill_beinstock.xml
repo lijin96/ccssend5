@@ -130,7 +130,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/relayout_company"
-                android:layout_marginTop="10dp" >
+               android:layout_marginTop="10dp"
+                >
 
                 <TextView
                     android:id="@+id/tv_stock_str"
@@ -269,6 +270,8 @@
                 android:text=""
                 android:textSize="30dp" />
         </LinearLayout>
+
+
     </LinearLayout>
 
     <View
@@ -299,12 +302,33 @@
                 android:text="型号色号 "
                 android:textSize="30dp" />
 
-            <TextView
-                android:layout_width="match_parent"
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:text="(产品ID) "-->
+<!--                android:textSize="28dp" />-->
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:gravity="center"
-                android:text="(产品ID) "
-                android:textSize="28dp" />
+                android:layout_gravity="center">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="(产品ID)"
+                    android:textSize="28dp" />
+                <TextView
+                    android:id="@+id/tv_instock_batch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="批号"
+                    android:textSize="26dp"
+                    android:visibility="gone"
+                    android:layout_marginLeft="10dp"></TextView>
+            </LinearLayout>
         </LinearLayout>
 
         <View
@@ -330,13 +354,38 @@
                 android:text=""
                 android:textSize="30dp" />
 
-            <TextView
-                android:id="@+id/tv_goodsid"
-                android:layout_width="match_parent"
+<!--            <TextView-->
+<!--                android:id="@+id/tv_goodsid"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:paddingLeft="5dp"-->
+<!--                android:text=""-->
+<!--                android:textSize="28dp" />-->
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                android:text=""
-                android:textSize="28dp" />
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                >
+                <TextView
+                    android:id="@+id/tv_goodsid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="28dp" />
+
+                <TextView
+                    android:id="@+id/tv_text_batch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="26dp"
+                    android:visibility="gone"
+                    android:layout_marginLeft="30dp"></TextView>
+            </LinearLayout>
+
+
         </LinearLayout>
 
         <View

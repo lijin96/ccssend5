@@ -11,7 +11,6 @@ import com.example.ccssend5.R;
 public class BluetoothUtil {
         public static final int BoxTagModel = R.raw.lab_jb;
 
-
         public static final int MESSAGE_STATE_CHANGE = 1;
         public static final int MESSAGE_READ = 2;
         public static final int MESSAGE_WRITE = 3;
@@ -20,10 +19,14 @@ public class BluetoothUtil {
 
         // Key names received from the BluetoothService Handler
         public static final String DEVICE_NAME = "device_name";
+        public static final String DEVICE_ADDRESS = "device_address";
         public static final String TOAST = "toast";
 
         // Intent request codes
         public static final int REQUEST_CONNECT_DEVICE = 1;
+        
+        // 蓝牙连接超时时间（毫秒）
+        public static final int CONNECTION_TIMEOUT = 10000; // 10秒超时
 
     }
 

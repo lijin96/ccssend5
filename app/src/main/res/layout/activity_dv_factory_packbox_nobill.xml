@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar_back"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="20dp"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:id="@+id/tv_BoxNo_Code_str"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="当前盒标码："
+                android:textColor="@color/white"
+                android:textSize="30dp" />
+
+            <TextView
+                android:id="@+id/tv_BoxNo_Code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/tv_BoxNo_Code_str"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="30dp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/cornflowerblue"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:gravity="center"
+            android:paddingBottom="15dp"
+            android:paddingTop="15dp"
+            android:text="条\t\t码"
+            android:textColor="@color/white"
+            android:textSize="30dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:background="#696969" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.05" />
+
+        <EditText
+            android:id="@+id/et_barcode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2.4"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center_vertical"
+            android:imeOptions="actionSend"
+            android:inputType="text"
+            android:textSize="30dp">
+
+            <requestFocus />
+        </EditText>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.05" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="#A2A2A2"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:gravity="center" >
+
+            <TextView
+                android:id="@+id/tv_model_color_str"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="型号色号"
+                android:textSize="30dp" />
+
+            <TextView
+                android:id="@+id/tv_productid_str"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_model_color_str"
+                android:gravity="center"
+                android:text="（产品ID）"
+                android:textSize="28dp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.4"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:background="#696969" />
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+                <TextView
+                    android:id="@+id/tv_model_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:text="请先选择型号色号>>>"
+                    android:textSize="30dp" />
+
+                <TextView
+                    android:id="@+id/tv_productid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_model_color"
+                    android:paddingLeft="20dp"
+                    android:textSize="28dp" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/btn_select_model_color"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:background="@drawable/button_background"
+                android:text="选择"
+                android:textSize="24dp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:background="#696969" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.1" >
+
+            <TextView
+                android:id="@+id/tv_packing_number_str"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="盒装数："
+                android:textSize="26dp" />
+
+            <TextView
+                android:id="@+id/tv_packing_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/tv_packing_number_str"
+                android:text=""
+                android:textSize="26dp" />
+
+            <Button
+                android:id="@+id/btn_set_packing_number"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:layout_toLeftOf="@+id/btn_test_packing"
+                android:background="@drawable/button_background"
+                android:text="设置"
+                android:textSize="24dp" />
+
+            <Button
+                android:id="@+id/btn_test_packing"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/button_background"
+                android:text="测试打印"
+                android:textSize="24dp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal" >
+
+
+        <RelativeLayout
+            android:id="@+id/relayout_box_count"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+
+            <RelativeLayout
+                android:id="@+id/relayout_box_count_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#D7D7D7"
+                android:gravity="center"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp" >
+
+                <TextView
+                    android:id="@+id/tv_box_count_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:text="当前盒已装数量"
+                    android:textSize="30dp" />
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/line_box_left"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/relayout_box_count_title"
+                android:background="#D7D7D7" />
+
+            <TextView
+                android:id="@+id/tv_box_count"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@id/line_box_left"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="0"
+                android:textSize="60dp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:background="#696969" />
+
+        <RelativeLayout
+            android:id="@+id/relayout_one_count"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+
+            <RelativeLayout
+                android:id="@+id/relayout_one_count_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#D7D7D7"
+                android:gravity="center"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp" >
+
+                <TextView
+                    android:id="@+id/tv_one_count_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:text="当前型号已装数"
+                    android:textSize="30dp" />
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/line_left"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/relayout_one_count_title"
+                android:background="#D7D7D7" />
+
+            <TextView
+                android:id="@+id/tv_one_count"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@id/line_left"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="0"
+                android:textSize="60dp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:background="#696969" />
+
+        <RelativeLayout
+            android:id="@+id/relayout_all_count"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+
+            <RelativeLayout
+                android:id="@+id/relayout_all_count_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#D7D7D7"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp" >
+
+                <TextView
+                    android:id="@+id/tv_all_count_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="当前已装产品总数"
+                    android:textSize="30dp" />
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/line_right"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/relayout_all_count_title"
+                android:background="#D7D7D7" />
+
+            <TextView
+                android:id="@+id/tv_all_count"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@+id/line_right"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="0"
+                android:textSize="60dp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:background="#696969" />
+
+        <RelativeLayout
+            android:id="@+id/relayout_all_box"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+
+            <RelativeLayout
+                android:id="@+id/relayout_all_box_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#D7D7D7"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp" >
+
+                <TextView
+                    android:id="@+id/tv_all_box_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="当前已装盒数"
+                    android:textSize="30dp" />
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/line_box"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/relayout_all_box_title"
+                android:background="#D7D7D7" />
+
+            <TextView
+                android:id="@+id/tv_all_box"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@+id/line_box"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="0"
+                android:textSize="60dp" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#D7D7D7"
+        android:padding="10dp" >
+
+        <TextView
+            android:id="@+id/tv_connect_state_str"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:gravity="center"
+            android:text="蓝牙打印机："
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/tv_connect_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tv_connect_state_str"
+            android:gravity="center"
+            android:text="未连接"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="50dp"
+            android:gravity="center"
+            android:text="可扫描"
+            android:textSize="30dp"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar_back"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" >
+
+        <Button
+            android:id="@+id/btn_connect"
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:background="@drawable/button_background2"
+            android:text="连接"
+            android:textSize="28dp" />
+
+<!--        <Button-->
+<!--            android:id="@+id/btn_scan_detail"-->
+<!--            android:layout_width="150dp"-->
+<!--            android:layout_height="60dp"-->
+<!--            android:layout_marginLeft="30dp"-->
+<!--            android:layout_toRightOf="@id/btn_connect"-->
+<!--            android:background="@drawable/button_background2"-->
+<!--            android:text="扫描明细"-->
+<!--            android:textSize="28dp" />-->
+
+        <Button
+            android:id="@+id/btn_scan_print"
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="30dp"
+            android:layout_toRightOf="@id/btn_connect"
+            android:background="@drawable/button_background2"
+            android:text="扫描打印"
+            android:textSize="28dp" />
+
+        <Button
+            android:id="@+id/btn_again_print_boxcode"
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="30dp"
+            android:layout_toRightOf="@id/btn_scan_print"
+            android:background="@drawable/button_background2"
+            android:text="打印盒标"
+            android:textSize="28dp" />
+
+        <Button
+            android:id="@+id/btn_eliminate"
+            android:layout_width="160dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="30dp"
+            android:layout_toRightOf="@id/btn_again_print_boxcode"
+            android:background="@drawable/button_background2"
+            android:text="当前盒剔除"
+            android:textSize="28dp" />
+
+        <Button
+            android:id="@+id/btn_history_eliminate"
+            android:layout_width="160dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="30dp"
+            android:layout_toRightOf="@id/btn_eliminate"
+            android:background="@drawable/button_background2"
+            android:text="历史盒剔除"
+            android:textSize="28dp" />
+
+
+        <Button
+            android:id="@+id/btn_finish"
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="30dp"
+            android:layout_toRightOf="@id/btn_history_eliminate"
+            android:background="@drawable/button_background2"
+            android:text="完成"
+            android:textSize="28dp" />
+    </RelativeLayout>
+
+</LinearLayout>

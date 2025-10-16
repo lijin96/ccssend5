@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -84,6 +85,7 @@ public class OtherMenuListActivity extends Activity {
         public void onItemClick(AdapterView<?> parent, View view, int position,
                                 long id) {
             MenuGroup menuGroup = (MenuGroup) parent.getItemAtPosition(position);
+
             goToNextScanPage(menuGroup.getMenuCode());
         }
 
@@ -136,7 +138,10 @@ public class OtherMenuListActivity extends Activity {
         //补打盒标
         else if ("0707".equals(menucode)) {
             intent = new Intent(mContext, P_Dv_InStock_PackBox_Search.class);
-        } else if ("0708".equals(menucode)) {
+            intent.putExtra("PageType", "othen");
+        }
+        //仓库补标
+        else if ("0708".equals(menucode)) {
             intent = new Intent(mContext, SelectStock.class);
             intent.putExtra("aim", "P_Dv_MendLable_Z");
         }

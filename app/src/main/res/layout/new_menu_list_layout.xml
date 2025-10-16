@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
-        android:background="@drawable/titlebar_back" >
+        android:background="@drawable/titlebar_back">
 
         <TextView
             android:id="@+id/tv_menu_title"

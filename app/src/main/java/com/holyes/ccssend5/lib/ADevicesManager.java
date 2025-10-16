@@ -20,7 +20,7 @@ public class ADevicesManager  {
     public static final boolean isDownloadMenu = true;//true:下载；false:不下载
 
     /**是否添加上一些下载不到的菜单来测试的，默认为false,不添加 */
-    public static final boolean isAddTestMenu = false ;//true添加上一些下载不到的菜单来测试的，默认为false
+    public static final boolean isAddTestMenu = false;//true添加上一些下载不到的菜单来测试的，默认为false
 
     /** 是否截取条码前两位品牌验证,截取就true,不截取就false*/
     public static final boolean isSubBrandTwo = false ;//是否截取前两位品牌验证,截取就true,不截取就false,这个不只在初次运行时有效

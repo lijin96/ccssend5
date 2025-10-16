@@ -42,6 +42,7 @@ import com.holyes.ccssend5.lib.SortListMapComparator;
 import com.holyes.ccssend5.lib.SqliteDataHelper;
 import com.holyes.ccssend5.utils.DisplayUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
+import com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Z_D_L_NoBill_BeInStock;
 import com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Z_D_NoBill_BeInStock;
 
 import java.util.ArrayList;
@@ -182,6 +183,10 @@ public class SelectCompanyD extends Activity {
                     //代理无单退货
                     else if ("P_Dv_ReturnedPurchase_Z_D_NoBill".equals(lsv_aim)) {
                         intent = new Intent(SelectCompanyD.this, SelectStock.class);
+
+                    } else if (lsv_aim.equals("P_Dv_OutStock_Z_D_L_NoBill_BeInStock")){
+                        //无单有入库代发货
+                        intent = new Intent(SelectCompanyD.this, P_Dv_OutStock_Z_D_L_NoBill_BeInStock.class);
                     }
 
 

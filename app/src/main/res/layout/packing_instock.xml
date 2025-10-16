@@ -121,6 +121,7 @@
             android:focusableInTouchMode="true"
             android:gravity="center_vertical"
             android:inputType="text"
+            android:imeOptions="actionSend"
             android:textSize="30dp" >
 
             <requestFocus />
@@ -460,7 +461,7 @@
             android:layout_marginLeft="30dp"
             android:layout_toRightOf="@id/btn_scan_print"
             android:background="@drawable/button_background2"
-            android:text="打印盒标"
+            android:text="补打盒标"
             android:textSize="28dp" />
 
         <Button

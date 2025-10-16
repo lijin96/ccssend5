@@ -31,6 +31,7 @@ import com.holyes.ccssend5.lib.SysUserInfo;
 import com.holyes.ccssend5.myview.MyProgressDialog;
 import com.holyes.ccssend5.select.QueryScanDetail;
 import com.holyes.ccssend5.select.SelectProductModelColor;
+import com.holyes.ccssend5.select.SelectProductModelColorV1;
 import com.holyes.ccssend5.utils.PrintUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
 
@@ -127,7 +128,7 @@ public class P_Dv_InStock_NoBill extends Activity {
         stock_name = gIntent.getStringExtra("stock_name");
 
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        scanBillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        scanBillno = sysUserInfo.getUserid() + "ZR" + SomeUtils.RandomScanOrder();// 系统
 
         tv_totalqty.setText("0");
         tv_curqty.setText("0");
@@ -326,7 +327,7 @@ public class P_Dv_InStock_NoBill extends Activity {
                         return;
                     }
                     //true;产品编号,型号,色号,当前型号数量,当前扫描的条码,入库单号
-                    String[] rest = result.split(",");
+                    String[] rest = result.split(",",-1);
 
                     if (rest.length < 6) {
                         MySound.errorSound();
@@ -379,15 +380,27 @@ public class P_Dv_InStock_NoBill extends Activity {
 
 
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                    tv_show_code.setText(et_barcode.getText().toString().trim());
-                    if (!SomeUtils.isAllNumber(mContext, et_barcode.getText().toString().trim())) {
+
+                    String tBarcode = "";
+
+                    if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
+                        //包含
+                        tBarcode = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
+                    } else {
+                        //不包含
+                        tBarcode = SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
+                    }
+
+
+                    tv_show_code.setText(tBarcode);
+                    if (!SomeUtils.isAllNumber(mContext, tBarcode)) {
                         MySound.errorSound();
-                        ShowMessage.Show(mContext, "请扫描正确的物流码【" + et_barcode.getText().toString().trim() + "】");
+                        ShowMessage.Show(mContext, "请扫描正确的物流码【" + tBarcode + "】");
                         et_barcode.setText("");
                         return true;
                     }
 
-                    access_send(et_barcode.getText().toString().trim());
+                    access_send(tBarcode);
                     et_barcode.setText("");
 
                 }

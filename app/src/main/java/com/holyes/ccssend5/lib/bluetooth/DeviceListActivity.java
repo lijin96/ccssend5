@@ -21,6 +21,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.example.ccssend5.R;
+import com.holyes.ccssend5.lib.ShowMessage;
 
 import java.util.Set;
 
@@ -89,7 +90,12 @@ public class DeviceListActivity extends Activity {
 
         // Get the local Bluetooth adapter
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-
+        // 添加 null 检查
+        if (mBtAdapter == null) {
+            // 设备不支持蓝牙
+            ShowMessage.Show(DeviceListActivity.this, "蓝牙未打开或不可用，请到系统设置中检查");
+            return; // 或者处理不支持蓝牙的情况
+        }
         // Get a set of currently paired devices
         Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
 

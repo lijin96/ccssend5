@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.holyes.ccssend5.lib.ShowMessage;
 import com.holyes.ccssend5.lib.SqliteDataHelper;
 import com.holyes.ccssend5.lib.SysUserInfo;
 import com.holyes.ccssend5.myview.MyProgressDialog;
+import com.holyes.ccssend5.select.QueryScanBatchDetail;
 import com.holyes.ccssend5.select.QueryScanDetail;
 import com.holyes.ccssend5.select.SelectProductModelColor;
 import com.holyes.ccssend5.utils.DisplayUtil;
@@ -55,7 +57,7 @@ public class P_Dv_OutStock_Z_D_Bill_Cancel extends Activity {
     private MyHandler handler;
 
     private TextView tv_curqty, tv_totalqty,
-            tv_billno, tv_model_colors, tv_goodsid;
+            tv_billno, tv_model_colors, tv_goodsid,tv_instock_batch,tv_text_batch;
     private EditText et_barcode;
 
     private TextView tv_show_code;
@@ -65,7 +67,7 @@ public class P_Dv_OutStock_Z_D_Bill_Cancel extends Activity {
     private String scanBillno = "", mBillNo = "";
     private String curcount = "0", goodsid = "";
     private String lastSuccessBarcode = "", lStar = "";
-    private String modelm = "", colors = "";
+    private String modelm = "", colors = "",batchno="";//批号
 
     private final int Lic_SelectModel = 2;
     private String nScanCount = "0";//合计
@@ -109,12 +111,20 @@ public class P_Dv_OutStock_Z_D_Bill_Cancel extends Activity {
         tv_model_colors = (TextView) findViewById(R.id.tv_model_colors);
         tv_goodsid = (TextView) findViewById(R.id.tv_goodsid);
 
+        tv_instock_batch=findViewById(R.id.tv_instock_batch);
+        tv_text_batch=findViewById(R.id.tv_text_batch);
+
         tv_show_code = (TextView) findViewById(R.id.tv_show_code);
 
         et_barcode = (EditText) findViewById(R.id.et_barcode);
         et_barcode.setOnKeyListener(new EtBarodeOnkeyListener());
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        scanBillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        scanBillno = sysUserInfo.getUserid() + "CDF" + SomeUtils.RandomScanOrder();// 系统
+
+        if (sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("08")){
+            tv_instock_batch.setVisibility(View.VISIBLE);
+            tv_text_batch.setVisibility(View.VISIBLE);
+        }
 
         tv_totalqty.setText("0");
         tv_curqty.setText("0");
@@ -158,6 +168,10 @@ public class P_Dv_OutStock_Z_D_Bill_Cancel extends Activity {
                     if (tv_billno != null) {
                         tv_billno.setText(mBillNo);
                     }
+                    if (sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("08")){
+                        tv_text_batch.setText("批号："+batchno);
+                    }
+
                     tv_goodsid.setText("(" + goodsid + ")");
                     break;
                 case ShowMessage.HandScanError:
@@ -288,16 +302,17 @@ public class P_Dv_OutStock_Z_D_Bill_Cancel extends Activity {
                     para.setScanBillNo(scanBillno);
                     para.setBillNo(mBillNo);
                     para.setSourceBillNo("");
+                    para.setBatchno("");
 
                     result = accWeb.P_Dv_Scan("P_Dv_OutStock_Z_D_Bill_Cancel", para.toJson());
-
+//                    Log.d("main",result);
                     if (result == "") {
                         MySound.errorSound();
                         ShowMessage.ShowMsg(handler, "网络不给力，请稍后再试！");
                         return;
                     }
                     //true;产品编号,型号,色号,当前型号数量,当前扫描的条码,发货单号
-                    String[] rest = result.split(",");
+                    String[] rest = result.split(",",-1);
 
                     if (rest.length < 6) {
                         MySound.errorSound();
@@ -317,6 +332,9 @@ public class P_Dv_OutStock_Z_D_Bill_Cancel extends Activity {
                     }
                     if (Integer.parseInt(nScanCount) < Integer.parseInt(rest[6].trim())) {
                         nScanCount = rest[6].trim();
+                    }
+                    if (rest[7] != null) {
+                        batchno = rest[7].trim();
                     }
                     ShowMessage.ShowMsg(handler, ShowMessage.HandScanSuccess, "ok");
                     lStar = "";
@@ -342,13 +360,15 @@ public class P_Dv_OutStock_Z_D_Bill_Cancel extends Activity {
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     String tBarcode = "";
-                    if (et_barcode.getText().toString().trim().indexOf("=") != -1) {
+                    if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
                         //包含
                         tBarcode = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
                     } else {
                         //不包含
-                        tBarcode = et_barcode.getText().toString().trim();
+                        tBarcode = SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
                     }
+
+
                     tv_show_code.setText(tBarcode);
                     if (!SomeUtils.isAllNumber(mContext, tBarcode)) {
                         MySound.errorSound();
@@ -376,8 +396,14 @@ public class P_Dv_OutStock_Z_D_Bill_Cancel extends Activity {
         @Override
         public void onClick(View v) {
 
-            Intent intent = new Intent(mContext,
-                    QueryScanDetail.class);
+//            Intent intent = new Intent(mContext,
+//                    QueryScanDetail.class);
+            Intent intent = null;
+            if (sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("08")){
+                intent = new Intent(mContext, QueryScanBatchDetail.class);
+            }else{
+                intent = new Intent(mContext,QueryScanDetail.class);
+            }
             intent.putExtra("mBillNo", scanBillno);
             startActivity(intent);
         }

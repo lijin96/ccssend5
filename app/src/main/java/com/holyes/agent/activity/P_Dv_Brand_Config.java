@@ -66,7 +66,7 @@ public class P_Dv_Brand_Config extends Activity implements View.OnClickListener 
 
         SomeUtils.moveFocus(edt_ip);
 
-        String  savePath = "/data/data/com.holyes.ccsdevs5/";
+        String  savePath = "/data/data/com.example.ccssend5/";
         filepath = savePath + businessid + ".png";
         File file = new File(filepath);
 

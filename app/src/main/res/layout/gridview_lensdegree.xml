@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gridview_selector_view"
+    >
+    <TextView
+        android:id="@+id/grid_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0.00"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:paddingTop="5dp"/>
+    <TextView
+        android:id="@+id/grid_num"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="采购数"
+        android:textColor="@color/gray"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="5dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"></View>
+    
+</LinearLayout>

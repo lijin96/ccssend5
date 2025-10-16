@@ -70,14 +70,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/burlywood"
-        android:gravity="left" >
+        >
 
         <include
             android:id="@+id/include1"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="0dp"
             layout="@layout/new_list_select_stock" />
     </LinearLayout>
 

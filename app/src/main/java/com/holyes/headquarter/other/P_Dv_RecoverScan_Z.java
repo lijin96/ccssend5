@@ -113,7 +113,7 @@ public class P_Dv_RecoverScan_Z extends Activity {
 
 
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        scanBillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        scanBillno = sysUserInfo.getUserid() + "S" + SomeUtils.RandomScanOrder();// 系统
 
         tv_totalqty.setText("0");
         tv_curqty.setText("0");
@@ -149,7 +149,7 @@ public class P_Dv_RecoverScan_Z extends Activity {
                 case ShowMessage.HandScanSuccess:
                     MySound.scanSound();
                     try {
-                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tv_billno, curcount, goodsid, modelm, colors, mBillNo);
+                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tv_billno,tv_goodsid, curcount, goodsid, modelm, colors, mBillNo);
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -287,7 +287,7 @@ public class P_Dv_RecoverScan_Z extends Activity {
                         return;
                     }
                     // true;产品编号,型号,色号,当前型号数量,当前扫描的条码
-                    String[] rest = result.split(",");
+                    String[] rest = result.split(",",-1);
                     // true;产品编号,型号,色号,当前型号数量,当前扫描的条码
                     goodsid = rest[0].trim();
                     modelm = rest[1].trim();
@@ -322,13 +322,14 @@ public class P_Dv_RecoverScan_Z extends Activity {
 
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
+
                     String tBarcode = "";
-                    if (et_barcode.getText().toString().trim().indexOf("=") != -1) {
+                    if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
                         //包含
                         tBarcode = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
                     } else {
                         //不包含
-                        tBarcode = et_barcode.getText().toString().trim();
+                        tBarcode = SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
                     }
 
                     tv_show_code.setText(tBarcode);

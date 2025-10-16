@@ -30,7 +30,7 @@ public class PackageReceiver extends BroadcastReceiver {
             if (("android.intent.action.PACKAGE_ADDED").equals(action))
             {
 //        	UpdateManager2.showUninstallDialog(context);
-                UpdateManager2.uninstallApp(context, "com.holyes.ccsdevs5");
+                UpdateManager2.uninstallApp(context, "com.example.ccssend5");
 //        	Log.i("main", "安装完成了"+packageName);
             }
             // 覆盖安装,安装完成后跳转到登录界面

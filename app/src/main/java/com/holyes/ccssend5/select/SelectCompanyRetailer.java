@@ -33,7 +33,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.example.ccssend5.R;
+import com.holyes.agent.activity.P_Dv_OutStock_D_L_Lens_NoBill;
 import com.holyes.agent.activity.P_Dv_OutStock_D_L_NoBill;
+import com.holyes.agent.activity.P_Dv_ReturnedPurchase_D_L_TransferGoods;
 import com.holyes.ccssend5.activity.HelpActivity;
 import com.holyes.ccssend5.lib.ShowMessage;
 import com.holyes.ccssend5.lib.SqliteDataHelper;
@@ -48,7 +50,7 @@ import java.util.Map;
 
 /**
  * @ClassName: SelectCompanyRetailer
- * @Description: 选择零售商
+ * @Description: 代理商版本 选择零售商
  * @Author: lijin
  * @Date: 2021/3/10 9:56
  */
@@ -82,6 +84,10 @@ public class SelectCompanyRetailer extends Activity {
     private int provicePosition = 0, cityPosition = 0, lastProvicePosition = 0;//选择的省，市。上次选择的省
     private final int Lic_SelectSure = 3;
 
+    private String lsv_aim = "";
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +105,8 @@ public class SelectCompanyRetailer extends Activity {
         tv_total = (TextView) findViewById(R.id.tv_total);
         et_search = (EditText) findViewById(R.id.et_search);
         btn_filter = (Button) findViewById(R.id.btn_filter);
+
+        lsv_aim = getIntent().getStringExtra("aim");
 
         et_search.addTextChangedListener(new EtTextWatcher());
         btn_filter.setOnClickListener(new BtnFilterClick());
@@ -271,6 +279,12 @@ public class SelectCompanyRetailer extends Activity {
             switch (requestCode) {
                 case Lic_SelectSure:
                     Intent intent = new Intent(this, P_Dv_OutStock_D_L_NoBill.class);
+                    if (lsv_aim.equals("P_Dv_OutStock_D_L_Lens_NoBill")){
+                        intent = new Intent(this, P_Dv_OutStock_D_L_Lens_NoBill.class);
+                    }else if (lsv_aim.equals("P_Dv_ReturnedPurchase_D_L_TransferGoods")){
+                        intent = new Intent(this, P_Dv_ReturnedPurchase_D_L_TransferGoods.class);
+                    }
+
                     intent.putExtra("company_na", item.get("tradername").toString());
                     intent.putExtra("company_id", item.get("traderid").toString());
                     startActivity(intent);

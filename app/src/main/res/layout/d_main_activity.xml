@@ -53,8 +53,8 @@
                 android:id="@+id/btn_otherscan"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:layout_marginTop="50dp"
                 android:layout_below="@+id/btn_backgoods"
+                android:layout_marginTop="50dp"
                 android:layout_toRightOf="@+id/btn_setting"
                 android:background="@drawable/btn_other6" />
 

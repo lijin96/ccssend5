@@ -93,6 +93,7 @@ public class BillProductUtil {
 
                         ShowMessage.ShowMsg(handler, HandCloseLoading, "");
                     } catch (Exception e) {
+                        ShowMessage.ShowMsg(handler, HandCloseLoading, "");
                         e.printStackTrace();
                     }
                 }

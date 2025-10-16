@@ -39,6 +39,10 @@ public class BluetoothService {
         private ConnectThread mConnectThread;
         private ConnectedThread mConnectedThread;
         private int mState;
+        
+        // 连接的设备信息
+        private String mConnectedDeviceName = "";
+        private String mConnectedDeviceAddress = "";
 
         // Constants that indicate the current connection state
         public static final int STATE_NONE = 0;       // we're doing nothing
@@ -72,6 +76,32 @@ public class BluetoothService {
          * Return the current connection state. */
         public synchronized int getState() {
             return mState;
+        }
+        
+        /**
+         * 设置连接的设备信息
+         * @param deviceName 设备名称
+         * @param deviceAddress 设备地址
+         */
+        public void setConnectedDeviceInfo(String deviceName, String deviceAddress) {
+            mConnectedDeviceName = deviceName;
+            mConnectedDeviceAddress = deviceAddress;
+        }
+        
+        /**
+         * 获取连接的设备名称
+         * @return 设备名称
+         */
+        public String getConnectedDeviceName() {
+            return mConnectedDeviceName;
+        }
+        
+        /**
+         * 获取连接的设备地址
+         * @return 设备地址
+         */
+        public String getConnectedDeviceAddress() {
+            return mConnectedDeviceAddress;
         }
 
         /**
@@ -148,14 +178,33 @@ public class BluetoothService {
             // Cancel the accept thread because we only want to connect to one device
             if (mAcceptThread != null) {mAcceptThread.cancel(); mAcceptThread = null;}
 
+            // 设置连接的设备信息
+            String deviceName = device.getName();
+            if (deviceName == null || deviceName.isEmpty()) {
+                // 如果设备名称为空，优先使用已设置的设备名称
+                if (mConnectedDeviceName != null && !mConnectedDeviceName.isEmpty()) {
+                    deviceName = mConnectedDeviceName;
+                } else {
+                    // 如果已设置的设备名称也为空，使用设备地址作为显示名称
+                    deviceName = device.getAddress();
+                }
+            }
+            // 确保设备名称不为空
+            if (deviceName == null || deviceName.isEmpty()) {
+                deviceName = device.getAddress();
+            }
+            mConnectedDeviceName = deviceName;
+            mConnectedDeviceAddress = device.getAddress();
+
             // Start the thread to manage the connection and perform transmissions
             mConnectedThread = new ConnectedThread(socket);
             mConnectedThread.start();
 
-            // 发送蓝牙名称到uiactivity
+            // 发送蓝牙名称和地址到uiactivity
             Message msg = mHandler.obtainMessage(BluetoothUtil.MESSAGE_DEVICE_NAME);
             Bundle bundle = new Bundle();
-            bundle.putString(BluetoothUtil.DEVICE_NAME, device.getName());
+            bundle.putString(BluetoothUtil.DEVICE_NAME, mConnectedDeviceName);
+            bundle.putString(BluetoothUtil.DEVICE_ADDRESS, mConnectedDeviceAddress);
             msg.setData(bundle);
             mHandler.sendMessage(msg);
 
@@ -170,6 +219,10 @@ public class BluetoothService {
             if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
             if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
             if (mAcceptThread != null) {mAcceptThread.cancel(); mAcceptThread = null;}
+            
+            // 清理设备信息
+            mConnectedDeviceName = "";
+            mConnectedDeviceAddress = "";
         }
 
         /**
@@ -198,7 +251,7 @@ public class BluetoothService {
             // Send a failure message back to the Activity
             Message msg = mHandler.obtainMessage(BluetoothUtil.MESSAGE_TOAST);
             Bundle bundle = new Bundle();
-            bundle.putString(BluetoothUtil.TOAST, "Unable to connect device");
+            bundle.putString(BluetoothUtil.TOAST, "无法连接到设备，连接超时");
             msg.setData(bundle);
             mHandler.sendMessage(msg);
         }
@@ -291,6 +344,7 @@ public class BluetoothService {
         private class ConnectThread extends Thread {
             private final BluetoothSocket mmSocket;
             private final BluetoothDevice mmDevice;
+            private volatile boolean cancelled = false;
 
             public ConnectThread(BluetoothDevice device) {
                 mmDevice = device;
@@ -311,12 +365,43 @@ public class BluetoothService {
                 // Always cancel discovery because it will slow down a connection
                 mAdapter.cancelDiscovery();
 
+                // 启动超时检查线程
+                Thread timeoutThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(BluetoothUtil.CONNECTION_TIMEOUT);
+                            // 超时后取消连接
+                            if (!cancelled && mmSocket != null) {
+                                try {
+                                    mmSocket.close();
+                                } catch (IOException e) {
+                                    // 忽略关闭异常
+                                }
+                                connectionFailed();
+                                // 启动服务以重新监听
+                                BluetoothService.this.start();
+                            }
+                        } catch (InterruptedException e) {
+                            // 连接成功或取消，超时线程被中断
+                        }
+                    }
+                });
+                timeoutThread.start();
+
                 // Make a connection to the BluetoothSocket
                 try {
                     // This is a blocking call and will only return on a
                     // successful connection or an exception
                     mmSocket.connect();
+                    
+                    // 连接成功，取消超时检查
+                    cancelled = true;
+                    timeoutThread.interrupt();
+                    
                 } catch (IOException e) {
+                    cancelled = true;
+                    timeoutThread.interrupt();
                     connectionFailed();
                     // Close the socket
                     try {
@@ -338,6 +423,7 @@ public class BluetoothService {
             }
 
             public void cancel() {
+                cancelled = true;
                 try {
                     mmSocket.close();
                 } catch (IOException e) {

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:layout_centerVertical="true"
+        android:orientation="horizontal"
+        android:paddingBottom="50dp"
+        android:paddingTop="50dp" >
+
+        <EditText
+            android:id="@+id/ed_addbatch_code"
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:hint="请输入要添加的批号"
+            android:imeOptions="actionSend"
+            android:maxLines="1"
+            android:inputType="text"
+            android:textSize="30dp"
+            android:padding="10dp" />
+
+        <Button
+            android:id="@+id/bt_addbatch_ok"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:textSize="30dp"
+            android:text="确定" />
+
+
+        <Button
+            android:id="@+id/bt_addbatch_cancel"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:textSize="30dp"
+            android:text="取消" />
+    </LinearLayout>
+
+</RelativeLayout>

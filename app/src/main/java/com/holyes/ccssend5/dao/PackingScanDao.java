@@ -2,6 +2,7 @@ package com.holyes.ccssend5.dao;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 
 import com.holyes.ccssend5.entity.PackingScan;
 import com.holyes.ccssend5.lib.ShowMessage;
@@ -86,7 +87,34 @@ public class PackingScanDao {
             }
         }
 
-        /**
+
+    /**
+     * 删除未装盒入库的同个型号条码
+     * @param context
+     * @param product_id 产品id
+     * @param tempBoxcode 临时盒标码 切换型号时，需要将之前装盒入库未成功的同个型号数据全部删除
+     */
+    public static boolean deletePackingByGoodsId(Context context, String product_id,String  tempBoxcode)
+    {
+
+        SqliteDataHelper sDataHelper = new SqliteDataHelper(context);
+        String sql=String.format("delete from packingscan where product_id = '%1$s' and boxcode is null",product_id);
+        Log.d("main","删除型号--"+sql);
+        try {
+            sDataHelper.execSQL(sql);
+            return true;
+        } catch (Exception e) {
+            ShowMessage.Show(context, "删除未装盒入库的同个型号条码报错"+e.getMessage());
+            return false;
+        }
+    }
+
+
+
+
+
+
+    /**
          * 通过产品id查找产品的品牌或者系列
          * @param context
          * @param product_id 产品id
@@ -162,7 +190,7 @@ public class PackingScanDao {
         public static List<Map<String, Object>> getPackModelColorDetail(Context context, String lsv_etStr)
         {
             SqliteDataHelper sDataHelper = new SqliteDataHelper(context);
-            String sql = "select product_id,modelm,colors,count(barcode) as curcount from packingscan GROUP BY product_id";
+            String sql = "select product_id,modelm,colors,boxcode,count(barcode) as curcount from packingscan GROUP BY product_id";
             if(lsv_etStr!=null&&!lsv_etStr.isEmpty())
             {
                 sql="select product_id,modelm,colors,count(barcode) as curcount from packingscan where " +

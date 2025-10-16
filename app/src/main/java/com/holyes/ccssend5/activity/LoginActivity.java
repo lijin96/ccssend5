@@ -45,6 +45,7 @@ import com.holyes.ccssend5.myhandler.UserLoginHandler;
 import com.holyes.ccssend5.myview.Loading;
 import com.holyes.ccssend5.utils.DisplayUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
+import com.holyes.factoryscan.activity.FactoryMainActivity;
 import com.holyes.headquarter.activity.MainActivity;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -106,6 +107,7 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //用来判断当前Activity是否是第一个activity
         if (!this.isTaskRoot()) {
             Intent mainIntent = getIntent();
             String action = mainIntent.getAction();
@@ -115,9 +117,11 @@ public class LoginActivity extends Activity {
             }
         }
 
+        //设置窗体始终点亮
         this.getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
 
         DisplayUtil.setDefaultDisplay(this);
 
@@ -152,6 +156,7 @@ public class LoginActivity extends Activity {
             SomeUtils.moveFocus(et_password);
         }
         tv_brand.setText(sysUserInfo.getBrand());
+
         String pServerip = sysUserInfo.getServerip();
         if (!pServerip.isEmpty()) {
             btn_login.setText("登录");
@@ -177,11 +182,18 @@ public class LoginActivity extends Activity {
             tv_brand.setVisibility(View.GONE);
             ADevicesManager.SetKey(false);
         }
+
+//        String Testresult="true;V17";
+////           Boolean.parseBoolean(Testresult.split(";")[0]);
+//        Log.d("main", Testresult.split(";")[0]);
+//        Log.d("main", Testresult.split(";")[1]);
+
+
         //
         // 登录
         lin_login.setOnClickListener(new BtnLoginClick());
 
-        // 修改密码
+        // 修改域名
         lin_setting.setOnClickListener(new BtnSettingClick());
 
         // 升级
@@ -253,9 +265,13 @@ public class LoginActivity extends Activity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case ShowMessage.HandShowMessage: // 显示错误提示显示
-                    if (loading != null)
-                        loading.Close();
-                    ShowMessage.Show(LoginActivity.this, msg.obj.toString());
+                    if (loading != null) loading.Close();
+                    if (msg.obj.toString().equals("供应商登录")){
+                        Intent intent = new Intent(LoginActivity.this, FactoryMainActivity.class);
+                        startActivity(intent);
+                    }else {
+                        ShowMessage.Show(LoginActivity.this, msg.obj.toString());
+                    }
                     break;
                 case ShowMessage.HandFailed:
                     if (loading != null)
@@ -269,11 +285,14 @@ public class LoginActivity extends Activity {
                             });
                     break;
                 case ShowMessage.HandSuccess: // 登录成功
+
+//                    Log.d("mian-version", sysUserInfo.getAgentVersionNum());
                     if (loading != null)
                         loading.Close();
                     //登录成功之后设置品牌id
                     sysUserInfo.setLastLoginBusinessid(businessid);
                     //				stopCheckNetState();// 停止网络测试
+
                     if (sysUserInfo.getSoftType().equals("52")) {
                         Intent intent = new Intent(LoginActivity.this, DMainActivity.class);
                         startActivity(intent);
@@ -426,6 +445,7 @@ public class LoginActivity extends Activity {
         }
     }
 
+
     private class BtnSettingClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -573,7 +593,7 @@ public class LoginActivity extends Activity {
                     downStock();
                     if (isPaused)
                         return;
-                    // 下载更新产品资料
+//                     下载更新产品资料
                     setProgressBarMax(0);
                     setProgressBarValue(0);
                     showTip("下载更新产品资料...");
@@ -600,8 +620,9 @@ public class LoginActivity extends Activity {
                     showTip("下载分销店资料...");
                     downloadStoreInfor();
                     //}
-                    boolean isNewVerSoft = AccessWeb.getHelper(mContext).JudgeBrandNessVer(businessid);
-                    sysUserInfo.setIsNewVerSoft(isNewVerSoft);
+                    String agentVersionNum = AccessWeb.getHelper(mContext).JudgeBrandNessVer(businessid);
+//                    sysUserInfo.setIsNewVerSoft(isNewVerSoft);agentVersionNum
+                    sysUserInfo.setAgentVersionNum(agentVersionNum);
                 }
 
 
@@ -627,6 +648,7 @@ public class LoginActivity extends Activity {
     private void downProduct() throws Exception {
         maxDataTime = getMaxUprecndate("newproduct");
         companycount = Integer.parseInt(AccessWeb.getHelper(getApplicationContext()).GetDownLoadGoodsRecord(maxDataTime));
+//        Log.i("main", "下载产品---最大时间："+maxDataTime+"----这次下载的数量="+companycount);
         companycurcount = 0;
         setProgressBarMax(companycount);
 
@@ -634,7 +656,7 @@ public class LoginActivity extends Activity {
         String BrandName, GoodsId, GoodsDescription, Modelm, Colors, GoodsYear, ProdType, Uprecndate;
         for (maxDataTime = getMaxUprecndate("newproduct"); companycurcount < companycount; maxDataTime = getMaxUprecndate("newproduct")) {
             map = AccessWeb.getHelper(getApplicationContext()).GetDownLoadGoodsInfor(maxDataTime);
-            //			Log.i("main", "下载产品---最大时间："+maxDataTime+"----这次下载的数量="+map.size());
+
             if (map.size() == 0) {
                 return;
             }
@@ -649,6 +671,8 @@ public class LoginActivity extends Activity {
                 GoodsYear = (String) map2.get("GoodsYear");
                 ProdType = (String) map2.get("ProdType");
                 Uprecndate = (String) map2.get("Uprecndate");
+
+//                Log.i("main", "下载产品时间："+Uprecndate);
 
                 String sqlInsert = "insert into newproduct("
                         + "brandname, goodsid , goodsdescription, modelm ,colors,productyear, prodtype ,uprecndate)"
@@ -693,6 +717,7 @@ public class LoginActivity extends Activity {
         List<Map<String, Object>> map;
         for (maxDataTime = getLSMaxUprecndate("newretail", sysUserInfo.getCompanyid()); companycurcount < companycount; maxDataTime = getLSMaxUprecndate("newretail", sysUserInfo.getCompanyid())) {
             map = AccessWeb.getHelper(getApplicationContext()).GetDownLoadTraderInfor(maxDataTime);
+//            Log.d("Main",map.toString());
             if (map.size() == 0) {
                 return;
             }
@@ -1205,6 +1230,7 @@ public class LoginActivity extends Activity {
         List<Map<String, Object>> map;
         for (maxDataTime = getMaxUprecndate("newstock"); companycurcount < companycount; maxDataTime = getMaxUprecndate("newstock")) {
             map = AccessWeb.getHelper(getApplicationContext()).GetDownLoadStockInfor(maxDataTime);
+//            Log.d("main--stock",map.toString());
 
             if (map.size() == 0) {
                 return;
@@ -1242,8 +1268,6 @@ public class LoginActivity extends Activity {
             }
         }
     }
-
-
     /**
      * 判断当前品牌商是否有首发发货功能
      *
@@ -1292,10 +1316,8 @@ public class LoginActivity extends Activity {
     boolean bOnNetState = true;
 
     private void startCheckNetState() {
-        Log.i("main", "startCheckNetState");
-
+//        Log.i("main", "startCheckNetState");
         GetNetRun = new GetNetStateRunnable(true, mContext);
-
         GetNetRun.SetCallBack(new GetNetStateRunnable.GetNetState() {
 
             @Override
@@ -1370,6 +1392,28 @@ public class LoginActivity extends Activity {
                 }
             }
 
+            if (user.getP05().equals("供应商")) {
+//                Log.d("main", user.toString());
+                sysUserInfo.setUserid(user.getP01());
+                sysUserInfo.setLoginid(user.getP02());
+                //总公司 代号传00，代理商则代理商代号
+                if ("总公司".equals(user.getP05())) {
+                    sysUserInfo.setCompanyid("00");
+                } else {
+                    sysUserInfo.setCompanyid(user.getP06());
+                }
+                sysUserInfo.setStock(user.getP04());
+                sysUserInfo.setMode(user.getP05());
+                sysUserInfo.setCompanyid(user.getP06());
+                sysUserInfo.setMobile(checkBox.isChecked() ? et_username.getText().toString() : "");
+                sysUserInfo.setLoginpwd(checkBox.isChecked() ? et_password.getText().toString() : "");
+                sysUserInfo.setIfrember(checkBox.isChecked());
+                sysUserInfo.setLastLoginServerIp(sysUserInfo.getServerip());
+
+                ShowMessage.ShowMsg(hand, "供应商登录");
+                return false;
+            }
+
             if (sysUserInfo.getSoftType().equals("52"))//代理商模式
             {
                 if (user.getP05().equals("总公司")) {
@@ -1383,6 +1427,7 @@ public class LoginActivity extends Activity {
                     return false;
                 }
             }
+//            Log.d("main", user.toString());
             sysUserInfo.setUserid(user.getP01());
             sysUserInfo.setLoginid(user.getP02());
             //总公司 代号传00，代理商则代理商代号
@@ -1558,12 +1603,19 @@ public class LoginActivity extends Activity {
                 "('*无单入库','1','P_Dv_InStock_NoBill','0101','010102')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*装盒入库','1','P_Dv_InStock_PackBox_List_NoBill','0101','010103')");
+
+        sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
+                "('*镜片有单入库','1','P_Dv_InStock_Lens_Bill','0101','010104')");
+
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*撤消','1','','01','0102')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*有单入库撤消','1','P_Dv_InStock_Bill_Cancel','0102','010201')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*无单入库撤消','1','P_Dv_InStock_NoBill_Cancel','0102','010202')");
+
+        sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
+                "('*镜片有单入库撤消','1','P_Dv_InStock_Lens_Bill_Cancel','0102','010203')");
 
         //入库退回
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
@@ -1574,12 +1626,19 @@ public class LoginActivity extends Activity {
                 "('*有单入库退回','1','P_Dv_ReturnedPurchase_Z_G_Bill','0201','020101')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*无单入库退回','1','P_Dv_ReturnedPurchase_Z_G_NoBill','0201','020102')");
+
+        sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
+                "('*无单镜片入库退回','1','P_Dv_ReturnedPurchase_Lens_Z_G_NoBill','0201','020103')");
+
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*撤消','1','','02','0202')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*有单退回撤消','1','P_Dv_ReturnedPurchase_Z_G_Bill_Cancel','0202','020201')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*无单退回撤消','1','P_Dv_ReturnedPurchase_Z_G_NoBill_Cancel','0202','020202')");
+
+        sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
+                "('*无单镜片退回撤消','1','P_Dv_ReturnedPurchase_Lens_Z_G_NoBill_Cancel','0202','020203')");
 
         //代销发货
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
@@ -1594,12 +1653,21 @@ public class LoginActivity extends Activity {
                 "('*无单有入库代销发货','1','P_Dv_OutStock_Z_D_NoBill_BeInStock','0301','030103')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*无单无入库代销发货','1','P_Dv_OutStock_Z_D_NoBill_NoInStock','0301','030104')");
+
+        sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
+                "('*镜片有单有入库代销发货','1','P_Dv_OutStock_Lens_Z_D_Bill_BeInStock','0301','030105')");
+        sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
+                "('*镜片有单无入库代销发货','1','P_Dv_OutStock_Lens_Z_D_Bill_NoInStock','0301','030106')");
+
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*撤消','1','','03','0302')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*有单代销发货撤消','1','P_Dv_OutStock_Z_D_Bill_Cancel','0302','030201')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*无单代销发货撤消','1','P_Dv_OutStock_Z_D_NoBill_Cancel','0302','030202')");
+
+        sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
+                "('*镜片有单代销发货撤销','1','P_Dv_OutStock_Lens_Z_D_Bill_Cancel','0302','030203')");
 
 
         //代销退货
@@ -1613,6 +1681,10 @@ public class LoginActivity extends Activity {
                 "('*有单有明细代销退货','1','P_Dv_ReturnedPurchase_Z_D_Bill_Detail','0401','040102')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*无单代销退货','1','P_Dv_ReturnedPurchase_Z_D_NoBill','0401','040103')");
+
+        sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
+                "('*镜片有单无明细代销退货','1','P_Dv_ReturnedPurchase_Lens_Z_D_Bill','0401','040105')");
+
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*撤消','1','','04','0402')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
@@ -1621,6 +1693,9 @@ public class LoginActivity extends Activity {
                 "('*有单有明细代销退货撤消','1','P_Dv_ReturnedPurchase_Z_D_Bill_Detail_Cancel','0402','040202')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*无单代销退货撤消','1','P_Dv_ReturnedPurchase_Z_D_NoBill_Cancel','0402','040203')");
+
+        sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
+                "('*镜片有单代销退货撤销','1','P_Dv_ReturnedPurchase_Lens_Z_D_Bill_Cancel','0402','040205')");
 
         //直销发货
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
@@ -1635,12 +1710,22 @@ public class LoginActivity extends Activity {
                 "('*无单有入库直销发货','1','P_Dv_OutStock_Z_L_NoBill_BeInStock','0501','050103')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*无单无入库直销发货','1','P_Dv_OutStock_Z_L_NoBill_NoInStock','0501','050104')");
+
+        sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
+                "('*镜片有单有入库直销发货','1','P_Dv_OutStock_Lens_Z_L_Bill_BeInStock','0501','050106')");
+
+        sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
+                "('*镜片有单无入库直销发货','1','P_Dv_OutStock_Lens_Z_L_Bill_NoInStock','0501','050108')");
+
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*发货撤消','1','','05','0502')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*有单直销发货撤消','1','P_Dv_OutStock_Z_L_Bill_Cancel','0502','050201')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*无单直销发货撤消','1','P_Dv_OutStock_Z_L_NoBill_Cancel','0502','050202')");
+
+        sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
+                "('*镜片有单直销发货撤销','1','P_Dv_OutStock_Lens_Z_L_Bill_Cancel','0502','050203')");
 
         //直销退货
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
@@ -1653,6 +1738,10 @@ public class LoginActivity extends Activity {
                 "('*有单有明细直销退货','1','P_Dv_ReturnedPurchase_Z_L_Bill_Detail','0601','060102')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*无单直销退货','1','P_Dv_ReturnedPurchase_Z_L_NoBill','0601','060103')");
+
+        sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
+                "('*镜片有单无明细直销退货','1','P_Dv_ReturnedPurchase_Lens_Z_L_Bill','0601','060105')");
+
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*撤消','1','','06','0602')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
@@ -1661,6 +1750,10 @@ public class LoginActivity extends Activity {
                 "('*有单有明细退货撤消','1','P_Dv_ReturnedPurchase_Z_L_Bill_Detail_Cancel','0602','060202')");
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
                 "('*无单退货撤消','1','P_Dv_ReturnedPurchase_Z_L_NoBill_Cancel','0602','060203')");
+
+        sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
+                "('*镜片有单直销退货撤销','1','P_Dv_ReturnedPurchase_Lens_Z_L_Bill_Cancel','0602','060205')");
+
 
         //其他功能
         sqlList.add("insert into menus(menuname,showstatus,procedurename,parentcode,menucode)values" +
@@ -1763,6 +1856,7 @@ public class LoginActivity extends Activity {
             if (SqliteDataHelper.getHelper(getApplicationContext()).execSQLInt("select count(*) from menus") == 0) {
                 //从网络下载菜单
                 List<Map<String, Object>> list = AccessWeb.getHelper(getApplicationContext()).GetDevMenuInfor(sysUserInfo.getEnterpriseId());
+
                 List<String> sqlList = new ArrayList<String>();
 
                 if (list.size() == 0) {

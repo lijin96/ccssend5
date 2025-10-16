@@ -1,14 +1,18 @@
 package com.holyes.ccssend5.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -17,8 +21,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.example.ccssend5.R;
+import com.holyes.agent.activity.P_Dv_ReturnedPurchase_D_L_NoBill;
 import com.holyes.ccssend5.lib.ADevicesManager;
 import com.holyes.ccssend5.lib.AccessWeb;
 import com.holyes.ccssend5.lib.ShowMessage;
@@ -30,10 +36,17 @@ import com.holyes.ccssend5.utils.DisplayUtil;
 import com.holyes.ccssend5.utils.PrintUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName: SysSettingActivity
@@ -49,6 +62,8 @@ public class SysSettingActivity extends Activity {
     private SysUserInfo sysUserInfo;
 
     private EditText et_ip, et_port, et_SoftType, et_EnterpriseID;
+
+    private AlertDialog alertDialog1; //选择客户打印框
 
 
     //{{系统事件
@@ -108,24 +123,142 @@ public class SysSettingActivity extends Activity {
             startActivity(intent);
         }
     }
+//
+//
+//    public List<Map<String,Object>> TestData(){
+//        String result = "[{\"CustId\": \"0001010100008\",\"OddNo\": \"LF-BillNo12345-87654321\"," +
+//                "\t\"CustName\": \"鞍山百视\",\t\"GoodsId\": \"2022C1\",\t\"Modelm\": \"2022\"," +
+//                "\t\"Colors\": \"C1\",\t\"BatchNo\": \"\",\t\"Num\": \"2\",\t\"ScanDate\": " +
+//                "\"2025-04-11 12:01:29\"},{\"CustId\": \"0001010100008\",\"OddNo\": " +
+//                "\"LF-BillNo12345-87654333\",\t\"CustName\": \"鞍山百视\",\t\"GoodsId\": \"2022C23\"," +
+//                "\t\"Modelm\": \"2024\",\t\"Colors\": \"C23\",\t\"BatchNo\": \"\",\t\"Num\": " +
+//                "\"2\",\t\"ScanDate\": \"2025-04-11 12:10:29\"},{\t\"CustId\": \"151010100342\"," +
+//                "\"OddNo\": \"LF-BillNo12345-87654345\",\"CustName\": \"ddd\",\t\"GoodsId\": " +
+//                "\"2022C1\",\t\"Modelm\": \"2022\",\t\"Colors\": \"C1\",\t\"BatchNo\": \"\"," +
+//                "\t\"Num\": \"2\",\t\"ScanDate\": \"2025-04-11 12:11:29\"}]";
+////        Log.d("main",result);
+//        try {
+//            JSONArray jsonArray =  new JSONArray(result);
+//
+//            List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+//            Map<String, Object> maps;
+//            for (int i = 0; i < jsonArray.length(); i++)
+//            {
+//                JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+//                maps = new HashMap<String, Object>();
+//                maps.put("oddno", jsonObject.getString("OddNo"));
+//                maps.put("custid", jsonObject.getString("CustId"));
+//                maps.put("custname", jsonObject.getString("CustName"));
+//
+//                maps.put("goodsid", jsonObject.getString("GoodsId"));
+//                maps.put("modelm", jsonObject.getString("Modelm"));
+//                maps.put("colors", jsonObject.getString("Colors"));
+//                maps.put("curcount", jsonObject.getString("Num"));
+//                maps.put("scandate", jsonObject.getString("ScanDate"));
+//                if(sysUserInfo.getEnterpriseId().equals("08")){
+//                    maps.put("batchno", jsonObject.getString("BatchNo"));
+//                }
+//                list.add(maps);
+//            }
+//            return list;
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+
+//
+//    private void TestMap(List<Map<String, Object>> dataList){
+////      / 按 CustId 分组（兼容低版本Android）
+//        Map<String, List<Map<String, Object>>> groupedData = new HashMap<>();
+//        for (Map<String, Object> item : dataList) {
+//            // 获取分组键（CustId）
+//            String custId = (String) item.get("custid");
+//            // 检查是否已存在该分组
+//            if (!groupedData.containsKey(custId)) {
+//                groupedData.put(custId, new ArrayList<Map<String, Object>>());
+//            }
+//            // 将当前项添加到对应分组
+//            groupedData.get(custId).add(item);
+//        }
+//
+//        // 获取分组结果（每个分组一个List）
+//        List<List<Map<String, Object>>> dataresult = new ArrayList<>(groupedData.values());
+////        System.out.println("dataresult: " + dataresult.toString() );
+//        PrintUtil printbill = new PrintUtil();
+//        for (int i = 0; i < dataresult.size(); i++)
+//        {
+////            String[] mark = new String[2];
+////            mark[0] = "退货单：LF-BillNo12345-87654321";
+////            mark[1] = "零售商：" + dataresult[i][0].getText().toString();
+//
+////            System.out.println("custname: " + dataresult.get(i).get(0).get("custname").toString() );
+//            printbill.returnprint(SysSettingActivity.this, "           零售退货", dataresult.get(i), sysUserInfo.getUserid());
+//        }
+//
+//    }
+//
+//
+//    public void showCustList(List<List<Map<String, Object>>> CustDataList){
+////        String[] items=new String[CustDataList.size()];
+//        ArrayList<String> CustNameList=new ArrayList<>();
+//        for (int i = 0; i < CustDataList.size(); i++){
+//            CustNameList.add(CustDataList.get(i).get(0).get("custname").toString());
+//        }
+//        String[]  items=CustNameList.toArray(new String[CustNameList.size()]);
+//        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this,AlertDialog.THEME_HOLO_LIGHT);
+//        alertBuilder.setTitle("请选择要打印的客户小票");
+//        alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                PrintUtil printbill = new PrintUtil();
+//                printbill.returnprint(SysSettingActivity.this, "           零售退货",  CustDataList.get(i), sysUserInfo.getUserid());
+//                alertDialog1.dismiss();
+//            }
+//        });
+//        alertDialog1 = alertBuilder.create();
+//        alertDialog1.show();
+//    }
+//
+//    private void TestMap(List<Map<String, Object>> dataList){
+////      / 按 CustId 分组（兼容低版本Android）
+//        Map<String, List<Map<String, Object>>> groupedData = new HashMap<>();
+//        for (Map<String, Object> item : dataList) {
+//            // 获取分组键（CustId）
+//            String custId = (String) item.get("custid");
+//            // 检查是否已存在该分组
+//            if (!groupedData.containsKey(custId)) {
+//                groupedData.put(custId, new ArrayList<Map<String, Object>>());
+//            }
+//            // 将当前项添加到对应分组
+//            groupedData.get(custId).add(item);
+//        }
+//
+//        // 获取分组结果（每个分组一个List）
+//        List<List<Map<String, Object>>> dataresult = new ArrayList<>(groupedData.values());
+//        PrintUtil printbill = new PrintUtil();
+//        if (dataresult.size()>1){
+//            showCustList(dataresult);
+//        }else{
+//            printbill.returnprint(SysSettingActivity.this, "           零售退货",  dataresult.get(0), sysUserInfo.getUserid());
+//        }
+//    }
 
     private class btn_print_click implements View.OnClickListener {
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public void onClick(View v) {
+
             PrintUtil printbill = new PrintUtil();
             String[] mark = new String[3];
             mark[0] = "零售单：DF-BillNo12345";
             mark[1] = "分销单：LF-BillNo12345-87654321";
-            mark[2] = "分销店：广东省深圳市龙华新区民治街道泰明工业区一栋三层B区分销测试店";
+            mark[2] = "分销店：广东省深圳市龙华区宝能科技区9栋b座13k分销测试店";
 
             List<Map<String, Object>> sacnDataList = new ArrayList<Map<String, Object>>();
-
             Map<String, Object> map = new HashMap<String, Object>();
-//			 map.put("modelm", "B67100");
-//			 map.put("colors", "P01");
-//			 map.put("curcount", "5");
-//			 map.put("product_id", "B67100-P01");
-//			 slist.add(0, map);
+            SimpleDateFormat sDateFormat = new SimpleDateFormat(
+                    "yyyy-MM-dd HH:mm:ss");
 
             for (int i = 0; i < 5; i++) {
                 map = new HashMap<String, Object>();
@@ -133,8 +266,11 @@ public class SysSettingActivity extends Activity {
                 map.put("colors", "B67100-P01");
                 map.put("curcount", "3" + i);
                 map.put("product_id", "B67100-P012");
+                map.put("scandate", sDateFormat.format(new java.util.Date()));
                 sacnDataList.add(map);
             }
+
+//            printer.writeln("日期时间：", sDateFormat.format(new java.util.Date()));
             printbill.print(SysSettingActivity.this, "    无单无入库直销发货", mark, sacnDataList, sysUserInfo.getUserid());
 
 
@@ -310,7 +446,8 @@ public class SysSettingActivity extends Activity {
                     try {
                         AccessWeb accessWeb = new AccessWeb(mContext);
                         List<Map<String, Object>> list = accessWeb.GetDevMenuInfor(sysUserInfo.getEnterpriseId());
-
+//                        Log.d("main",list.toString());
+//                        Log.d("main","菜单--"+list.toString());
                         if (list.size() < 1) {
                             ShowMessage.ShowMsg(hand, "菜单下载失败！");
                             return;

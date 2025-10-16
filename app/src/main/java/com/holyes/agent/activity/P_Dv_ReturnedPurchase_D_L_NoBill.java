@@ -2,13 +2,17 @@ package com.holyes.agent.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,8 +20,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.example.ccssend5.R;
 import com.holyes.ccssend5.dao.ScanDataDao;
@@ -30,11 +36,19 @@ import com.holyes.ccssend5.myview.MyProgressDialog;
 import com.holyes.ccssend5.select.QueryScanDetail;
 import com.holyes.ccssend5.utils.PrintUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
+import com.holyes.headquarter.activity.MainActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName: P_Dv_ReturnedPurchase_D_L_NoBill
@@ -70,6 +84,9 @@ public class P_Dv_ReturnedPurchase_D_L_NoBill extends Activity {
     private String nScanCount = "0";//合计
     private int nSize = 0;//次数
 
+    private AlertDialog alertDialog1; //选择客户打印框
+
+
 //	private List<String> codesList= new ArrayList<String>();
 //
 //	Thread send ;
@@ -86,7 +103,7 @@ public class P_Dv_ReturnedPurchase_D_L_NoBill extends Activity {
         mContext = this;
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         sysUserInfo = new SysUserInfo(getApplicationContext());
-        Scanbillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        Scanbillno = sysUserInfo.getUserid() + "2T" + SomeUtils.RandomScanOrder();// 系统
         Intent gIntent = this.getIntent();
 
         ((Button) findViewById(R.id.btn_list))
@@ -142,6 +159,7 @@ public class P_Dv_ReturnedPurchase_D_L_NoBill extends Activity {
     }
 
     private class handShowMsg extends Handler {
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @SuppressWarnings("unchecked")
         @Override
         public void handleMessage(Message msg) {
@@ -167,7 +185,7 @@ public class P_Dv_ReturnedPurchase_D_L_NoBill extends Activity {
                 case ShowMessage.HandSuccess:
                     MySound.scanSound();
                     try {
-                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tvBillno, curcount, product_id, modelm, colors, mBillNo);
+                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tvBillno,tv_product_id, curcount, product_id, modelm, colors, mBillNo);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -189,11 +207,23 @@ public class P_Dv_ReturnedPurchase_D_L_NoBill extends Activity {
                     break;
                 case 8:
                     MyProgressDialog.close();
-                    String[] mark = new String[2];
-                    mark[0] = "退货单：" + mBillNo;
-                    mark[1] = "零售商：" + tv_company_na.getText().toString();
 
-                    printbill.print(P_Dv_ReturnedPurchase_D_L_NoBill.this, "           零售退货", mark, slist, sysUserInfo.getUserid());
+//
+//                    String[] mark = new String[2];
+//                    mark[0] = "退货单：" + mBillNo;
+//                    mark[1] = "零售商：" + tv_company_na.getText().toString();
+//
+//                    printbill.print(P_Dv_ReturnedPurchase_D_L_NoBill.this, "           零售退货", mark, slist, sysUserInfo.getUserid());
+                    if (sysUserInfo.getEnterpriseId().equals("62")){
+                        //佰莱德单独判断退货打印的功能
+                        String[] mark = new String[2];
+                        mark[0] = "退货单：" + mBillNo;
+                        mark[1] = "零售商：" + tv_company_na.getText().toString();
+                        printbill.print(P_Dv_ReturnedPurchase_D_L_NoBill.this, "零售退货", mark, slist, sysUserInfo.getUserid());
+                    }else {
+                        //其他品牌继续多客户退货打印功能
+                        GroupPrintingMap(slist);
+                    }
 
                     break;
                 case 9:
@@ -207,6 +237,54 @@ public class P_Dv_ReturnedPurchase_D_L_NoBill extends Activity {
             super.handleMessage(msg);
         }
     }
+
+    //选择要打印哪一个客户的小票
+    public void showCustList(List<List<Map<String, Object>>> CustDataList){
+//        String[] items=new String[CustDataList.size()];
+        ArrayList<String> CustNameList=new ArrayList<>();
+        for (int i = 0; i < CustDataList.size(); i++){
+            CustNameList.add(CustDataList.get(i).get(0).get("custname").toString());
+        }
+        String[]  items=CustNameList.toArray(new String[CustNameList.size()]);
+//        final String[] items = {"列表1", "列表2", "列表3", "列表4"};
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this,AlertDialog.THEME_HOLO_LIGHT);
+        alertBuilder.setTitle("请选择要打印的客户小票");
+        alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+//                Log.d("main", CustDataList.get(i).toString());
+//                Toast.makeText(mContext, items[i], Toast.LENGTH_SHORT).show();
+                printbill.returnprint(P_Dv_ReturnedPurchase_D_L_NoBill.this, "零售退货",  CustDataList.get(i), sysUserInfo.getUserid());
+                alertDialog1.dismiss();
+            }
+        });
+        alertDialog1 = alertBuilder.create();
+        alertDialog1.show();
+    }
+
+    private void GroupPrintingMap(List<Map<String, Object>> dataList){
+//      / 按 CustId 分组（兼容低版本Android）
+        Map<String, List<Map<String, Object>>> groupedData = new HashMap<>();
+        for (Map<String, Object> item : dataList) {
+            // 获取分组键（CustId）
+            String custId = (String) item.get("custid");
+            // 检查是否已存在该分组
+            if (!groupedData.containsKey(custId)) {
+                groupedData.put(custId, new ArrayList<Map<String, Object>>());
+            }
+            // 将当前项添加到对应分组
+            groupedData.get(custId).add(item);
+        }
+
+        // 获取分组结果（每个分组一个List）
+        List<List<Map<String, Object>>> dataresult = new ArrayList<>(groupedData.values());
+        if (dataresult.size()>1){
+            showCustList(dataresult);
+        }else{
+            printbill.returnprint(P_Dv_ReturnedPurchase_D_L_NoBill.this, "零售退货",  dataresult.get(0), sysUserInfo.getUserid());
+        }
+    }
+
 
 
     // {{明细
@@ -233,7 +311,7 @@ public class P_Dv_ReturnedPurchase_D_L_NoBill extends Activity {
 
         @Override
         public void onClick(View v) {
-            MyProgressDialog.show(mContext, "正在打印...", false, true);
+            MyProgressDialog.show(mContext, "正在打印...", true, true);
 
             Thread sendprint = new Thread(new Runnable() {
 
@@ -348,13 +426,14 @@ public class P_Dv_ReturnedPurchase_D_L_NoBill extends Activity {
                         ShowMessage.ShowMsg(hand, 3, "");
                         return;
                     }
+//                    Log.d("main","零售退货参数"+result.toString());
                     //代理商发货日期，零售商代号，零售商名称，产品编号,型号,色号,当前型号数量,发货单号
                     //2018-02-06,CS0011907550001,深圳零售测试1,a123C1,a123,C1,2,LT-CS001-18000010
-                    String rest[] = result.split(",");
+                    String rest[] = result.split(",",-1);
                     nSize++;
-                    if (mBillNo.isEmpty()) {
-                        mBillNo = rest[7];
-                    }
+//                    if (mBillNo.isEmpty()) {
+                    mBillNo = rest[7];
+//                    }
                     company_id = rest[1].trim();
                     company_na = rest[2].trim();
                     product_id = rest[3].trim();
@@ -393,6 +472,12 @@ public class P_Dv_ReturnedPurchase_D_L_NoBill extends Activity {
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     String tBarcode = edtBarcode.getText().toString().trim();
+                    if (edtBarcode.getText().toString().trim().indexOf("=") != -1||edtBarcode.getText().toString().trim().indexOf("http") != -1) {
+                        //包含
+                        tBarcode = SomeUtils.InterceptCode(mContext, edtBarcode.getText().toString().trim());
+                    }else{
+                        tBarcode=SomeUtils.UpdatefirstString(mContext,edtBarcode.getText().toString().trim());
+                    }
                     if (edtBarcode.getText().toString().indexOf(" ") != -1) {
                         //包含
                         tBarcode = SomeUtils.AgentCode(mContext, edtBarcode.getText().toString());

@@ -32,9 +32,7 @@ public class ScanDataDao {
          * @param mBillNo 单号
          * @throws Exception
          */
-        public static void updateDataAndUi(Context context, TextView tv_model_colors, TextView tv_curqty,
-                                           TextView tv_totalqty, TextView tv_billno, String curcount,
-                                           String goodsid, String modelm, String colors, String mBillNo) throws Exception
+        public static void updateDataAndUi(Context context, TextView tv_model_colors, TextView tv_curqty,TextView tv_totalqty, TextView tv_billno,TextView tv_goodsid, String curcount,String goodsid, String modelm, String colors, String mBillNo) throws Exception
         {
             //没有扫描的数量,总的扫描数量
             int noscanqty = 0;
@@ -71,7 +69,9 @@ public class ScanDataDao {
             }
 
             totalsacnqty = SqliteDataHelper.getHelper(context).execSQLString("select sum(curcount) from newscandate ");
-            tv_model_colors.setText(modelm + "-" + colors+"\n"+"("+goodsid+")");
+
+            tv_model_colors.setText(modelm + "-" + colors);
+            tv_goodsid.setText("("+goodsid+")");
             tv_curqty.setText(curcount);
             tv_totalqty.setText(totalsacnqty);
             if(tv_billno!=null)

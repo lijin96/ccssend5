@@ -213,6 +213,7 @@
             android:focusableInTouchMode="true"
             android:gravity="center_vertical"
             android:inputType="text"
+            android:imeOptions="actionSend"
             android:textSize="18dp" >
 
             <requestFocus />

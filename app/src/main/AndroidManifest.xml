@@ -5,7 +5,7 @@
     android:installLocation="auto"
     android:persistent="true"
     android:versionCode="1"
-    android:versionName="V5.202106091730" >
+    android:versionName="V5.202203231730" >
 
 
     <!-- android中获取设备的型号、手机厂商以及手机唯一标识符IMEI -->
@@ -36,7 +36,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- 允许读写系统设置项 -->
-<!--    <permission android:name="android.permission.WRITE_SETTINGS" />-->
+    <!--    <permission android:name="android.permission.WRITE_SETTINGS" />-->
     <!-- 修改Activity已经关闭而diloag还在运行中。所以导致bug -->
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <!-- 清除内存，杀掉没用的进程 -->
@@ -61,6 +61,7 @@
         android:label="@string/app_name"
         android:testOnly="false"
         android:requestLegacyExternalStorage="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@android:style/Theme.Light.NoTitleBar"
         android:windowSoftInputMode="adjustUnspecified|stateHidden" >
 
@@ -89,8 +90,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.holyes.agent.activity.P_Dv_Select_Brand"
 
+            android:name="com.holyes.agent.activity.P_Dv_Select_Brand"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Light.NoTitleBar"
@@ -157,6 +158,27 @@
             android:theme="@android:style/Theme.Light.NoTitleBar"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
+        <!-- 新选择型号色号 -->
+        <activity
+            android:name="com.holyes.ccssend5.select.SelectProductModelColorV1"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+        <!--        选择镜片视频-->
+        <activity
+            android:name="com.holyes.ccssend5.select.SelectLensProduct"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+
 
         <!-- 《《《《《《《《《《《《《《《《《【【【下面的是第五版新的 】】】》》》》》》》》》》》》》。 -->
 
@@ -190,11 +212,22 @@
         <!-- 无单入库界面 -->
         <activity
             android:name="com.holyes.headquarter.instock_in.P_Dv_InStock_NoBill"
-        android:configChanges="orientation|keyboardHidden"
+            android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Light.NoTitleBar"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
+
+        <!-- 无单盒标入库界面 -->
+        <activity
+            android:name="com.holyes.headquarter.instock_in.Holyes_Dv_Box_InStock_NoBill"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+
         <!-- 有单入库撤销界面 -->
         <activity
             android:name="com.holyes.headquarter.instock_in.P_Dv_InStock_Bill_Cancel"
@@ -211,6 +244,18 @@
             android:theme="@android:style/Theme.Light.NoTitleBar"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
+
+        <!-- 无单盒标入库撤消函数界面 -->
+        <activity
+            android:name="com.holyes.headquarter.instock_in.Holyes_Dv_Box_InStock_NoBill_Cancel"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+
+
         <!-- 无单入库退回界面 -->
         <activity
             android:name="com.holyes.headquarter.instock_back.P_Dv_ReturnedPurchase_Z_G_NoBill"
@@ -325,6 +370,15 @@
             android:theme="@android:style/Theme.Light.NoTitleBar"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
+
+        <!-- 选择配货单中的产品 显示批号 金大合需求2024年3月21 -->
+        <activity
+            android:name="com.holyes.ccssend5.select.SelectBillBatchProduct"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
         <!-- 入库退回单选择
         <activity
             android:name="com.holyes.ccssend5.select.SelectInStockBackBill"
@@ -360,6 +414,17 @@
             android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
 
+        <!-- 查询扫描明细 金大合需求 新增批号显示 -->
+        <activity
+            android:name="com.holyes.ccssend5.select.QueryScanBatchDetail"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+
+
         <!-- 有单有入库代销发货 -->
         <activity
             android:name="com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Z_D_Bill_BeInStock"
@@ -368,6 +433,25 @@
             android:theme="@android:style/Theme.Light.NoTitleBar"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
+
+        <!-- 有单有入库代销零售发货 -->
+        <activity
+            android:name="com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Z_D_L_Bill_BeInStock"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+        <!-- 无单有入库代销零售发货 -->
+        <activity
+            android:name="com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Z_D_L_NoBill_BeInStock"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
         <!-- 选择配货单 -->
         <activity
             android:name="com.holyes.ccssend5.select.SelectPeiBill"
@@ -393,6 +477,16 @@
             android:theme="@android:style/Theme.Light.NoTitleBar"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
+        <!-- 有单有入库直营分店发货 -->
+        <activity
+            android:name="com.holyes.headquarter.sendgoods_zy.P_Dv_OutStock_Z_L_S_HaveBill_BeInStock"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+
 
         <!-- 有单(代销)发货撤消 -->
         <activity
@@ -671,7 +765,7 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
-        <!-- 选择零售店 -->
+        <!-- 代理商版本 选择零售店 -->
         <activity
             android:name="com.holyes.ccssend5.select.SelectCompanyRetailer"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
@@ -679,6 +773,17 @@
             android:theme="@android:style/Theme.Light.NoTitleBar"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
+
+
+        <!-- 总公司版本 选择零售店 -->
+        <activity
+            android:name="com.holyes.ccssend5.select.SelectRetailStore"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
         <!-- 零售发货 -->
         <activity
             android:name="com.holyes.agent.activity.P_Dv_OutStock_D_L_NoBill"
@@ -687,9 +792,25 @@
             android:theme="@android:style/Theme.Light.NoTitleBar"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
+        <!-- 镜片零售发货 -->
+        <activity
+            android:name="com.holyes.agent.activity.P_Dv_OutStock_D_L_Lens_NoBill"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
         <!-- 零售发货撤销 -->
         <activity
             android:name="com.holyes.agent.activity.P_Dv_OutStock_D_L_NoBill_Cancel"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+        <!-- 镜片零售发货撤销 -->
+        <activity
+            android:name="com.holyes.agent.activity.P_Dv_OutStock_D_L_Lens_NoBill_Cancel"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Light.NoTitleBar"
@@ -704,6 +825,16 @@
             android:theme="@android:style/Theme.Light.NoTitleBar"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
+
+        <!-- 镜片零售退货 -->
+        <activity
+            android:name="com.holyes.agent.activity.P_Dv_ReturnedPurchase_D_L_Lens_NoBill"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
         <!-- 零售退货撤销 -->
         <activity
             android:name="com.holyes.agent.activity.P_Dv_ReturnedPurchase_D_L_NoBill_Cancel"
@@ -712,6 +843,24 @@
             android:theme="@android:style/Theme.Light.NoTitleBar"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
+        <!-- 镜片零售退货撤销 -->
+        <activity
+            android:name="com.holyes.agent.activity.P_Dv_ReturnedPurchase_D_L_Lens_NoBill_Cancel"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+        <!-- 零售退货直通车 -->
+        <activity
+            android:name="com.holyes.agent.activity.P_Dv_ReturnedPurchase_D_L_TransferGoods"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
 
         <!-- 代理物流查询 -->
         <activity
@@ -851,7 +1000,8 @@
         <activity
             android:name="com.holyes.headquarter.other.P_Dv_InStock_PackBox_Search"
             android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
         </activity>
         <!-- 帮助界面 -->
         <activity
@@ -923,9 +1073,229 @@
             android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
 
-<!--        <service-->
-<!--            android:name="services.netState"-->
-<!--            android:enabled="true" />-->
+        <!-- 镜片有单入库-->
+        <activity
+            android:name="com.holyes.headquarter.instock_in.P_Dv_InStock_Lens_Bill"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+
+        <!-- 镜片有单入库撤销-->
+        <activity
+            android:name="com.holyes.headquarter.instock_in.P_Dv_InStock_Lens_Bill_Cancel"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+        <!-- 无单镜片入库退回-->
+        <activity
+            android:name="com.holyes.headquarter.instock_back.P_Dv_ReturnedPurchase_Lens_Z_G_NoBill"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+
+        <!-- 无单镜片入库退回撤销-->
+        <activity
+            android:name="com.holyes.headquarter.instock_back.P_Dv_ReturnedPurchase_Lens_Z_G_NoBill_Cancel"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+
+        <!-- 镜片有单有入库代销发货-->
+        <activity
+            android:name="com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Lens_Z_D_Bill_BeInStock"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+        <!-- 镜片有单无入库代销发货-->
+        <activity
+            android:name="com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Lens_Z_D_Bill_NoInStock"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+
+
+        <!-- 镜片有单有入库直销发货-->
+        <activity
+            android:name="com.holyes.headquarter.sendgoods_zy.P_Dv_OutStock_Lens_Z_L_Bill_BeInStock"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+        <!-- 镜片有单无入库直销发货-->
+        <activity
+            android:name="com.holyes.headquarter.sendgoods_zy.P_Dv_OutStock_Lens_Z_L_Bill_NoInStock"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+        <!--  镜片有单直销发货撤销-->
+        <activity
+            android:name="com.holyes.headquarter.sendgoods_zy.P_Dv_OutStock_Lens_Z_L_Bill_Cancel"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+        <!--  镜片有单无明细直销退货-->
+        <activity
+            android:name="com.holyes.headquarter.backgoods_zy.P_Dv_ReturnedPurchase_Lens_Z_L_Bill"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+
+        <!--  镜片有单无明细直销退货撤销-->
+        <activity
+            android:name="com.holyes.headquarter.backgoods_zy.P_Dv_ReturnedPurchase_Lens_Z_L_Bill_Cancel"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+
+        <!--  镜片有单无明细代销退货-->
+        <activity
+            android:name="com.holyes.headquarter.backgoods_d.P_Dv_ReturnedPurchase_Lens_Z_D_Bill"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+
+        <!--  镜片有单无明细代销退货撤销-->
+        <activity
+            android:name="com.holyes.headquarter.backgoods_d.P_Dv_ReturnedPurchase_Lens_Z_D_Bill_Cancel"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+
+        <!-- 镜片代销有单发货撤销-->
+        <activity
+            android:name="com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Lens_Z_D_Bill_Cancel"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+        <!-- 选择球镜柱镜界面-->
+        <activity
+            android:name="com.holyes.ccssend5.select.CheckLensDegree"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+        <!-- 选择折射率界面-->
+        <activity
+            android:name="com.holyes.ccssend5.select.SelectPurOrderLensDetail"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+
+        <!-- 镜片扫描明细-->
+        <activity
+            android:name="com.holyes.ccssend5.select.QueryScanLensDetail"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+        <!-- 镜片有单发货明细-->
+        <activity
+            android:name="com.holyes.ccssend5.select.SelectLensBillProduct"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+
+        <!-- 供应商主界面-->
+        <activity
+            android:name="com.holyes.factoryscan.activity.FactoryMainActivity"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+        <!-- 供应商装盒入库扫描-->
+        <activity
+            android:name="com.holyes.factoryscan.activity.Holyes_Dv_Factory_PackBox_NoBill"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+        <!-- 供应商装盒入库扫描选择产品-->
+        <activity
+            android:name="com.holyes.factoryscan.activity.SelectFactoryGoods"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+        <!-- 供应商当前装盒入库剔除扫描-->
+        <activity
+            android:name="com.holyes.factoryscan.activity.FactoryEliminateActivity"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+        <!-- 供应商历史装盒入库剔除扫描-->
+        <activity
+            android:name="com.holyes.factoryscan.activity.FactoryHistoryEliminateActivity"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+<!--        我的装盒明细-->
+        <activity
+            android:name="com.holyes.factoryscan.activity.SelectFactoryScanDetail"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+        <!--所有用户装盒明细-->
+        <activity
+            android:name="com.holyes.factoryscan.activity.SelectAllFactoryScanDetail"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+        <!--所有用户装盒汇总-->
+        <activity
+            android:name="com.holyes.factoryscan.activity.SelectAllFactoryBoxDetail"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+        </activity>
+
+
+
+
+        <!--        <service-->
+        <!--            android:name="services.netState"-->
+        <!--            android:enabled="true" />-->
         <!-- 监听开机广播，启动系统，调到登录界面 -->
         <receiver android:name="com.holyes.headquarter.broadcastreceiver.NewStartupReceiver" >
             <intent-filter android:priority="1000" >
@@ -954,8 +1324,5 @@
         android:normalScreens="true"
         android:resizeable="true"
         android:smallScreens="true" />
-
-
-
 
 </manifest>

@@ -69,7 +69,7 @@ public class SysUserInfo {
     public String getServerport()
     {
         String rest = ReadConfigString("serverport").trim();
-        rest = rest.isEmpty() ? "9521" : rest;
+        rest = rest.isEmpty() ? "9520" : rest;
         return rest;
     }
 
@@ -432,6 +432,21 @@ public class SysUserInfo {
         return ReadConfigBoolean("isDownload");
     }
 
+
+    /**
+     * 获取是否球镜在前
+     * @return
+     */
+    public boolean getIsMirrorBefore()
+    {
+        return ReadConfigBoolean("IsMirrorBefore");
+    }
+
+    public void setIsMirrorBefore(boolean IsMirrorBefore)
+    {
+        SaveConfigBoolean("IsMirrorBefore", IsMirrorBefore);
+    }
+
     /**
      * 设置是否是新版本的软件
      * @param isNewVerSoft
@@ -511,6 +526,24 @@ public class SysUserInfo {
     public String getConnectedBluetoothAddress()
     {
         return ReadConfigString("deviceAddress");
+    }
+
+
+    /**
+     * 设置登录返回的代理商版本号
+     * @param tAgentVersionNum
+     */
+    public void setAgentVersionNum(String tAgentVersionNum)
+    {
+        SaveConfigString("AgentVersionNum", tAgentVersionNum);
+    }
+    /**
+     * 获取登录返回的代理商版本号
+     * @return
+     */
+    public String getAgentVersionNum()
+    {
+        return ReadConfigString("AgentVersionNum");
     }
 
 

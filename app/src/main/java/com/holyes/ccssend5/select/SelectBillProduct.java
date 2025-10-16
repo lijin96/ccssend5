@@ -78,7 +78,13 @@ public class SelectBillProduct extends Activity {
 
         if (lsv_aim != null && !lsv_aim.isEmpty()) {
             if ("P_Dv_OutStock_Z_L_Bill_BeInStock".equals(lsv_aim) ||
-                    "P_Dv_OutStock_Z_D_Bill_BeInStock".equals(lsv_aim)) {
+                    "P_Dv_OutStock_Z_D_Bill_BeInStock".equals(lsv_aim)||
+                    "P_Dv_InStock_Z_ChangeStock_Bill".equals(lsv_aim)||
+                    "P_Dv_OutStock_Lens_Z_D_Bill_BeInStock".equals(lsv_aim)||
+                    "P_Dv_OutStock_Lens_Z_L_Bill_BeInStock".equals(lsv_aim)||
+                    "P_Dv_OutStock_Z_D_L_Bill_BeInStock".equals(lsv_aim)
+
+            ) {
                 tv_title.setText("查看单明细");
             }
 
@@ -186,9 +192,14 @@ public class SelectBillProduct extends Activity {
                     dataList = accWeb.GetDowLoadPurOutDetail(orderno);
                 }
                 //配货单（代销）明细下载
-                else if (lsv_aim.equals("P_Dv_OutStock_Z_D_Bill_BeInStock")) {
+                else if (lsv_aim.equals("P_Dv_OutStock_Z_D_Bill_BeInStock")||lsv_aim.equals("P_Dv_OutStock_Z_D_L_Bill_BeInStock")) {
                     dataList = accWeb.GetDowLoadAgentInvoiceDetail(orderno);
                 }
+                //配货单（直销分店）明细下载
+                else if (lsv_aim.equals("P_Dv_OutStock_Z_L_S_HaveBill_BeInStock")) {
+                    dataList = accWeb.GetDowLoadAgentInvoiceDetail(orderno);
+                }
+
                 //配货单（直销）明细下载
                 else if (lsv_aim.equals("P_Dv_OutStock_Z_L_Bill_BeInStock")) {
                     dataList = accWeb.GetDowLoadDirectInvoiceDetail(orderno);

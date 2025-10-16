@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -70,6 +71,7 @@ public class SelectPackingScanDetail1 extends Activity {
 
                 lsv_etStr = et_search.getText().toString().trim();
                 searchList = PackingScanDao.getPackModelColorDetail(mContext, lsv_etStr);
+//                Log.d("main","chauxn"+searchList.toString());
                 initListView(searchList);
             }
 

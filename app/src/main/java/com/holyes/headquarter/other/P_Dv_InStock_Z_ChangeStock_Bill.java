@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,7 +28,9 @@ import com.holyes.ccssend5.lib.ShowMessage;
 import com.holyes.ccssend5.lib.SqliteDataHelper;
 import com.holyes.ccssend5.lib.SysUserInfo;
 import com.holyes.ccssend5.myview.MyProgressDialog;
+import com.holyes.ccssend5.select.QueryScanBatchDetail;
 import com.holyes.ccssend5.select.QueryScanDetail;
+import com.holyes.ccssend5.select.SelectBillBatchProduct;
 import com.holyes.ccssend5.select.SelectBillProduct;
 import com.holyes.ccssend5.utils.PrintUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
@@ -55,7 +58,7 @@ public class P_Dv_InStock_Z_ChangeStock_Bill extends Activity {
     private Intent gIntent;
 
     private TextView tv_curqty, tv_totalqty, tv_company_name, tv_source_billno,
-            tv_billno, tv_model_colors, tv_stock_name, tv_goodsid;
+            tv_billno, tv_model_colors, tv_stock_name, tv_goodsid,tv_instock_batch,tv_text_batch;
     private EditText et_barcode;
     private TextView tv_show_code;
 
@@ -64,7 +67,7 @@ public class P_Dv_InStock_Z_ChangeStock_Bill extends Activity {
     private String scanBillno = "", mBillNo = "", supplier_id = "", supplier_name = "";
     private String curcount = "0", goodsid = "", stock_id = "", stock_name, sourceBillNo;
     private String lastSuccessBarcode = "", lStar = "";
-    private String modelm = "", colors = "";
+    private String modelm = "", colors = "",batch_num="";
 
     private final int Lic_SelectModel = 2;
 
@@ -115,6 +118,8 @@ public class P_Dv_InStock_Z_ChangeStock_Bill extends Activity {
         tv_model_colors = (TextView) findViewById(R.id.tv_model_colors);
         tv_source_billno = (TextView) findViewById(R.id.tv_source_billno);
         tv_goodsid = (TextView) findViewById(R.id.tv_goodsid);
+        tv_instock_batch=findViewById(R.id.tv_instock_batch);
+        tv_text_batch=findViewById(R.id.tv_text_batch);
 
         tv_show_code = (TextView) findViewById(R.id.tv_show_code);
 
@@ -128,8 +133,14 @@ public class P_Dv_InStock_Z_ChangeStock_Bill extends Activity {
         sourceBillNo = gIntent.getStringExtra("purchecklno");
 
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        scanBillno = sysUserInfo.getUserid() + "S" + sDateFormat.format(new java.util.Date());// 系统
+        scanBillno = sysUserInfo.getUserid() + "S" + SomeUtils.RandomScanOrder();// 系统
         sysUserInfo.setIsDownload(true);
+
+        if (sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("08")){
+            tv_instock_batch.setVisibility(View.VISIBLE);
+            tv_text_batch.setVisibility(View.VISIBLE);
+        }
+
 
         tv_totalqty.setText("0");
         tv_curqty.setText("0");
@@ -168,20 +179,23 @@ public class P_Dv_InStock_Z_ChangeStock_Bill extends Activity {
                 case ShowMessage.HandScanSuccess:
                     MySound.scanSound();
                     try {
-                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tv_billno, curcount, goodsid, modelm, colors, mBillNo);
+                        ScanDataDao.updateDataAndUi(mContext, tv_model_colors, tv_curqty, tv_totalqty, tv_billno,tv_goodsid, curcount, goodsid, modelm, colors, mBillNo);
 //					tv_source_billno.setText(mDocumentNo);
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                         ShowMessage.Show(mContext, e.getMessage());
                     }
+//                    if (sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("08")){
+//                        tv_text_batch.setText("批号："+batch_num);
+//                    }
 //				tv_model_colors.setText(modelm + "-" + colors);
 //				tv_curqty.setText(curcount);
 //				tv_totalqty.setText(nScanCount);
 //				if(tv_billno!=null){
 //					tv_billno.setText(mBillNo);
 //				}
-//				tv_goodsid.setText("("+goodsid+")");
+//
                     break;
                 case ShowMessage.HandScanError:
                     MySound.errorSound();
@@ -284,12 +298,7 @@ public class P_Dv_InStock_Z_ChangeStock_Bill extends Activity {
 
     // 请求服务
     private void access_send(final String contents) {
-        if (goodsid.equals("")) {
-            MySound.errorSound();
-            ShowMessage.ShowMsg(handler, "请先扫描产品ID或者手动选择产品");
-            return;
 
-        }
         Thread sendCode = new Thread(new Runnable() {
             @SuppressLint("NewApi")
             @Override
@@ -300,7 +309,7 @@ public class P_Dv_InStock_Z_ChangeStock_Bill extends Activity {
                     accWeb.mWebId = lStar + contents;
 
                     //					  Barcode：扫描的条码(必传)
-                    //		                 GoodsId：调拨产品编号(必传)
+                    //		                 GoodsId：调拨产品编号(传空)
                     //		                 SoCompId：调出仓代号(必传)
                     //		                 DeCompId：调入仓代号(必传)
                     //		                 OaSuserId：扫描人员代号(必传)
@@ -308,13 +317,16 @@ public class P_Dv_InStock_Z_ChangeStock_Bill extends Activity {
                     //		                 ScanBillNo：扫描单号(必传)
                     //		                 SourceBillNo：来源单号(调拨单号)(必传)
                     para.setBarcode(contents);
-                    para.setGoodsId(goodsid);
+                    para.setGoodsId("");
                     para.setSoCompId(supplier_id);
                     para.setDeCompId(stock_id);
                     para.setOaSuserId(sysUserInfo.getUserid());
                     para.setScanSn(String.valueOf(nSize));
                     para.setScanBillNo(scanBillno);
                     para.setSourceBillNo(sourceBillNo);
+                    para.setBatchno("");
+
+//                    Log.d("main",para.toJson());
 
                     result = accWeb.P_Dv_Scan("P_Dv_InStock_Z_ChangeStock_Bill", para.toJson());
 
@@ -324,7 +336,7 @@ public class P_Dv_InStock_Z_ChangeStock_Bill extends Activity {
                         return;
                     }
                     //true;产品编号,型号,色号,当前型号数量,当前扫描的条码,入库单号
-                    String[] rest = result.split(",");
+                    String[] rest = result.split(",",-1);
 
                     if (rest.length < 6) {
                         MySound.errorSound();
@@ -346,6 +358,10 @@ public class P_Dv_InStock_Z_ChangeStock_Bill extends Activity {
                     //				nScanCount=rest[6].trim() ;
                     //			}
                     //			ScanDataDao.updateDataAndUi(mContext, curcount, goodsid, modelm, colors, mBillNo);
+
+//                    if (rest[7] != null) {
+//                        batch_num = rest[7].trim();
+//                    }
 
                     ShowMessage.ShowMsg(handler, ShowMessage.HandScanSuccess, "ok");
                     lStar = "";
@@ -370,12 +386,13 @@ public class P_Dv_InStock_Z_ChangeStock_Bill extends Activity {
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     String tBarcode = "";
-                    if (et_barcode.getText().toString().trim().indexOf("=") != -1) {
+
+                    if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
                         //包含
                         tBarcode = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
                     } else {
                         //不包含
-                        tBarcode = et_barcode.getText().toString().trim();
+                        tBarcode = SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
                     }
 
                     tv_show_code.setText(tBarcode);
@@ -406,8 +423,15 @@ public class P_Dv_InStock_Z_ChangeStock_Bill extends Activity {
         @Override
         public void onClick(View v) {
 
-            Intent intent = new Intent(mContext,
-                    QueryScanDetail.class);
+//            Intent intent = new Intent(mContext,
+//                    QueryScanDetail.class);
+            Intent intent = null;
+            if (sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("08")){
+                intent = new Intent(mContext, QueryScanBatchDetail.class);
+            }else{
+                intent = new Intent(mContext,QueryScanDetail.class);
+            }
+
             intent.putExtra("mBillNo", scanBillno);
             startActivity(intent);
         }
@@ -464,10 +488,22 @@ public class P_Dv_InStock_Z_ChangeStock_Bill extends Activity {
     private class BtnSelectProductClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(mContext, SelectBillProduct.class);
+//            Intent intent = new Intent(mContext, SelectBillProduct.class);
+//            intent.putExtra("orderno", sourceBillNo);
+//            intent.putExtra("aim", "P_Dv_InStock_Z_ChangeStock_Bill");
+//            startActivityForResult(intent, Lic_SelectModel);
+            sysUserInfo.setIsDownload(true);//每次选择确认是否下载配货单明细数据
+//            Intent intent = new Intent(mContext, SelectBillProduct.class);
+            Intent intent = null;
+            if (sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("08")){
+                intent = new Intent(mContext, SelectBillBatchProduct.class);
+            }else{
+                intent = new Intent(mContext, SelectBillProduct.class);
+            }
             intent.putExtra("orderno", sourceBillNo);
             intent.putExtra("aim", "P_Dv_InStock_Z_ChangeStock_Bill");
-            startActivityForResult(intent, Lic_SelectModel);
+            //			startActivityForResult(intent, Lic_SelectModel);
+            startActivity(intent);
         }
     }
 

@@ -18,6 +18,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -37,6 +38,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.holyes.ccssend5.lib.ShowMessage;
 import com.holyes.ccssend5.lib.SqliteDataHelper;
+import com.holyes.ccssend5.lib.SysUserInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,11 +49,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Pattern;
@@ -312,7 +317,7 @@ public class SomeUtils {
 
     /**
      * 把String（json格式的）转换成List<Map<String, Object>>
-     * @param mlist
+     * @param
      * @return
      */
     public List<Map<String, Object>> stringToMapList(String jsonStr)
@@ -627,17 +632,73 @@ public class SomeUtils {
 
 
 //		String str1=str.substring(0, str.lastIndexOf("="));
-        code=str.substring(str.lastIndexOf("=")+1, str.length());
+        if (str.indexOf("=") != -1){
+            code=str.substring(str.lastIndexOf("=")+1, str.length());
+        }else if (str.indexOf("＝") != -1){
+            code=str.substring(str.lastIndexOf("＝")+1, str.length());
+        }else {
+            code=str.substring(str.length()-16);
+        }
 
+
+        if (str2HexStr(code.substring(0,1)).equals("3F")){
+            SysUserInfo sysUserInfo=new SysUserInfo(context);
+            if (sysUserInfo.getEnterpriseId().equals("10")) {
+                String newcode = code.substring(1);
+                code = "1" + newcode;
+            }
+        }
 
 //		String code=str.substring(str.length()-16,str.length());
         return code;
     }
 
+        //普通条码截取
+        public static String UpdatefirstString(Context context,String str){
+            String code =str;
+            SysUserInfo sysUserInfo=new SysUserInfo(context);
+            if (sysUserInfo.getEnterpriseId().equals("10")) {
+            if(!str.startsWith("A")){
+                String firstcode = code.substring(1);
+                code = "1" + firstcode;
+            }
+        }else if (sysUserInfo.getEnterpriseId().equals("83")){
+            /**
+             * 舒达迈的条码12位并且包含空格
+             * */
+            if (code.indexOf(" ") != -1) {
+                code = AgentCode(context, code);
+            }
+        }
+//		String code=str.substring(str.length()-16,str.length());
+        return code;
+    }
+
+    /**
+     * 字符串转换成为16进制(无需Unicode编码)
+     * @param str 待转换的ASCII字符串
+     * @author xxs
+     * @return byte字符串 （每个Byte之间空格分隔）
+     */
+    public static String str2HexStr(String str) {
+        char[] chars = "0123456789ABCDEF".toCharArray();//toCharArray() 方法将字符串转换为字符数组。
+        StringBuilder sb = new StringBuilder(""); //StringBuilder是一个类，可以用来处理字符串,sb.append()字符串相加效率高
+        byte[] bs = str.getBytes();//String的getBytes()方法是得到一个操作系统默认的编码格式的字节数组
+        int bit;
+        for (int i = 0; i < bs.length; i++) {
+            bit = (bs[i] & 0x0f0) >> 4; // 高4位, 与操作 1111 0000
+            sb.append(chars[bit]);
+            bit = bs[i] & 0x0f;  // 低四位, 与操作 0000 1111
+            sb.append(chars[bit]);
+            sb.append(' ');//每个Byte之间空格分隔
+        }
+        return sb.toString().trim();
+    }
 
     /**
      * 舒达迈的条码12位并且包含空格
      * */
+
     public static String AgentCode(Context context,String str){
         String code ="";
         if (str.length()>12) {
@@ -646,6 +707,30 @@ public class SomeUtils {
             return str;
         }
         return code;
+    }
+
+    /**
+     * 获取随机数的扫描单号
+     * */
+    public static String RandomScanOrder(){
+        // 创建一个随机数生成器
+
+        // 生成一个17位的随机数
+//        long randomNum = random.nextLong() % 100000000000000000L;
+//        if (randomNum < 0) {
+//            randomNum *= -1; // 如果是负数，取绝对值
+//        }
+   // 生成6位随机数
+        Random random = new Random();
+        int randomNum = random.nextInt(900000) + 100000; // 保证是6位的随机数
+
+        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyMMddHHmmssSSS");
+        String time = sDateFormat.format(new Date());
+
+        // 将随机数转换为字符串，确保长度为6位
+        String randomNumStr = String.valueOf(randomNum);
+
+        return time+randomNumStr;
     }
 
     /**

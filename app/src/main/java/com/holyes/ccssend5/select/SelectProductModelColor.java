@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,6 +26,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -65,12 +67,15 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
     private ListView listView;//列数据的listview
     private Button btn_cancel, btn_ok, select_model_btn_filter, select_model_btn_next;
     private EditText et_search;
-    private TextView tv_count, tv_selected_model_colors, tv_dialog_title, tv_redownload;//统计数据条数，已选型号色号
+    private TextView tv_count, tv_Allcount, tv_selected_model_colors, tv_dialog_title, tv_redownload;//统计数据条数，已选型号色号
 
     private List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+    private List<Map<String, Object>> quantitieslist = new ArrayList<Map<String, Object>>();
     private List<Map<String, Object>> listProductName, listProductYear, listProductModel, listProdType;//总list,品牌list,年份list,型号list
     private Map<String, Object> addMap = new HashMap<String, Object>();
     private Map<String, Object> itemMap;//listview的item
+
+    private String pagegoodsid = "", pagemodelm = "", pagecolors = "";
 
     private String etStr = "", goodsid = "", modelm = "", colors = "";
     private String brandname = "", productyear = "", prodtype = "";//用在Spinner的sql作搜索条件
@@ -84,6 +89,10 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
             selectedModelPosition = 0, selectedProdTypePosition = 0;//已经选中的筛选条件的序号，退出界面前下次点击筛选时还是这个
 
     private Thread reDownloadThread = null;
+
+    private int Nextpage=0;
+
+    int numdata=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +112,7 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
         btn_ok.setOnClickListener(this);
         et_search = (EditText) findViewById(R.id.select_model_et_search);
         tv_count = (TextView) findViewById(R.id.select_model_tv_count);
+        tv_Allcount = (TextView) findViewById(R.id.select_model_allcount);
         tv_selected_model_colors = (TextView) findViewById(R.id.selected_model_tv);
 
         select_model_btn_filter = (Button) findViewById(R.id.select_model_btn_filter);
@@ -134,7 +144,15 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
         addMap.put("modelm", "全部");
         addMap.put("prodtype", "全部");
 
-        initSpinner();
+//        initSpinner();
+        try {
+            numdata=SqliteDataHelper.getHelper(getApplicationContext()).execSQLInt("select count(*) from newproduct");
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            numdata=0;
+            e.printStackTrace();
+        }
+        tv_Allcount.setText("合计" + numdata + "条");
 
         if (!sysUserInfo.ReadConfigString("searchProductSql").isEmpty()) {
             searchSql = sysUserInfo.ReadConfigString("searchProductSql");
@@ -144,15 +162,16 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
             //弹出筛选dialog
             if (sysUserInfo.getEnterpriseId().equals("05")) {
                 isConfirmFresh = true;
-                freshListView("select * from newproduct order by productyear desc limit 1,200");
-                btn_cancel.setText("取消");
+                freshListView("select * from newproduct order by productyear desc limit 0,200");
+//                btn_cancel.setText("取消");
 
             } else {
-                isConfirmFresh = false;
-                showFilterAlertDialog();
+                isConfirmFresh = true;
+//                showFilterAlertDialog();
+                freshListView("select * from newproduct limit ?,200");
             }
         }
-        et_search.addTextChangedListener(new EditTextWatch());
+        et_search.addTextChangedListener(new SelectProductModelColor.EditTextWatch());
 
         loading = new Loading(SelectProductModelColor.this, "请稍候，下载中...", new Loading.OnLoadingback() {
             @Override
@@ -165,8 +184,6 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
                 }
             }
         });
-
-
     }
 
     @Override
@@ -208,13 +225,16 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
                 return;
             }
             if (etStr.isEmpty()) {
-                sql = "select * from newproduct where brandname like '%%" + brandname + "%%' and " +
+                Nextpage=0;
+                searchSql = "select * from newproduct where brandname like '%%" + brandname + "%%' and " +
                         "productyear like '%%" + productyear + "%%' and " +
                         "modelm like '%%" + modelm + "%%' and " +
-                        "prodtype like '%%" + prodtype + "%%' ";
-                freshListView(sql);
+                        "prodtype like '%%" + prodtype + "%%' limit ?,200";
+                freshListView(searchSql);
+                btn_cancel.setText("返回");
             } else {
                 isConfirmFresh = true;
+                Nextpage=0;
                 searchSql = "select  * from newproduct  where " +
                         "brandname like '%%" + brandname + "%%' and " +
                         "productyear like '%%" + productyear + "%%' and " +
@@ -223,9 +243,10 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
                         "(goodsid like '%%" + etStr + "%%' or " +
                         "goodsdescription like '%%" + etStr + "%%' or " +
                         "prodtype like '%%" + etStr + "%%' or " +
-                        "productyear like '%%" + etStr + "%%')";
+                        "productyear like '%%" + etStr + "%%') limit ?,200";
 
                 freshListView(searchSql);
+                btn_cancel.setText("取消");
             }
 
         }
@@ -249,10 +270,10 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
         spinnerProductModel = (Spinner) alertView.findViewById(R.id.spinner_product_model_filfter);
         spinnerProdType = (Spinner) alertView.findViewById(R.id.spinner_prodtype_filfter);
 
-        spinnerProductName.setOnItemSelectedListener(new SpinnerProductNameListener());
-        spinnerProductYear.setOnItemSelectedListener(new SpinnerProductYearListener());
-        spinnerProductModel.setOnItemSelectedListener(new SpinnerProductModelListener());
-        spinnerProdType.setOnItemSelectedListener(new SpinnerProdTypeListener());
+        spinnerProductName.setOnItemSelectedListener(new SelectProductModelColor.SpinnerProductNameListener());
+        spinnerProductYear.setOnItemSelectedListener(new SelectProductModelColor.SpinnerProductYearListener());
+        spinnerProductModel.setOnItemSelectedListener(new SelectProductModelColor.SpinnerProductModelListener());
+        spinnerProdType.setOnItemSelectedListener(new SelectProductModelColor.SpinnerProdTypeListener());
 
         spinnerProductName.setPrompt("\t\t\t\t\t\t品牌选择");
         spinnerProductYear.setPrompt("\t\t\t\t\t\t年份选择");
@@ -295,8 +316,16 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
                     modelm = "";
                     colors = "";
 
-                    freshListView(sql);
-                    searchSql = "";
+                    pagecolors="";
+                    pagemodelm="";
+                    pagecolors="";
+
+                    Nextpage=0;
+                    searchSql="select * from newproduct limit ?,200";
+
+                    freshListView(searchSql);
+
+
                     et_search.setText("");
                     btn_cancel.setText("返回");
                 }
@@ -307,13 +336,13 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
 
                 break;
             case R.id.select_model_btn_ok:
-                if ((modelm + colors).isEmpty()) {
+                if ((pagemodelm + pagecolors).isEmpty()) {
                     SomeUtils.showToask(context, "未选择");
                 } else {
                     Intent intent = new Intent();
-                    intent.putExtra("goodsid", goodsid);
-                    intent.putExtra("modelm", modelm);
-                    intent.putExtra("colors", colors);
+                    intent.putExtra("goodsid", pagegoodsid);
+                    intent.putExtra("modelm", pagemodelm);
+                    intent.putExtra("colors", pagecolors);
                     setResult(RESULT_OK, intent);
                     finish();
 
@@ -332,7 +361,19 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
                 break;
 
             case R.id.select_model_btn_next:
-
+                if (numdata==list.size()){
+                    Toast.makeText(context, "数据已全部加载", Toast.LENGTH_SHORT).show();
+                }else{
+//	                if (Nextpage==0){
+//	                    Nextpage=1;
+//	                }
+//                    Log.d("main","测试"+searchSql);
+                    Nextpage=Nextpage+200;
+//	                searchSql = "select * from newproduct where brandname like  '%" + brandname + "%' and " +
+//	                        "productyear like  '%" + productyear + "%' and modelm like  '%" + modelm + "%' " +
+//	                        "and prodtype  like '%" + prodtype + "%' limit ?,200";
+                    freshListView(searchSql);
+                }
                 break;
 
             default:
@@ -389,10 +430,10 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
                         if ("全部".equals(prodtype)) {
                             prodtype = "";
                         }
-
+                        Nextpage=0;
                         searchSql = "select * from newproduct where brandname like  '%" + brandname + "%' and " +
                                 "productyear like  '%" + productyear + "%' and modelm like  '%" + modelm + "%' " +
-                                "and prodtype  like '%" + prodtype + "%'";
+                                "and prodtype  like '%" + prodtype + "%' limit ?,500";
                         freshListView(searchSql);
                         btn_cancel.setText("取消");
                     }
@@ -419,24 +460,33 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
         if (!isConfirmFresh) {
             return;
         }
-        list.clear();
-        list.addAll(SqliteDataHelper.getHelper(getApplicationContext()).QueryDbList(sqls, null));
-        //把集合数据先排序
-        Collections.sort(list, new SortListMapComparator("goodsid"));
-        adapter = new SimpleAdapter(context, list, R.layout.new_select_product_model_color_listview_item,
-                new String[]{"goodsid", "goodsdescription", "prodtype"},
-                new int[]{R.id.tv_goodsid, R.id.tv_product_descr, R.id.tv_prodtype});
-        listView.setAdapter(adapter);
-        tv_count.setText("共计 " + list.size() + " 条");
+        if (Nextpage==0){
+            list.clear();
+        }
+        List<Map<String, Object>> dataList=new ArrayList<Map<String,Object>>();
+        dataList=SqliteDataHelper.getHelper(getApplicationContext()).findPart(sqls, Nextpage);
+        if(dataList.size()==0){
+            tv_count.setText("当前" + list.size() + " 条");
+            Toast.makeText(context, "暂无数据", Toast.LENGTH_SHORT).show();
+        }else{
+            list.addAll(dataList);
+            //把集合数据先排序
+            Collections.sort(list, new SortListMapComparator("goodsid"));
+            adapter = new SimpleAdapter(context, list, R.layout.new_select_product_model_color_listview_item,
+                    new String[]{"goodsid", "goodsdescription", "prodtype"},
+                    new int[]{R.id.tv_goodsid, R.id.tv_product_descr, R.id.tv_prodtype});
+            listView.setAdapter(adapter);
+            tv_count.setText("当前" + list.size() + " 条");
+        }
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         itemMap = (Map<String, Object>) adapterView.getItemAtPosition(position);
-        goodsid = (String) itemMap.get("goodsid");
-        modelm = (String) itemMap.get("modelm");
-        colors = (String) itemMap.get("colors");
-        tv_selected_model_colors.setText("（已选：" + modelm + "-" + colors + "）");
+        pagegoodsid = (String) itemMap.get("goodsid");
+        pagemodelm = (String) itemMap.get("modelm");
+        pagecolors = (String) itemMap.get("colors");
+        tv_selected_model_colors.setText("（已选：" + pagemodelm + "-" + pagecolors + "）");
         btn_cancel.setText("取消");
     }
 
@@ -695,12 +745,13 @@ public class SelectProductModelColor extends Activity implements View.OnClickLis
                     if (!msg.obj.toString().isEmpty())
                         ShowMessage.Show(SelectProductModelColor.this, msg.obj.toString());
                     loading.setTipText("请稍候，下载中...");
-                    sql = "select * from newproduct";
+                    Nextpage=0;
+                    searchSql = "select * from newproduct  limit ?,200";
                     selectedBrandPosition = 0;
                     selectedYearPosition = 0;
                     selectedModelPosition = 0;
                     selectedProdTypePosition = 0;
-                    freshListView(sql);
+                    freshListView(searchSql);
                     initSpinner();
                     break;
                 default:
