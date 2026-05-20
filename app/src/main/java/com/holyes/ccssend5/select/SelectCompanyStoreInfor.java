@@ -27,6 +27,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.example.ccssend5.R;
+import com.holyes.agent.activity.P_Dv_OutStock_D_L_F_Lens;
 import com.holyes.agent.activity.P_Dv_OutStock_D_S_NoBill;
 import com.holyes.ccssend5.activity.HelpActivity;
 import com.holyes.ccssend5.entity.Retailer;
@@ -69,6 +70,8 @@ public class SelectCompanyStoreInfor extends Activity {
 
     private final int Lic_SelectSure = 3;
 
+    private String lsv_aim = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +92,8 @@ public class SelectCompanyStoreInfor extends Activity {
         //根据全部的零售商查出全部的分销店，封装成适合适配器的格式适配
         //		initExpandListView(getAllDistributorByRetailer(allRetailList),false);
         initListView(sql);
+
+        lsv_aim = getIntent().getStringExtra("aim");
 
 
         et_search.addTextChangedListener(new TextWatcher() {
@@ -360,9 +365,19 @@ public class SelectCompanyStoreInfor extends Activity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case Lic_SelectSure:
-                    Intent intent = new Intent(this, P_Dv_OutStock_D_S_NoBill.class);
-                    intent.putExtra("selectedStoreInfor", selectedStoreInfor);
-                    startActivity(intent);
+                    if (lsv_aim.equals("P_Dv_OutStock_D_S_NoBill")){
+                        Intent intent = new Intent(this, P_Dv_OutStock_D_S_NoBill.class);
+                        intent.putExtra("selectedStoreInfor", selectedStoreInfor);
+                        startActivity(intent);
+                    }else
+                    {
+
+                        Intent intent = new Intent(this, P_Dv_OutStock_D_L_F_Lens.class);
+                        intent.putExtra("selectedStoreInfor", selectedStoreInfor);
+                        startActivity(intent);
+
+                    }
+
                     break;
             }
 

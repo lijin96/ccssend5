@@ -104,6 +104,9 @@ public class P_Dv_OutStock_D_L_Lens_NoBill_Cancel extends Activity {
         ((Button) findViewById(R.id.btn_exit))
                 .setOnClickListener(new BtnExitClick());
         tv_title = (TextView) findViewById(R.id.tv_title);
+        if (sysUserInfo.getAgentVersionNum().equals("CCS7")) {
+            tv_title.setText("镜片发货撤销");
+        }
         tv_company_na = (TextView) findViewById(R.id.tv_company_na);
         tv_product_id = (TextView) findViewById(R.id.tv_product_id);
         tv_curqty = (TextView) findViewById(R.id.tv_curqty);

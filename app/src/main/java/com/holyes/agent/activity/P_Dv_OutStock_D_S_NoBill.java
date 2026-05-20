@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,6 +39,7 @@ import com.holyes.ccssend5.utils.PrintUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -184,8 +186,40 @@ public class P_Dv_OutStock_D_S_NoBill extends Activity {
 
 //		send = new SendDatas();
 //		send.start();
-
+//        String testtao=" [ {\"GoodsId\": \"C00001\",\"Modelm\": \"1357\",\"Colors\": \"C01\"," +
+//                "\"CurNum\": \"39\",\"PackNumber\": \"P200917000001\",\"TranLno\" " +
+//                ":\"DX-00-200000001\"}]";
+//        try {
+//            Testscancode(testtao);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
     }
+
+//    private void Testscancode(String result) throws JSONException {
+//
+//        JSONArray listjson = new JSONArray(result);
+//
+//        for (int i = 0; i < listjson.length(); i++)
+//        {
+//            JSONObject jsonObject1 = (JSONObject) listjson.opt(i);
+//            product_id = jsonObject1.optString("GoodsId");
+//            modelm = jsonObject1.optString("Modelm");
+//            colors = jsonObject1.optString("Colors");
+//            curcount = jsonObject1.optString("CurNum");
+//
+//            if(mBillNo==null||mBillNo.isEmpty())
+//            {
+//                mBillNo = jsonObject1.optString("TranLno");
+//            }
+//            if(pShopBillNo.isEmpty())
+//            {
+//                pShopBillNo =  jsonObject1.optString("ShopLno");
+//            }
+//            nScanCount = String.valueOf(Integer.parseInt(nScanCount) + Integer.parseInt(jsonObject1.optString("CurNum","0")));
+//        }
+//        Log.i("main","合计数 "+nScanCount);
+//    }
 
     @Override
     protected void onDestroy() {
@@ -334,6 +368,14 @@ public class P_Dv_OutStock_D_S_NoBill extends Activity {
 
         @Override
         public void onClick(View v) {
+//            String testtao=" [ {\"GoodsId\": \"C00001\",\"Modelm\": \"1357\",\"Colors\": \"C01\"," +
+//                    "\"CurNum\": \"39\",\"PackNumber\": \"P200917000003\",\"TranLno\" " +
+//                    ":\"DX-00-200000001\"}]";
+//            try {
+//                Testscancode(testtao);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
             if (SomeUtils.isDoubleClick(P_Dv_OutStock_D_S_NoBill.this, true)) {
                 finish();
             }
@@ -367,7 +409,7 @@ public class P_Dv_OutStock_D_S_NoBill extends Activity {
 
                     AccessWeb.getHelper(getApplicationContext()).mWebId = lStar + contents;
                     //！！！注意，这个服务和其他的调的参数有差异
-
+//                    Log.d("main", sysUserInfo.getFirstStart());
                     if (sysUserInfo.getFirstStart().equals("01") ||
                             sysUserInfo.getFirstStart().equals("11")) {
                         //				   Barcode：扫描的条码(必传)
@@ -390,12 +432,16 @@ public class P_Dv_OutStock_D_S_NoBill extends Activity {
                         para.setBillNo(mBillNo);
                         para.setDocumentNo(pShopBillNo);
                         para.setFirstDelivery(Delivery_type);
+//                        Log.d("main", para.toJson());
                         result = AccessWeb.getHelper(getApplicationContext()).P_Dv_OutStock_D_S_NoBillv1(para.toJson());
 
                     } else {
                         result = AccessWeb.getHelper(getApplicationContext()).P_Dv_OutStock_D_S_NoBill(contents, socompany_id,
                                 company_id, pShopCompid, String.valueOf(nSize), Scanbillno, mBillNo, pShopBillNo);
                     }
+
+//                    Log.d("main----", result);
+
                     //返回数据为空
                     if (result.isEmpty()) {
                         MySound.errorSound();
@@ -405,7 +451,7 @@ public class P_Dv_OutStock_D_S_NoBill extends Activity {
 
                     nSize++;
                     if (contents.startsWith("P")) {
-
+                        nScanCount="0";
                         JSONArray listjson = new JSONArray(result);
 
                         //                "GoodsId": "C00001",
@@ -418,36 +464,30 @@ public class P_Dv_OutStock_D_S_NoBill extends Activity {
                         for (int i = 0; i < listjson.length(); i++)
                         {
                             JSONObject jsonObject1 = (JSONObject) listjson.opt(i);
-
-                            JSONObject jsonObject2 = (JSONObject) listjson.opt(0);
-
-
-                            product_id = jsonObject2.getString("GoodsId");
-                            modelm = jsonObject2.getString("Modelm");
-                            colors = jsonObject2.getString("Colors");
-                            curcount = jsonObject2.getString("CurNum");
-                            //					lastSuccessBarcode = rest[4].trim();
+                            product_id = jsonObject1.optString("GoodsId");
+                            modelm = jsonObject1.optString("Modelm");
+                            colors = jsonObject1.optString("Colors");
+                            curcount = jsonObject1.optString("CurNum");
 
                             if(mBillNo==null||mBillNo.isEmpty())
                             {
-                                mBillNo = jsonObject2.getString("TranLno");
+                                mBillNo = jsonObject1.optString("TranLno");
                             }
                             if(pShopBillNo.isEmpty())
                             {
-                                pShopBillNo =  jsonObject2.getString("ShopLno");
+                                pShopBillNo =  jsonObject1.optString("ShopLno");
                             }
 
-                            if (listjson.length()==1) {
-                                nScanCount=jsonObject1.getString("CurNum");
-                            } else {
-                                nScanCount=String.valueOf(Integer.parseInt(curcount)+Integer.parseInt(jsonObject1.getString("CurNum"))) ;
+                            if (sysUserInfo.getAgentVersionNum().equals("CCS7")) {
+                                //如果是新版本的CCS 那么合计显示：BillNum
+                                nScanCount =jsonObject1.optString("BillNum", "0");
+                            }else {
+                                //如果是旧版本，每次只取最后一次的明细来计算合计数
+                                nScanCount = String.valueOf(Integer.parseInt(jsonObject1.optString("CurNum", "0")) + Integer.parseInt(nScanCount));
                             }
-
                         }
                         ShowMessage.ShowMsg(hand, ShowMessage.HandScanSuccess,"");
                     } else {
-
-
 
                         //CS170001,1.50非球面,+1.75+0.50,1,6222323912072181,DF-CS001-17000001,DF-CS001-1700000101
                         // true;产品编号,型号,色号,当前型号数量,当前扫描的条码,零售商发货单号,分销店发货单号

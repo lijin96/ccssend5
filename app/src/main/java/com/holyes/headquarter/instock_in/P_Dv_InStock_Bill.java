@@ -365,7 +365,6 @@ public class P_Dv_InStock_Bill extends Activity {
         sendCode.start();
     }
 
-
     /**
      * 输入框监听
      */
@@ -377,7 +376,6 @@ public class P_Dv_InStock_Bill extends Activity {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
 
                     String tBarcode = "";
-
                     if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
                         //包含
                         tBarcode = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
@@ -385,8 +383,6 @@ public class P_Dv_InStock_Bill extends Activity {
                         //不包含
                         tBarcode = SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
                     }
-
-
                     tv_show_code.setText(tBarcode);
                     if (!SomeUtils.isAllNumber(mContext,tBarcode)) {
                         MySound.errorSound();

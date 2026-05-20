@@ -73,10 +73,27 @@
             layout="@layout/item_list_factorygoods"/>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/listView1"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </ListView>
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </ListView>
+
+        <TextView
+            android:id="@+id/tv_empty_prompt"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/factorygoods_empty_tip"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/black"
+            android:background="@color/white"
+            android:visibility="gone" />
+    </FrameLayout>
+
 
 </LinearLayout>

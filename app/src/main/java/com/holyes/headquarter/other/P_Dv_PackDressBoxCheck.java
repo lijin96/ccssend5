@@ -480,7 +480,6 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
                     //补打盒标
                     ed_code.setText("");
                     startThreadCheckCode(code);
-
                 }
 
             }
@@ -556,10 +555,7 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
             public void run() {
                 String result = "";
                 try {
-
-
                     result = accWeb.GetPackMealBoxLabel(code);
-
                     if (result == "")
                     {
                         sound.errorSound();
@@ -790,12 +786,9 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
 
 
                 case ShowMessage.HandMakeDressBox:
-
                     printBoxCode(MakeBox);
-
                     MyProgressDialog.close();
                     ShowMessage.Show(mContext, "正在补打套标...");
-
                     break;
 
                 case 6:

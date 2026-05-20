@@ -14,9 +14,9 @@
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/drawable/rounded_button.xml" value="0.154296875" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/drawable/rounded_button_pressed.xml" value="0.154296875" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/about.xml" value="0.2" />
-        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_dv_factory_packbox_nobill.xml" value="0.4" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_dv_factory_packbox_nobill.xml" value="0.244140625" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_factorymain.xml" value="0.1421875" />
-        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_holyes_dv_box_instock_nobill.xml" value="0.16" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_holyes_dv_box_instock_nobill.xml" value="0.264" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_holyes_dv_box_instock_nobill_cancel.xml" value="0.264" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_lensdegree.xml" value="0.39479166666666665" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_p_dv_instock_packbox_search.xml" value="0.11640625" />
@@ -31,10 +31,12 @@
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_select_lens.xml" value="0.13828125" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_select_lens_detail.xml" value="0.1" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_selectfactoryscandetail.xml" value="0.144" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activty_eliminate.xml" value="0.151171875" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activty_factoryeliminate.xml" value="0.264" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activty_factoryhistoryeliminate.xml" value="0.13984375" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/addluminosity_dialog.xml" value="0.1806469298245614" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/addprocure_dialog.xml" value="0.1" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/brand_config.xml" value="0.132421875" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/d_main_activity.xml" value="0.264" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/device_list.xml" value="0.190234375" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/device_name.xml" value="0.190234375" />
@@ -75,7 +77,7 @@
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_instock_z_changestock_nobill.xml" value="0.536" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_l_return_z_bill.xml" value="0.126171875" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_mendlable_z.xml" value="0.264" />
-        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_lens_z_d_bill_beinstock.xml" value="0.1" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_lens_z_d_bill_beinstock.xml" value="0.264" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_lens_z_d_bill_noinstock.xml" value="0.264" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_lens_z_l_bill_beinstock.xml" value="0.2" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_lens_z_l_bill_cancel.xml" value="0.190234375" />
@@ -83,11 +85,12 @@
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_bill_beinstock.xml" value="0.1484375" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_bill_cancel.xml" value="0.178125" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_bill_noinstock.xml" value="0.1" />
-        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_l_bill_beinstock.xml" value="0.14375" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_l_bill_beinstock.xml" value="0.1" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_l_nobill_beinstock.xml" value="0.14" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_nobill_beinstock.xml" value="0.178125" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_nobill_cancel.xml" value="0.178125" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_nobill_noinstock.xml" value="0.178125" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_packmeal_nobill_noinstock.xml" value="0.21875" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_l_bill_beinstock.xml" value="0.2" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_l_bill_cancel.xml" value="0.4" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_l_bill_noinstock.xml" value="0.178125" />
@@ -124,17 +127,23 @@
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_select_company_zy.xml" value="0.2" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_select_product_model_color.xml" value="0.2" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_select_purcheck.xml" value="0.2" />
-        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_select_stock.xml" value="0.4" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_select_setmeal_details.xml" value="0.2" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_select_stock.xml" value="0.35" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_select_supplier.xml" value="0.18842364532019704" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/noticscan_list.xml" value="0.115234375" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/other_menu_list_layout.xml" value="0.155078125" />
-        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_outstock_d_f_nobill.xml" value="0.176" />
-        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_outstock_d_l_lens_nobill.xml" value="0.134375" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_outstock_d_f_nobill.xml" value="0.2" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_outstock_d_l_f_lens.xml" value="0.264" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_outstock_d_l_lens_nobill.xml" value="0.264" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_outstock_d_l_lens_nobill_bancel.xml" value="0.134375" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_outstock_d_l_nobill.xml" value="0.4888392857142857" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_outstock_d_l_nobill_bancel.xml" value="0.190234375" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_recoverscan_d.xml" value="0.264" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_returnedpurchase_d_brand_lens_nobill.xml" value="0.176" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_returnedpurchase_d_brand_nobill.xml" value="0.176" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_returnedpurchase_d_l_lens_nobill.xml" value="0.134375" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_returnedpurchase_d_l_lens_nobill_cancel.xml" value="0.134375" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_returnedpurchase_d_l_nobill.xml" value="0.264" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_returnedpurchase_d_l_transfergoods.xml" value="0.144140625" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/p_dv_returnedpurchase_z_d_nobill.xml" value="0.11796875" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/packing_instock.xml" value="0.190234375" />

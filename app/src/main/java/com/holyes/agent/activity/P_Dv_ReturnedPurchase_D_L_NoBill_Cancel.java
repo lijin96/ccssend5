@@ -99,6 +99,11 @@ public class P_Dv_ReturnedPurchase_D_L_NoBill_Cancel extends Activity {
         ((Button) findViewById(R.id.btn_exit))
                 .setOnClickListener(new BtnExitClick());
         tv_title = (TextView) findViewById(R.id.tv_title);
+
+        if (sysUserInfo.getAgentVersionNum().equals("CCS7")) {
+            tv_title.setText("镜架退货撤销");
+        }
+
         tv_company_na = (TextView) findViewById(R.id.tv_company_na);
         tv_product_id = (TextView) findViewById(R.id.tv_product_id);
         tv_curqty = (TextView) findViewById(R.id.tv_curqty);

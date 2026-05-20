@@ -94,7 +94,6 @@ public class FactoryEliminateActivity extends Activity {
         et_barcode.setOnKeyListener(new EtBarcodeOnKeyListener());
 
         btn_finish.setOnClickListener(new BtnFinishClick());
-
 //        scanBillno = sysUserInfo.getUserid() + "S" + SomeUtils.RandomScanOrder();// 系统
         scanBillno = getIntent().getStringExtra("ScanBillno");
 
@@ -104,7 +103,6 @@ public class FactoryEliminateActivity extends Activity {
         if (!BoxNoCode.equals("")){
             DownLoadBoxNoCodeThread(BoxNoCode);
         }
-
     }
 
     private class EtBarcodeOnKeyListener implements View.OnKeyListener {
@@ -113,10 +111,7 @@ public class FactoryEliminateActivity extends Activity {
 
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
-
-
                     String barcodeStr = "";
-
                     if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
                         //包含
                         barcodeStr = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
@@ -124,7 +119,6 @@ public class FactoryEliminateActivity extends Activity {
                         //不包含
                         barcodeStr =SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
                     }
-
                     et_barcode.setText("");
                     RemoveoCodeThread(barcodeStr);
                 }
@@ -145,13 +139,11 @@ public class FactoryEliminateActivity extends Activity {
                 try {
 
                     accWeb.mWebId = lStar + tBoxNoCode;
-
                     JsonObject FillBoxInforObj = new JsonObject();
                     FillBoxInforObj.addProperty("BoxNo", tBoxNoCode);
                     FillBoxInforObj.addProperty("SoCompId", sysUserInfo.getCompanyid());
                     FillBoxInforObj.addProperty("OaSuserId", sysUserInfo.getUserid());
-
-                    String  FillBoxInfor = accWeb.Holyes_Dv_Factory_GetFillBoxInfor(FillBoxInforObj.toString());
+                    String FillBoxInfor = accWeb.Holyes_Dv_Factory_GetFillBoxInfor(FillBoxInforObj.toString());
 
                     JSONArray listjson = new JSONArray(FillBoxInfor);
                     dList = new ArrayList<Map<String, Object>>();
@@ -215,8 +207,9 @@ public class FactoryEliminateActivity extends Activity {
                         map1.put("Modelm", jsonObject2.optString("Modelm"));
                         map1.put("Colors", jsonObject2.optString("Colors"));
 
-                        map1.put("GoodsNum", jsonObject2.optString("GoodsNum"));
-                        map1.put("TotalNum", jsonObject2.optString("TotalNum"));
+                        map1.put("GoodsNum", jsonObject2.optString("GoodsNum").equals("null")?"0":jsonObject2.optString("GoodsNum"));
+                        map1.put("TotalNum", jsonObject2.optString("TotalNum").equals("null")?"0":jsonObject2.optString("TotalNum"));
+
                         map1.put("BoxNum", jsonObject2.optString("BoxNum"));
 
                         map1.put("SetNum", jsonObject2.optString("SetNum"));//设置盒装数
@@ -316,6 +309,7 @@ public class FactoryEliminateActivity extends Activity {
 
 //                BoxSetNum=WeedOutList.get(0).get("SetNum").toString();
 //                BoxActNum=WeedOutList.get(0).get("ActNum").toString();
+
 
                 setResult(RESULT_OK, intent);
                 finish();

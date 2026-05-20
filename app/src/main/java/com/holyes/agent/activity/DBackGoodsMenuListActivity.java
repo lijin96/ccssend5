@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -54,11 +55,21 @@ public class DBackGoodsMenuListActivity extends Activity {
 //                menu = new String[]{"零售退货"};//,"零售退货直通车"
 //            }
 //        }else{
-        if(sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("19")||sysUserInfo.getEnterpriseId().equals("88")){
-            menu = new String[]{"零售退货","镜片零售退货", "退货撤销","镜片退货撤销"};//,"零售退货直通车"
+//        Log.d("main", sysUserInfo.getAgentVersionNum());
+        //00合力思 11铭瑞 45费雷玛 46德国大众 19帕莎 88海伦
+        //新版的话菜单改名 ,"镜架退货品牌商","镜片退货品牌商"
+        if (sysUserInfo.getAgentVersionNum().equals("CCS7")) {
+            menu = new String[]{"镜架退货", "镜片退货", "镜架退货撤销", "镜片退货撤销"};
         }else{
-            menu = new String[]{"零售退货", "退货撤销"};//,"零售退货直通车"
+            if(sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("19")||sysUserInfo.getEnterpriseId().equals("88")) {
+                menu = new String[]{"零售退货", "镜片零售退货", "退货撤销", "镜片退货撤销"};
+            }else{
+                menu = new String[]{"零售退货", "退货撤销"};
+            }
         }
+
+
+
 //        }
 
         ((Button) findViewById(R.id.btn_exit)).setOnClickListener(new btn_exit_click());
@@ -112,32 +123,39 @@ public class DBackGoodsMenuListActivity extends Activity {
             ListView listView = (ListView) parent;
             Map<String, Object> map = (Map<String, Object>) listView
                     .getItemAtPosition(position);
-            if (sysUserInfo.getAgentVersionNum().equals("V17")){
-                ShowMessage.Show(DBackGoodsMenuListActivity.this,"第七代代理商功能正在开发中");
-            }else {
-                String menuName = map.get("menu").toString();
-                if (menuName.equals("零售退货")) // 零售退货
-                {
-                    Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_L_NoBill.class);
-                    startActivity(itent);
-                } else if (menuName.equals("退货撤销")) // 退货撤销（零售）
-                {
-                    Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_L_NoBill_Cancel.class);
-                    startActivity(itent);
-                } else if (menuName.equals("镜片零售退货")) //镜片零售退货
-                {
-                    Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_L_Lens_NoBill.class);
-                    startActivity(itent);
-                } else if (menuName.equals("镜片退货撤销")) //镜片退货撤销
-                {
-                    Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_L_Lens_NoBill_Cancel.class);
-                    startActivity(itent);
-                } else if (menuName.equals("零售退货直通车")) //零售退货直通车
-                {
-                    Intent intent = new Intent(DBackGoodsMenuListActivity.this, SelectCompanyRetailer.class);
-                    intent.putExtra("aim", "P_Dv_ReturnedPurchase_D_L_TransferGoods");//零售退货直通车
-                    startActivity(intent);
-                }
+//            if (sysUserInfo.getAgentVersionNum().equals("V17")){
+//                ShowMessage.Show(DBackGoodsMenuListActivity.this,"第七代代理商功能正在开发中");
+//            }else {
+            String menuName = map.get("menu").toString();
+            if (menuName.equals("零售退货")||menuName.equals("镜架退货")) // 零售退货
+            {
+                Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_L_NoBill.class);
+                startActivity(itent);
+            } else if (menuName.equals("退货撤销")||menuName.equals("镜架退货撤销")) // 退货撤销（零售）
+            {
+                Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_L_NoBill_Cancel.class);
+                startActivity(itent);
+            } else if (menuName.equals("镜片零售退货")||menuName.equals("镜片退货")) //镜片零售退货
+            {
+                Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_L_Lens_NoBill.class);
+                startActivity(itent);
+            } else if (menuName.equals("镜片退货撤销")) //镜片退货撤销
+            {
+                Intent itent = new Intent(DBackGoodsMenuListActivity.this, P_Dv_ReturnedPurchase_D_L_Lens_NoBill_Cancel.class);
+                startActivity(itent);
+            } else if (menuName.equals("零售退货直通车")) //零售退货直通车
+            {
+                Intent intent = new Intent(DBackGoodsMenuListActivity.this, SelectCompanyRetailer.class);
+                intent.putExtra("aim", "P_Dv_ReturnedPurchase_D_L_TransferGoods");//零售退货直通车
+                startActivity(intent);
+            }else if (menuName.equals("镜架退货品牌商")){
+                Intent intent = new Intent(DBackGoodsMenuListActivity.this, P_DV_ReturnedPurchase_D_Brand_NoBill.class);
+                intent.putExtra("aim", "P_DV_ReturnedPurchase_D_Brand_NoBill");//镜架退货品牌商
+                startActivity(intent);
+            }else if (menuName.equals("镜片退货品牌商")){
+                Intent intent = new Intent(DBackGoodsMenuListActivity.this, P_DV_ReturnedPurchase_D_Brand_Lens_NoBill.class);
+                intent.putExtra("aim", "P_DV_ReturnedPurchase_D_Brand_Lens_NoBill");//镜片退货品牌商
+                startActivity(intent);
             }
 
 

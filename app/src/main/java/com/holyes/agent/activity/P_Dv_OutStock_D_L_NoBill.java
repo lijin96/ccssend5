@@ -131,8 +131,6 @@ public class P_Dv_OutStock_D_L_NoBill extends Activity {
         tvBillno.setText("");
         printbill = new PrintUtil();
 
-
-
         try {
             SqliteDataHelper.getHelper(getApplicationContext()).execSQL("delete from newscandate");
         } catch (Exception e) {
@@ -416,30 +414,19 @@ public class P_Dv_OutStock_D_L_NoBill extends Activity {
                         for (int i = 0; i < listjson.length(); i++) {
                             JSONObject jsonObject1 = (JSONObject) listjson.opt(i);
 
-                            JSONObject jsonObject2 = (JSONObject) listjson.opt(0);
-
-
-                            product_id = jsonObject2.getString("GoodsId");
-                            modelm = jsonObject2.getString("Modelm");
-                            colors = jsonObject2.getString("Colors");
-                            curcount = jsonObject2.getString("CurNum");
+                            product_id = jsonObject1.getString("GoodsId");
+                            modelm = jsonObject1.getString("Modelm");
+                            colors = jsonObject1.getString("Colors");
+                            curcount = jsonObject1.getString("CurNum");
                             //					lastSuccessBarcode = rest[4].trim();
-
                             if (mBillNo == null || mBillNo.isEmpty()) {
-                                mBillNo = jsonObject2.getString("TranLno");
+                                mBillNo = jsonObject1.getString("TranLno");
                             }
 
-                            if (listjson.length() == 1) {
-                                nScanCount = jsonObject1.getString("CurNum");
-                            } else {
-                                nScanCount = String.valueOf(Integer.parseInt(curcount) + Integer.parseInt(jsonObject1.getString("CurNum")));
-                            }
-
+                            nScanCount = String.valueOf(Integer.parseInt(nScanCount) + Integer.parseInt(jsonObject1.optString("CurNum","0")));
                         }
                         ShowMessage.ShowMsg(hand, ShowMessage.HandScanSuccess, "");
                     } else {
-
-
                         //CS170001,1.50非球面,+1.75+0.50,1,6222323912072181,DF-CS001-17000001
                         //产品编号,型号,色号,当前型号数量,当前扫描的条码,发货单号
                         String rest[] = result.split(",",-1);

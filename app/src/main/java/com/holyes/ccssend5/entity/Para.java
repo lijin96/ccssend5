@@ -177,6 +177,7 @@ public class Para {
                 + ", BillNo=" + BillNo + ", SourceBillNo=" + SourceBillNo + "]";
     }
 
+
     public String toJson() throws JSONException {
         JSONObject js = new JSONObject();
         js.put("Barcode", getBarcode());

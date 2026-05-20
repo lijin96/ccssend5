@@ -48,6 +48,7 @@ import com.holyes.ccssend5.select.SelectRetailStore;
 import com.holyes.ccssend5.utils.SomeUtils;
 import com.holyes.headquarter.instock_in.EliminateActivity;
 import com.holyes.headquarter.instock_in.P_Dv_InStock_PackBox_List_NoBill;
+import com.holyes.headquarter.other.P_Dv_InStock_PackBox_Search;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -73,6 +74,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
     private SysUserInfo sysUserInfo;
     private AccessWeb accessWeb;
 
+    private String GoodsBrand="",GoodsSeries="";//产品品牌，产品系列
     private String GoodsModelm="",GoodsColor="",GoodsId="";//产品型号 产品色号 产品id
     private String BoxNoCode="";//盒标码
     private String OneCount="0",AllCount="0",AllBox="0";//当前型号已装数 当前已装产品总数 当前已装盒数
@@ -115,10 +117,11 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothManager bluetoothManager = null;
 
-    private boolean isTest = true;//是否测试，测试的话不需要连接蓝牙打印机。输出log.i盒标.编译的时候要false
+    private boolean isTest = false;//是否测试，测试的话不需要连接蓝牙打印机。输出log.i盒标.编译的时候要false
 
     private BoxTag boxTag;
 
+    private Button btn_again_print_boxcode;//打印盒标
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -133,7 +136,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
         initView();
 
     }
-    
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -144,7 +147,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                 updateBluetoothConnectionStatus();
             }
         }, 200); // 延迟200ms，给更多时间让蓝牙服务初始化
-        
+
         // 再次延迟检查，确保状态同步
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
@@ -153,7 +156,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
             }
         }, 500); // 延迟500ms再次检查
     }
-    
+
     /**
      * 更新蓝牙连接状态
      */
@@ -161,18 +164,18 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
         if (bluetoothManager == null) {
             return;
         }
-        
+
         // 检查蓝牙服务是否存在
         if (bluetoothManager.getBluetoothService() == null) {
             // 如果蓝牙服务不存在，尝试重新初始化
             bluetoothManager.initBluetoothServiceAndAutoConnect(this, mHandler);
         }
-        
+
         if (bluetoothManager.isBluetoothConnected()) {
             // 如果蓝牙已连接，更新界面状态
             String currentDeviceName = bluetoothManager.getConnectedDeviceName();
             String currentDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
-            
+
             if (currentDeviceName != null && !currentDeviceName.isEmpty()) {
                 connectedDeviceName = currentDeviceName;
                 connectedDeviceAddress = currentDeviceAddress;
@@ -186,7 +189,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                     connectedDeviceName = "未知设备";
                 }
             }
-            
+
             // 更新UI状态
             isConnectedBluetooth = true;
             tv_connect_state.setText("已连接:" + connectedDeviceName);
@@ -302,10 +305,20 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
             }
         });
 
+        btn_again_print_boxcode=findViewById(R.id.btn_again_print_boxcode);
+        btn_again_print_boxcode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(mContext, P_Dv_InStock_PackBox_Search.class);
+                intent.putExtra("PageType","factorypack");
+                startActivity(intent);
+            }
+        });
+
         // 使用全局蓝牙管理器
         bluetoothManager = BluetoothManager.getInstance();
         mBluetoothAdapter = bluetoothManager.getBluetoothAdapter();
-        
+
         if (bluetoothManager.isBluetoothAvailable()) {
             // 如果已经连接，则不需要重新初始化
             if (!bluetoothManager.isBluetoothConnected()) {
@@ -327,7 +340,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                 // 已经连接，从BluetoothManager获取当前连接的设备信息
                 String currentDeviceName = bluetoothManager.getConnectedDeviceName();
                 String currentDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
-                
+
                 if (currentDeviceName != null && !currentDeviceName.isEmpty()) {
                     connectedDeviceName = currentDeviceName;
                     connectedDeviceAddress = currentDeviceAddress;
@@ -338,7 +351,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                         connectedDeviceName = "未知设备";
                     }
                 }
-                
+
                 // 直接更新UI状态
                 isConnectedBluetooth = true;
                 tv_connect_state.setText("已连接:" + connectedDeviceName);
@@ -481,6 +494,8 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
 
                     String packBoxResult = accessWeb.Holyes_Dv_Factory_PackBox_NoBill(PackBoxObj.toString());
 
+//                    Log.d("main", packBoxResult);
+
                     JSONArray listjson = new JSONArray(packBoxResult);
                     List<Map<String, Object>>  packBoxResultList = new ArrayList<Map<String, Object>>();
                     for (int i = 0; i < listjson.length(); i++) {
@@ -497,7 +512,6 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                         map1.put("SetNum", jsonObject2.optString("SetNum"));//设置盒装数
                         map1.put("ActNum", jsonObject2.optString("ActNum"));//当前盒已装数
 
-
                         packBoxResultList.add(map1);
                     }
 
@@ -508,7 +522,6 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                         OneCount=packBoxResultList.get(0).get("GoodsNum").toString();//当前型号数量
                         AllCount=packBoxResultList.get(0).get("TotalNum").toString();//合计数
                         AllBox=packBoxResultList.get(0).get("BoxNum").toString();//当前装盒成功数
-
 
                         BoxActNum=packBoxResultList.get(0).get("ActNum").toString();
 
@@ -549,9 +562,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                     SetNumObj.addProperty("OaSuserId", sysUserInfo.getUserid());
 
                     String setFillBoxResult = accessWeb.Holyes_Dv_Factory_SetFillBoxNum(SetNumObj.toString());
-
 //                    Log.d("mian", setFillBoxResult);
-
                     JSONArray listjson = new JSONArray(setFillBoxResult);
                     List<Map<String, Object>> unFillBoxList = new ArrayList<Map<String, Object>>();
                     for (int i = 0; i < listjson.length(); i++) {
@@ -594,10 +605,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
 
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
-//                    String barcodeStr = et_barcode.getText().toString().trim();
-
                     String barcodeStr = "";
-
                     if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
                         //包含
                         barcodeStr = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
@@ -605,9 +613,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                         //不包含
                         barcodeStr = SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
                     }
-
                     et_barcode.setText("");
-
                     if (GoodsId.isEmpty()) {
                         ShowMessage.ShowMsg(mHandler, HandToaskErrorMsg, "请先选择产品");
                         return true;
@@ -620,9 +626,6 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                         ShowMessage.ShowMsg(mHandler, HandToaskErrorMsg, "请先连接蓝牙打印机");
                         return true;
                     }
-
-
-
 //                    if (!isPackedBoxReturnResult) {
 //                        showNormalDialog();
 //                        //MyProgressDialog.show(mContext, "数量超出，请查看数量是否正确，以免窜盒!!!", false, true);
@@ -631,7 +634,6 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
 //                        //ShowMessage.Show(mContext, "请等装盒完成后再继续扫描，谢谢！");
 //                        return true;
 //                    }
-
                     if (barcodeStr.startsWith("A")) {
                         MySound.errorSound();
                         ShowMessage.Show(mContext, "请扫描正确的物流码【" + barcodeStr + "】");
@@ -660,11 +662,9 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
     }
 
     private Handler mHandler = new Handler(new Handler.Callback() {
-
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
-
                 case 5:
                     //获取上一次未完成的装盒入库任务
                     MyProgressDialog.close();
@@ -703,7 +703,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                         ShowMessage.Show(mContext,"正在打印盒标，请稍后！！！");
 
                         SimpleDateFormat  simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-                        boxTag = new BoxTag(BoxNoCode, "", "", GoodsModelm, GoodsColor, BoxNoNum, sysUserInfo.getUserid(), simpleDateFormat.format(new Date()).substring(0, 10),"");
+                        boxTag = new BoxTag(BoxNoCode, GoodsBrand, GoodsSeries, GoodsModelm, GoodsColor, BoxNoNum, sysUserInfo.getUserid(), simpleDateFormat.format(new Date()).substring(0, 10),"");
                         printBoxCode(boxTag);
 
                         BoxNoCode="";
@@ -736,7 +736,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                         ShowMessage.Show(mContext,"正在打印盒标，请稍后！！！");
 
                         SimpleDateFormat  simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-                        boxTag = new BoxTag(BoxNoCode, "", "", GoodsModelm, GoodsColor, BoxNoNum, sysUserInfo.getUserid(), simpleDateFormat.format(new Date()).substring(0, 10),"");
+                        boxTag = new BoxTag(BoxNoCode, GoodsBrand, GoodsSeries, GoodsModelm, GoodsColor, BoxNoNum, sysUserInfo.getUserid(), simpleDateFormat.format(new Date()).substring(0, 10),"");
                         printBoxCode(boxTag);
 
                         BoxNoCode="";
@@ -756,7 +756,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                     // 获取连接的设备名称和地址
                     String deviceName = msg.getData().getString(BluetoothUtil.DEVICE_NAME);
                     String deviceAddress = msg.getData().getString(BluetoothUtil.DEVICE_ADDRESS);
-                    
+
                     // 确保设备名称不为空，如果为空则使用设备地址
                     if (deviceName == null || deviceName.isEmpty()) {
                         deviceName = deviceAddress;
@@ -764,7 +764,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                     if (deviceName == null || deviceName.isEmpty()) {
                         deviceName = "未知设备";
                     }
-                    
+
                     connectedDeviceName = deviceName;
                     if (deviceAddress != null && !deviceAddress.isEmpty()) {
                         connectedDeviceAddress = deviceAddress;
@@ -772,18 +772,18 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                         // 如果消息中没有设备地址，从BluetoothManager获取
                         connectedDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
                     }
-                    
+
                     // 更新UI显示（不依赖连接状态检查，因为消息顺序可能不确定）
                     tv_connect_state.setText("已连接:" + connectedDeviceName);
                     tv_connect_state.setTextColor(Color.parseColor("#008000"));
                     btn_connect.setText("断开");
                     isConnectedBluetooth = true;
-                    
+
                     // 保存连接信息到sysUserInfo
                     sysUserInfo.setConnectedBluetoothName(connectedDeviceName);
                     sysUserInfo.setConnectedBluetoothAddress(connectedDeviceAddress);
                     break;
-                    
+
                 case BluetoothUtil.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothService.STATE_CONNECTED:
@@ -791,7 +791,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                             // 从BluetoothManager获取设备信息
                             String currentDeviceName = bluetoothManager.getConnectedDeviceName();
                             String currentDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
-                            
+
                             if (currentDeviceName != null && !currentDeviceName.isEmpty()) {
                                 connectedDeviceName = currentDeviceName;
                                 connectedDeviceAddress = currentDeviceAddress;
@@ -805,7 +805,7 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                                     connectedDeviceName = "未知设备";
                                 }
                             }
-                            
+
                             // 强制更新界面状态
                             btn_connect.setText("断开");
                             tv_connect_state.setText("已连接:" + connectedDeviceName);
@@ -929,20 +929,20 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                     if (resultCode == Activity.RESULT_OK) {
                         connectedDeviceAddress = data.getStringExtra("deviceAddress");
                         connectedDeviceName = data.getStringExtra("deviceName");
-                        
+
                         // 处理设备名称为空的情况
                         if (connectedDeviceName == null || connectedDeviceName.isEmpty()) {
                             connectedDeviceName = connectedDeviceAddress;
                         }
-                        
+
                         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(connectedDeviceAddress);
-                        
+
                         // 立即更新界面状态为"正在连接"
                         isConnectedBluetooth = false;
                         tv_connect_state.setText("正在连接:" + connectedDeviceName + "...");
                         tv_connect_state.setTextColor(Color.BLACK);
                         btn_connect.setText("连接");
-                        
+
                         // 开始连接
                         bluetoothManager.connect(device);
                     }
@@ -955,6 +955,9 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                         GoodsModelm=data.getStringExtra("Modelm");
                         GoodsColor=data.getStringExtra("Colors");
                         GoodsId=data.getStringExtra("GoodsId");
+
+                        GoodsBrand=data.getStringExtra("BrandName");
+                        GoodsSeries=data.getStringExtra("SeriesName");
 
                         tv_model_color.setText(GoodsModelm+" "+GoodsColor);
                         tv_productid.setText(GoodsId);
@@ -973,6 +976,11 @@ public class Holyes_Dv_Factory_PackBox_NoBill extends Activity {
                     AllBox=data.getStringExtra("BoxNum");
 
                     BoxActNum=data.getStringExtra("BoxActNum");
+
+                    if (BoxActNum.equals("0")){
+                        BoxNoCode="";//如果当前盒已经剔除完了，那么盒标码就要清空
+                        tv_BoxNo_Code.setText(BoxNoCode);
+                    }
 
                     tv_one_count.setText(OneCount);
                     tv_all_count.setText(AllCount);

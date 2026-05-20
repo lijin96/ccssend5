@@ -10,7 +10,6 @@ import android.device.DeviceManager;
  * @Date: 2021/3/6 14:27
  */
 public class ADevicesManager  {
-
     /**是否是总公司* */
     public static final boolean CorpCompany = true;//true:总公司;false:代理商
 

@@ -246,8 +246,11 @@ public class FactoryHistoryEliminateActivity extends Activity {
                         map1.put("Modelm", jsonObject2.optString("Modelm"));
                         map1.put("Colors", jsonObject2.optString("Colors"));
 
-                        map1.put("GoodsNum", jsonObject2.optString("GoodsNum"));
-                        map1.put("TotalNum", jsonObject2.optString("TotalNum"));
+//                        map1.put("GoodsNum", jsonObject2.optString("GoodsNum"));
+//                        map1.put("TotalNum", jsonObject2.optString("TotalNum"));
+                        map1.put("GoodsNum", jsonObject2.optString("GoodsNum").equals("null")?"0":jsonObject2.optString("GoodsNum"));
+                        map1.put("TotalNum", jsonObject2.optString("TotalNum").equals("null")?"0":jsonObject2.optString("TotalNum"));
+
                         map1.put("BoxNum", jsonObject2.optString("BoxNum"));
 
                         map1.put("SetNum", jsonObject2.optString("SetNum"));

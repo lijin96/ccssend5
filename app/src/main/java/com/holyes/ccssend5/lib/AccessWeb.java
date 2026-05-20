@@ -393,8 +393,10 @@ public class AccessWeb {
         map.put("tLoginId", sysUserInfo.getLoginid());
         map.put("tCondition", tCondition);
         para.add(map);
+//        Log.d("main", para.toString());
         String result = downLoadWebResult("GetDownLoadTraderInfor", para);
         JSONArray listjson = new JSONArray(result);
+//        Log.d("main", result);
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < listjson.length(); i++) {
             JSONObject jsonObject2 = (JSONObject) listjson.opt(i);
@@ -408,7 +410,12 @@ public class AccessWeb {
             map1.put("CityName", jsonObject2.getString("CityName"));
             map1.put("AgentId", jsonObject2.getString("AgentId"));
             map1.put("AgentName", jsonObject2.getString("AgentName"));
-            map1.put("Uprecndate", jsonObject2.getString("Uprecndate"));
+            if (jsonObject2.optString("Uprecndate").equals("")){
+                map1.put("Uprecndate", jsonObject2.getString("uprecndate"));
+            }else{
+                map1.put("Uprecndate", jsonObject2.getString("Uprecndate"));
+            }
+
             list.add(map1);
         }
         return list;
@@ -423,6 +430,7 @@ public class AccessWeb {
         map.put("tLoginId", sysUserInfo.getLoginid());
         map.put("tCondition", tCondition);
         para.add(map);
+//        Log.d("main", map.toString());
         return downLoadWebResult("GetDownLoadStoreRecord", para);
     }
 
@@ -437,6 +445,7 @@ public class AccessWeb {
         map.put("tCondition", tCondition);
         para.add(map);
         String result = downLoadWebResult("GetDownLoadStoreInfor", para);
+//        Log.d("main",result);
         JSONArray listjson = new JSONArray(result);
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < listjson.length(); i++)
@@ -449,7 +458,12 @@ public class AccessWeb {
             map1.put("Tel", jsonObject2.getString("Tel"));
             map1.put("CorpAddr", jsonObject2.getString("CorpAddr"));
             map1.put("TraderId", jsonObject2.getString("TraderId"));
-            map1.put("Uprecndate", jsonObject2.getString("Uprecndate"));
+//            map1.put("Uprecndate", jsonObject2.getString("Uprecndate"));
+            if (jsonObject2.optString("Uprecndate").equals("")){
+                map1.put("Uprecndate", jsonObject2.optString("uprecndate"));
+            }else{
+                map1.put("Uprecndate", jsonObject2.optString("Uprecndate"));
+            }
             list.add(map1);
         }
         return list;
@@ -1200,6 +1214,23 @@ public class AccessWeb {
         return result;
     }
 
+    /**
+     * 无单无入库代销套餐装盒出货：整套产品与明细数量一致后的提交接口。
+     * 服务端 WebMethod 名称须与后台实现一致（若后台不同名，请改此常量或增加映射）。
+     *
+     * @param tPara JSON，建议包含 PackId、ScanBillNo、BillNo、DeCompId、StockId、OaSuserId、Barcodes 等
+     */
+    public String P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock_Complete(String tPara)
+            throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tWebId", mWebId);
+        map.put("tPara", tPara);
+        para.add(map);
+        return getWebResult("P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock_Complete", para);
+    }
+
 
     /**
      * 修改镜片入库品检单明细信息
@@ -1247,7 +1278,7 @@ public class AccessWeb {
         map.put("tPara", tPara);
         para.add(map);
 //        Log.d("main11",methodName);
-        Log.d("main11",para.toString());
+//        Log.d("main11",para.toString());
         String result = getWebResult(methodName, para);
 //        Log.d("main11",result);
         return result;
@@ -1308,7 +1339,10 @@ public class AccessWeb {
         map.put("tBcOrAc", tBcOrAc);
         map.put("tCompnay", tCompnay);
         para.add(map);
+
+//        Log.d("main", map.toString());
         String result = getWebResult("BarcodeLogistics", para);
+
 
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         JSONArray listjson = new JSONArray(result);
@@ -1480,6 +1514,55 @@ public class AccessWeb {
     /**
      * 用户登录函数
      * */
+    public String AgentUserLogin(String pUsercode, String pPsw,String pBrandingCode) throws Exception {
+        String result = "";
+        // SOAP Action
+        String SOAP_ACTION = this.namespace + "UserLoginVer02";//
+        // 指定WebService的命名空间和调用的方法名
+        SoapObject rpc = new SoapObject(this.namespace, "UserLoginVer02");
+        // 设置需调用WebService接口需要传入的参数
+        rpc.addProperty("pBrandingCode",pBrandingCode);
+        rpc.addProperty("pUsercode", pUsercode);
+        rpc.addProperty("pPsw", pPsw);
+        // 生成调用WebService方法的SOAP请求信息,并指定SOAP的版本
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+                SoapEnvelope.VER10);
+        envelope.bodyOut = rpc;
+        // 设置是否调用的是dotNet开发的WebService
+        envelope.dotNet = true;
+        // 等价于envelope.bodyOut = rpc;
+        envelope.setOutputSoapObject(rpc);
+
+        // HttpTransportSE transport = new HttpTransportSE(this.webservice_url);
+        MyAndroidHttpTransport transport = new MyAndroidHttpTransport(
+                this.webservice_url, 300000);//5分钟
+//        Log.d("main", this.webservice_url);
+        try {
+            // 调用WebService
+            transport.call(SOAP_ACTION, envelope);
+            // 获取返回的数据
+            SoapObject object = (SoapObject) envelope.bodyIn;
+//            SoapObject object = (SoapObject) envelope.getResponse();
+            // 获取返回的结果
+//            Log.d("main",object.toString());
+            result = object.getProperty(0).toString();
+        } catch (IOException e) {
+            throw new Exception("服务器:（IOException网络超时）"+e);
+        } catch (Exception e) {
+            throw new Exception("服务器:服务器连接失败"+e.getMessage());
+        }
+
+        if (result.isEmpty())
+        {
+            throw new Exception("网络超时");
+        }
+        return result;
+    }
+
+
+    /**
+     * 用户登录函数
+     * */
     public String UserLogin(String pUsercode, String pPsw) throws Exception {
         String result = "";
         // SOAP Action
@@ -1506,7 +1589,7 @@ public class AccessWeb {
             transport.call(SOAP_ACTION, envelope);
             // 获取返回的数据
             SoapObject object = (SoapObject) envelope.bodyIn;
-//            			SoapObject object = (SoapObject) envelope.getResponse();
+//            SoapObject object = (SoapObject) envelope.getResponse();
             // 获取返回的结果
 //            Log.d("main",object.toString());
             result = object.getProperty(0).toString();
@@ -1777,7 +1860,7 @@ public class AccessWeb {
     /**
      * 判断版本第四代还是第五代
      * 返回True是第五代、返回false是第四代 以前的判断
-     * 优化 V17新版 V16保留原先的版本
+     * 优化 CCS7新版 V16保留原先的版本
      * @param tBrandNessCode 品牌代号
      * @return
      * @throws Exception
@@ -1807,7 +1890,7 @@ public class AccessWeb {
             //			SoapObject object = (SoapObject) envelope.getResponse();
             // 获取返回的结果
             result = object.getProperty(0).toString().trim();
-//            Log.d("mian","版本号"+Boolean.parseBoolean(result.split(";")[0]));
+            Log.d("mian","版本号"+result);
 //            return  Boolean.parseBoolean(result.split(";")[0]);
             if(result.split(";")[0].equals("true"))
             {
@@ -1820,11 +1903,56 @@ public class AccessWeb {
 //            return false;
             throw new Exception("服务器:" + e);
         }
-
-
     }
 
 
+    /**
+     *读取品牌商对应的参数
+     * 优化 CCS7新版
+     * @param tBrandId 品牌代号
+     * @return
+     * @throws Exception
+     */
+    public String ReadBrand(String tBrandId)throws Exception{
+        try{
+            String result = "";
+            // SOAP Action
+            String SOAP_ACTION = "http://tempuri.org/ReadBrand";
+            // 指定WebService的命名空间和调用的方法名
+            SoapObject rpc = new SoapObject("http://tempuri.org/", "ReadBrand");
+            // 设置需调用WebService接口需要传入的参数
+            rpc.addProperty("tLoginCode", "HOLYES");
+            rpc.addProperty("tBrandId", tBrandId);
+            // 生成调用WebService方法的SOAP请求信息,并指定SOAP的版本
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+                    SoapEnvelope.VER10);
+            envelope.bodyOut = rpc;
+            // 设置是否调用的是dotNet开发的WebService
+            envelope.dotNet = true;
+            // 等价于envelope.bodyOut = rpc;
+            envelope.setOutputSoapObject(rpc);
+            HttpTransportSE transport = new HttpTransportSE("http://www.4006889521.cn:9516/softreg/WebRegService.asmx");
+            // 调用WebService
+            transport.call(SOAP_ACTION, envelope);
+            // 获取返回的数据
+            SoapObject object = (SoapObject) envelope.bodyIn;
+            //			SoapObject object = (SoapObject) envelope.getResponse();
+            // 获取返回的结果
+            result = object.getProperty(0).toString().trim();
+//            Log.d("main","版本号"+result);
+//            return  Boolean.parseBoolean(result.split(";")[0]);
+            if(result.split(";")[0].equals("true"))
+            {
+                return result.split(";")[1];
+            }else{
+                throw new Exception("服务器：" + result.split(";")[1]);
+            }
+        }catch (Exception e){
+//            e.printStackTrace();
+//            return false;
+            throw new Exception("服务器:" + e);
+        }
+    }
 
     /**
      *判断当前品牌商是否有首发发货功能
@@ -1930,6 +2058,7 @@ public class AccessWeb {
             //SoapObject object = (SoapObject) envelope.getResponse();
             // 获取返回的结果
             result = object.getProperty(0).toString();
+
         } catch (IOException e) {
             throw new Exception("服务器连接超时"+e.getMessage());
         } catch (Exception e) {
@@ -1940,7 +2069,9 @@ public class AccessWeb {
         }
         if (result.split(";")[0].equalsIgnoreCase("true"))
         {
+            Log.d("main", result);
             result=result.split(";")[1];
+
             JSONArray listjson = new JSONArray(result);
             Map<String, Object> map1 = new HashMap<String, Object>();
             for (int i = 0; i < listjson.length(); i++) {
@@ -2022,6 +2153,19 @@ public class AccessWeb {
         String data = getWebResult("P_Dv_OutStock_D_L_Lens_NoBill", para);
         return data;
     }
+    /** 代理商镜片扫描发货分销店
+     * */
+    public String P_Dv_OutStock_D_L_F_Lens(String tPara) throws Exception {
+
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tWebId", mWebId);
+        map.put("tPara", tPara);
+        para.add(map);
+        String data = getWebResult("P_Dv_OutStock_D_L_F_Lens", para);
+        return data;
+    }
 
 
     /** 零售商镜片扫描退货代理商
@@ -2100,6 +2244,7 @@ public class AccessWeb {
         map.put("pBillNo", pBillNo);
         map.put("pShopBillNo", pShopBillNo);
         para.add(map);
+        Log.d("main",map.toString() );
         String data = getWebResult("P_Dv_OutStock_D_S_NoBill", para);
         return data;
     }
@@ -2651,7 +2796,7 @@ public class AccessWeb {
         map.put("tWebId", mWebId);
         map.put("tPara", tPara);
         para.add(map);
-        Log.d("main", para.toString());
+//        Log.d("main", para.toString());
         String data = getWebResult("Holyes_Dv_Factory_PackBox_NoBill", para);
         return data;
     }
@@ -2708,9 +2853,9 @@ public class AccessWeb {
         map.put("tWebId", mWebId);
         map.put("tPara", tPara);
         para.add(map);
-        Log.d("mainWeedOut", para.toString());
+//        Log.d("mainWeedOut", para.toString());
         String data = getWebResult("Holyes_Dv_Factory_WeedOutFillBox", para);
-        Log.d("mainresult", data);
+//        Log.d("mainresult", data);
         return data;
     }
 

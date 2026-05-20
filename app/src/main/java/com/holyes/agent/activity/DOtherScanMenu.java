@@ -109,9 +109,9 @@ public class DOtherScanMenu extends Activity {
                     .getItemAtPosition(position);
 
 
-            if (sysUserInfo.getAgentVersionNum().equals("V17")){
-                ShowMessage.Show(mContext,"第七代代理商功能正在开发中");
-            }else {
+//            if (sysUserInfo.getAgentVersionNum().equals("V17")){
+//                ShowMessage.Show(mContext,"第七代代理商功能正在开发中");
+//            }else {
                 String menuName = map.get("menu").toString();
                 if (menuArray[0].equals(menuName)) {
                     //物流查询
@@ -126,7 +126,7 @@ public class DOtherScanMenu extends Activity {
                 if (intent != null) {
                     startActivity(intent);
                 }
-            }
+//            }
         }
     }
 

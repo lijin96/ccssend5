@@ -113,6 +113,11 @@ public class P_Dv_ReturnedPurchase_D_L_NoBill extends Activity {
         ((Button) findViewById(R.id.btn_exit))
                 .setOnClickListener(new BtnExitClick());
         tv_title = (TextView) findViewById(R.id.tv_title);
+
+        if (sysUserInfo.getAgentVersionNum().equals("CCS7")) {
+            tv_title.setText("镜架退货");
+        }
+
         tv_company_na = (TextView) findViewById(R.id.tv_company_na);
         tv_product_id = (TextView) findViewById(R.id.tv_product_id);
         tv_curqty = (TextView) findViewById(R.id.tv_curqty);
@@ -131,14 +136,9 @@ public class P_Dv_ReturnedPurchase_D_L_NoBill extends Activity {
         tvBillno.setText("");
 
         printbill = new PrintUtil();
-
-
         try {
-
             SqliteDataHelper.getHelper(getApplicationContext()).execSQL("delete from newscandate");
-
         } catch (Exception e) {
-
             e.printStackTrace();
         }
 
@@ -171,7 +171,6 @@ public class P_Dv_ReturnedPurchase_D_L_NoBill extends Activity {
                     MySound.scanSound();
                     //MyProgressDialog.close();
                     //				addToList();
-
                     tv_model_colors.setText(modelm + "-" + colors);
                     tv_curqty.setText(curcount);
                     tv_totalqty.setText(nScanCount);

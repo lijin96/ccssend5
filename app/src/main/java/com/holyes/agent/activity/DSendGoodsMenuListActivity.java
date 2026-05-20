@@ -71,11 +71,18 @@ public class DSendGoodsMenuListActivity extends Activity {
 //			{
 
 //			}
-        if(sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("19")||sysUserInfo.getEnterpriseId().equals("88")){
-            menu = new String[]{"零售发货","镜片零售发货","分销发货", "发货撤销","镜片发货撤销"};
-        }else{
-            menu = new String[]{"零售发货","分销发货","发货撤销",};
+        //00合力思 19帕莎 88海伦
+        if (sysUserInfo.getAgentVersionNum().equals("CCS7")) {
+            //新版没有零售发货了 "零售发货", "镜片零售发货",
+            menu = new String[]{"镜架发货","镜片分销发货", "镜架发货撤销", "镜片发货撤销"};
+        }else {
+            if(sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("19")||sysUserInfo.getEnterpriseId().equals("88")) {
+                menu = new String[]{"零售发货", "镜片零售发货", "分销发货", "发货撤销", "镜片发货撤销"};
+            }else{
+                menu = new String[]{"零售发货","分销发货","发货撤销",};
+            }
         }
+
 //        }
 
 
@@ -133,37 +140,41 @@ public class DSendGoodsMenuListActivity extends Activity {
             Map<String, Object> map = (Map<String, Object>) listView
                     .getItemAtPosition(position);
 
-            if (sysUserInfo.getAgentVersionNum().equals("V17")){
-                ShowMessage.Show(DSendGoodsMenuListActivity.this,"第七代代理商功能正在开发中");
-            }else {
-                String menuName = map.get("menu").toString();
-                if (menuName.equals("零售发货")) // 零售发货
-                {
-                    Intent intent = new Intent(DSendGoodsMenuListActivity.this, SelectCompanyRetailer.class);
-                    intent.putExtra("aim", "P_Dv_OutStock_D_L_NoBill");//零售发货
-                    startActivity(intent);
-                } else if (menuName.equals("发货撤销")) // 零售发货撤销
-                {
-                    Intent intent = new Intent(DSendGoodsMenuListActivity.this, P_Dv_OutStock_D_L_NoBill_Cancel.class);
-                    intent.putExtra("type", "retailer");//零售
-                    startActivity(intent);
-                } else if (menuName.equals("分销发货")) // 分销发货
-                {
-                    Intent intent = new Intent(DSendGoodsMenuListActivity.this, SelectCompanyStoreInfor.class);
-                    startActivity(intent);
-                } else if (menuName.equals("镜片零售发货")) // 镜片零售发货
-                {
-                    Intent intent = new Intent(DSendGoodsMenuListActivity.this, SelectCompanyRetailer.class);
-                    intent.putExtra("aim", "P_Dv_OutStock_D_L_Lens_NoBill");//零售
+//            if (sysUserInfo.getAgentVersionNum().equals("V17")){
+//                ShowMessage.Show(DSendGoodsMenuListActivity.this,"第七代代理商功能正在开发中");
+//            }else {
+            String menuName = map.get("menu").toString();
+            if (menuName.equals("零售发货")) // 零售发货
+            {
+                Intent intent = new Intent(DSendGoodsMenuListActivity.this, SelectCompanyRetailer.class);
+                intent.putExtra("aim", "P_Dv_OutStock_D_L_NoBill");//零售发货
+                startActivity(intent);
+            } else if (menuName.equals("发货撤销")||menuName.equals("镜架发货撤销")) // 零售发货撤销
+            {
+                Intent intent = new Intent(DSendGoodsMenuListActivity.this, P_Dv_OutStock_D_L_NoBill_Cancel.class);
+                intent.putExtra("type", "retailer");//零售
+                startActivity(intent);
+            } else if (menuName.equals("分销发货")||menuName.equals("镜架发货")) // 分销发货 镜架发货
+            {
+                Intent intent = new Intent(DSendGoodsMenuListActivity.this, SelectCompanyStoreInfor.class);
+                intent.putExtra("aim", "P_Dv_OutStock_D_S_NoBill");//
+                startActivity(intent);
+            }else if (menuName.equals("镜片分销发货")){
+                Intent intent = new Intent(DSendGoodsMenuListActivity.this, SelectCompanyStoreInfor.class);
+                intent.putExtra("aim", "P_Dv_OutStock_D_L_F_Lens");//
+                startActivity(intent);
+            }else if (menuName.equals("镜片零售发货")) // 镜片零售发货
+            {
+                Intent intent = new Intent(DSendGoodsMenuListActivity.this, SelectCompanyRetailer.class);
+                intent.putExtra("aim", "P_Dv_OutStock_D_L_Lens_NoBill");//零售
 
-                    startActivity(intent);
-                } else if (menuName.equals("镜片发货撤销")) // 镜片零售发货
-                {
-                    Intent intent = new Intent(DSendGoodsMenuListActivity.this, P_Dv_OutStock_D_L_Lens_NoBill_Cancel.class);
-
-                    startActivity(intent);
-                }
+                startActivity(intent);
+            } else if (menuName.equals("镜片发货撤销")) // 镜片零售发货撤销
+            {
+                Intent intent = new Intent(DSendGoodsMenuListActivity.this, P_Dv_OutStock_D_L_Lens_NoBill_Cancel.class);
+                startActivity(intent);
             }
+        }
 
 //			else if (menuName.equals("分销发货撤销")) //
 //			{
@@ -171,7 +182,7 @@ public class DSendGoodsMenuListActivity extends Activity {
 //				intent.putExtra("type", "store");//门店
 //				startActivity(intent);
 //			}
-        }
+//        }
     }
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {

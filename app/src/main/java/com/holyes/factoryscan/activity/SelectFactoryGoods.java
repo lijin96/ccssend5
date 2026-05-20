@@ -72,6 +72,7 @@ public class SelectFactoryGoods extends Activity {
 
     private View alertView;//AlertDialog的布局view
     private ListView listview;
+    private TextView tv_empty_prompt;
     private EditText et_search;
     private TextView tv_total;
 
@@ -104,6 +105,7 @@ public class SelectFactoryGoods extends Activity {
 //                .setOnClickListener(new BtnExitClickListener());
         listview = (ListView) findViewById(R.id.listView1);
         tv_total = (TextView) findViewById(R.id.tv_total);
+        tv_empty_prompt = (TextView) findViewById(R.id.tv_empty_prompt);
         et_search = (EditText) findViewById(R.id.et_search);
 
         lsv_aim = getIntent().getStringExtra("aim");
@@ -129,11 +131,16 @@ public class SelectFactoryGoods extends Activity {
 
         listview.setOnItemClickListener(new ListViewItemClickListener());
 
-//        DownLoadDataThread();
+        // 初始为空时也显示“请先搜索产品”
+        listview.setEmptyView(tv_empty_prompt);
+        initListView(dList);
     }
 
 
     public void initListView(List<Map<String, Object>> dataList) {
+        if (dataList == null) {
+            dataList = new ArrayList<>();
+        }
         adapter = new SimpleAdapter(this, dataList, R.layout.item_list_factorygoods,
                 new String[]{"BrandName", "SeriesName", "Modelm", "Colors",
                 }, new int[]{
@@ -141,6 +148,11 @@ public class SelectFactoryGoods extends Activity {
                 R.id.item_factorycolor});
         listview.setAdapter(adapter);
         tv_total.setText("（共 " + dataList.size() + " 条）");
+
+        // 兜底：确保第一次进入时也能立即看到空数据提示
+        if (tv_empty_prompt != null) {
+            tv_empty_prompt.setVisibility(dataList.size() > 0 ? View.GONE : View.VISIBLE);
+        }
     }
 
     private class handShowMsg extends Handler {
@@ -153,11 +165,11 @@ public class SelectFactoryGoods extends Activity {
                     break;
                 case ShowMessage.HandSuccess: // 返回成功
                     MyProgressDialog.close();
-                    if (dList.size()>0){
-                        initListView(dList);
-                    }else{
-                        ShowMessage.Show(SelectFactoryGoods.this, "未查询到数据");
+                    // 无论返回多少条都刷新 ListView，让空数据时自动显示提示语
+                    if (dList.size()==0){
+                        ShowMessage.Show(mContext, "未查询到数据，请检查关键字");
                     }
+                    initListView(dList);
                     break;
 
                 default:
@@ -229,6 +241,9 @@ public class SelectFactoryGoods extends Activity {
             intent.putExtra("Modelm", item.get("Modelm").toString());
             intent.putExtra("Colors", item.get("Colors").toString());
             intent.putExtra("GoodsId", item.get("GoodsId").toString());
+            intent.putExtra("BrandName", item.get("BrandName").toString());
+            intent.putExtra("SeriesName", item.get("SeriesName").toString());
+
             setResult(RESULT_OK, intent);
             finish();
 

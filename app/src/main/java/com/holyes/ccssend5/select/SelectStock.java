@@ -166,6 +166,14 @@ public class SelectStock extends Activity {
             else if (lsv_aim.equals("P_Dv_OutStock_Z_D_NoBill_BeInStock")) {
                 intent = new Intent(SelectStock.this, P_Dv_OutStock_Z_D_NoBill_BeInStock.class);
             }
+            else  if (lsv_aim.equals("P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock")){
+                //无单无入库代销套餐装盒出货
+                intent = new Intent(SelectStock.this, SelectSetmeal.class);
+                intent.putExtra("aim", "P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock");
+            }else if (lsv_aim.equals("P_Dv_OutStock_Z_L_PackMeal_NoBill_NoInStock")){
+                intent = new Intent(SelectStock.this, SelectSetmeal.class);
+                intent.putExtra("aim", "P_Dv_OutStock_Z_L_PackMeal_NoBill_NoInStock");
+            }
 
             //直营无入库无单发货
             else if (lsv_aim.equals("P_Dv_OutStock_Z_L_NoBill_NoInStock")) {

@@ -235,7 +235,7 @@ public class MenuListActivity extends Activity {
             intent.putExtra("aim", "P_Dv_OutStock_Lens_Z_D_Bill_BeInStock");
         }
 
-//        有单有入库代发货
+        //有单有入库代发货
         else if ("030106".equals(menucode)) {
             intent = new Intent(mContext, SelectPeiBill.class);
             intent.putExtra("aim", "P_Dv_OutStock_Z_D_L_Bill_BeInStock");
@@ -244,7 +244,13 @@ public class MenuListActivity extends Activity {
         //无单有入库代发货
         else if ("030107".equals(menucode)) {
             intent = new Intent(mContext, SelectCompanyD.class);
-            intent.putExtra("aim", "P_Dv_OutStock_Z_D_L_NoBill_BeInStock"); }
+            intent.putExtra("aim", "P_Dv_OutStock_Z_D_L_NoBill_BeInStock");
+        }
+        //无单无入库代销套餐装盒发货
+        else if ("030108".equals(menucode)) {
+            intent = new Intent(mContext, SelectCompanyD.class);
+            intent.putExtra("aim", "P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock");
+        }
         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>---代销发货撤销--->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         //有单发货撤销
@@ -354,12 +360,21 @@ public class MenuListActivity extends Activity {
             intent = new Intent(mContext, SelectPeiBill.class);
             intent.putExtra("aim", "P_Dv_OutStock_Lens_Z_L_Bill_BeInStock");
         }
-        //镜片有单无入库直销发货
+//        //镜片有单无入库直销发货
+//        else if ("050108".equals(menucode)){
+//            intent = new Intent(mContext, SelectPeiBill.class);
+//            intent.putExtra("aim", "P_Dv_OutStock_Lens_Z_L_Bill_NoInStock");
+//        }
+        //无单无入库套餐装盒发货（总店）
         else if ("050108".equals(menucode)){
-            intent = new Intent(mContext, SelectPeiBill.class);
-            intent.putExtra("aim", "P_Dv_OutStock_Lens_Z_L_Bill_NoInStock");
-        }
+//            intent = new Intent(mContext, SelectPeiBill.class);
+//            intent.putExtra("aim", "P_Dv_OutStock_Lens_Z_L_Bill_NoInStock");
+            //无单无入库代销套餐装盒发货
 
+                intent = new Intent(mContext, SelectCompanyZY.class);
+                intent.putExtra("aim", "P_Dv_OutStock_Z_L_PackMeal_NoBill_NoInStock");
+
+        }
         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>---直销发货撤消--->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         //有单直销发货撤消

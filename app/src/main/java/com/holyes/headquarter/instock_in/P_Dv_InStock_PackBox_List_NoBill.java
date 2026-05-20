@@ -202,7 +202,7 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
         // 使用全局蓝牙管理器
         bluetoothManager = BluetoothManager.getInstance();
         mBluetoothAdapter = bluetoothManager.getBluetoothAdapter();
-        
+
         if (bluetoothManager.isBluetoothAvailable()) {
             // 如果已经连接，则不需要重新初始化
             if (!bluetoothManager.isBluetoothConnected()) {
@@ -224,7 +224,7 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
                 // 已经连接，从BluetoothManager获取当前连接的设备信息
                 String currentDeviceName = bluetoothManager.getConnectedDeviceName();
                 String currentDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
-                
+
                 if (currentDeviceName != null && !currentDeviceName.isEmpty()) {
                     connectedDeviceName = currentDeviceName;
                     connectedDeviceAddress = currentDeviceAddress;
@@ -235,7 +235,7 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
                         connectedDeviceName = "未知设备";
                     }
                 }
-                
+
                 // 直接更新UI状态
                 isConnectedBluetooth = true;
                 tv_connect_state.setText("已连接:" + connectedDeviceName);
@@ -275,7 +275,7 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
                 updateBluetoothConnectionStatus();
             }
         }, 200); // 延迟200ms，给更多时间让蓝牙服务初始化
-        
+
         // 再次延迟检查，确保状态同步
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
@@ -284,7 +284,7 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
             }
         }, 500); // 延迟500ms再次检查
     }
-    
+
     /**
      * 更新蓝牙连接状态
      */
@@ -292,18 +292,18 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
         if (bluetoothManager == null) {
             return;
         }
-        
+
         // 检查蓝牙服务是否存在
         if (bluetoothManager.getBluetoothService() == null) {
             // 如果蓝牙服务不存在，尝试重新初始化
             bluetoothManager.initBluetoothServiceAndAutoConnect(this, mHandler);
         }
-        
+
         if (bluetoothManager.isBluetoothConnected()) {
             // 如果蓝牙已连接，更新界面状态
             String currentDeviceName = bluetoothManager.getConnectedDeviceName();
             String currentDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
-            
+
             if (currentDeviceName != null && !currentDeviceName.isEmpty()) {
                 connectedDeviceName = currentDeviceName;
                 connectedDeviceAddress = currentDeviceAddress;
@@ -317,7 +317,7 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
                     connectedDeviceName = "未知设备";
                 }
             }
-            
+
             // 更新UI状态
             isConnectedBluetooth = true;
             tv_connect_state.setText("已连接:" + connectedDeviceName);
@@ -348,20 +348,20 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
                     if (resultCode == Activity.RESULT_OK) {
                         connectedDeviceAddress = data.getStringExtra("deviceAddress");
                         connectedDeviceName = data.getStringExtra("deviceName");
-                        
+
                         // 处理设备名称为空的情况
                         if (connectedDeviceName == null || connectedDeviceName.isEmpty()) {
                             connectedDeviceName = connectedDeviceAddress;
                         }
-                        
+
                         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(connectedDeviceAddress);
-                        
+
                         // 立即更新界面状态为"正在连接"
                         isConnectedBluetooth = false;
                         tv_connect_state.setText("正在连接:" + connectedDeviceName + "...");
                         tv_connect_state.setTextColor(Color.BLACK);
                         btn_connect.setText("连接");
-                        
+
                         // 开始连接
                         bluetoothManager.connect(device);
                     }
@@ -564,7 +564,7 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
                     // 获取连接的设备名称和地址
                     String deviceName = msg.getData().getString(BluetoothUtil.DEVICE_NAME);
                     String deviceAddress = msg.getData().getString(BluetoothUtil.DEVICE_ADDRESS);
-                    
+
                     // 确保设备名称不为空，如果为空则使用设备地址
                     if (deviceName == null || deviceName.isEmpty()) {
                         deviceName = deviceAddress;
@@ -572,7 +572,7 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
                     if (deviceName == null || deviceName.isEmpty()) {
                         deviceName = "未知设备";
                     }
-                    
+
                     connectedDeviceName = deviceName;
                     if (deviceAddress != null && !deviceAddress.isEmpty()) {
                         connectedDeviceAddress = deviceAddress;
@@ -580,18 +580,18 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
                         // 如果消息中没有设备地址，从BluetoothManager获取
                         connectedDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
                     }
-                    
+
                     // 更新UI显示（不依赖连接状态检查，因为消息顺序可能不确定）
                     tv_connect_state.setText("已连接:" + connectedDeviceName);
                     tv_connect_state.setTextColor(Color.parseColor("#008000"));
                     btn_connect.setText("断开");
                     isConnectedBluetooth = true;
-                    
+
                     // 保存连接信息到sysUserInfo
                     sysUserInfo.setConnectedBluetoothName(connectedDeviceName);
                     sysUserInfo.setConnectedBluetoothAddress(connectedDeviceAddress);
                     break;
-                    
+
                 case BluetoothUtil.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothService.STATE_CONNECTED:
@@ -599,7 +599,7 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
                             // 从BluetoothManager获取设备信息
                             String currentDeviceName = bluetoothManager.getConnectedDeviceName();
                             String currentDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
-                            
+
                             if (currentDeviceName != null && !currentDeviceName.isEmpty()) {
                                 connectedDeviceName = currentDeviceName;
                                 connectedDeviceAddress = currentDeviceAddress;
@@ -613,7 +613,7 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
                                     connectedDeviceName = "未知设备";
                                 }
                             }
-                            
+
                             // 强制更新界面状态
                             btn_connect.setText("断开");
                             tv_connect_state.setText("已连接:" + connectedDeviceName);
@@ -1007,7 +1007,6 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
         printUtil.print(P_Dv_InStock_PackBox_List_NoBill.this, "           装盒入库", mark, pList, sysUserInfo.getUserid());
     }
 
-
     public void printBoxCode(BoxTag boxTag) {
         if (boxTag == null) {
             ShowMessage.ShowMsg(mHandler, HandToaskErrorMsg, "没有数据可以打印");
@@ -1020,7 +1019,7 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
 
         } else {
 //			message = SomeUtils.readFileString(mContext,BluetoothUtil.BoxTagModel);
-            message = SomeUtils.readAssetsTxt(mContext, "lab_ChuanJ");
+            message = SomeUtils.readAssetsTxt(mContext, "lab_Chuanj");
 //            message = SomeUtils.readAssetsTxt(mContext, "lab_jb");
         }
 //        Log.d("main",message);
@@ -1080,7 +1079,7 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
                 message = message.replace("%C", boxTag.getColor());
                 message = message.replace("%N", boxTag.getNum());
 //                message = message.replace("%D", boxTag.getPackDate());
-            }else if (sysUserInfo.getEnterpriseId().toString().equals("76")||sysUserInfo.getEnterpriseId().toString().equals("74")||sysUserInfo.getEnterpriseId().toString().equals("00")){
+            }else if (sysUserInfo.getEnterpriseId().toString().equals("76")||sysUserInfo.getEnterpriseId().toString().equals("74")||sysUserInfo.getEnterpriseId().toString().equals("00")||sysUserInfo.getEnterpriseId().toString().equals("72")){
 //                逸夫和阿塔那都需要加仓库，品牌代号是76和74
                 message = message.replace("%BOX", boxTag.getBoxNo());
                 message = message.replace("%U", boxTag.getUserCode());
@@ -1107,7 +1106,7 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
             message = message.replace("%M", boxTag.getModel());
             message = message.replace("%C", boxTag.getColor());
             message = message.replace("%N", boxTag.getNum());
-            message = message.replace("%D", boxTag.getPackDate());
+            message = message.replace("%D", boxTag.getStockName());
         }
 
         //byte[] send = readFileByte();

@@ -9,8 +9,8 @@ android {
         minSdkVersion 15
         targetSdkVersion 30
         versionCode 2
-        versionName "V1T9202510161050"// V1T9202508061430 总公司版本号
-//        versionName "D1T9202510141030" //D1T9202506201600 代理商版本号
+        versionName "V1T9202605131450"// V1T9202605131450 总公司版本号 更新了品牌72的盒标打印格式
+//        versionName "D1T9202603191050" //D1T9202506201600 代理商版本号
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'

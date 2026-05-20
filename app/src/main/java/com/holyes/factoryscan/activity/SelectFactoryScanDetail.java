@@ -120,13 +120,14 @@ public class SelectFactoryScanDetail extends Activity {
 
 
 
-        LocalDate currentDate = LocalDate.now();
-        int year = currentDate.getYear();
-        int month = currentDate.getMonthValue()-1;
-        int day = currentDate.getDayOfMonth();
+        Calendar calendar = Calendar.getInstance();
+
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);      // 注意：Calendar的月份是0-11
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
 
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String today = sdf.format(new Date());
 
         dp_start_date.setText(getLastMonthToday());

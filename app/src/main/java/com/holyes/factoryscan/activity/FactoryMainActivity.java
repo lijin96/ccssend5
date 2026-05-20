@@ -27,7 +27,6 @@ public class FactoryMainActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_factorymain);
-
         mContext=this;
 
         btn_scan_box=findViewById(R.id.btn_scan_box);

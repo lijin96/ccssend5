@@ -367,8 +367,8 @@ public class HelpActivity extends Activity implements View.OnClickListener {
                         "uprecndate=? where traderid=? ";
                 try {
                     String rest = "";
-                    rest = SqliteDataHelper.getHelper(getApplicationContext()).execSQLString("select traderid from newretail where traderid=?",
-                            new String[]{TraderId});
+                    rest = SqliteDataHelper.getHelper(getApplicationContext()).execSQLString("select traderid from newretail where traderid=? and  agentid=?",
+                            new String[]{TraderId,AgentId});
                     if (rest == "") {
                         SqliteDataHelper.getHelper(getApplicationContext()).execSQL(sqlInsert,
                                 new String[]{TraderId, TraderName, Link, Tel, CorpAddr, ProviceName,

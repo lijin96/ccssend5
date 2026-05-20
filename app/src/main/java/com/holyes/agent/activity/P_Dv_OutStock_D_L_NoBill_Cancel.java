@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -345,13 +346,14 @@ public class P_Dv_OutStock_D_L_NoBill_Cancel extends Activity {
                     para.setScanSn(String.valueOf(nSize));
                     para.setScanBillNo(Scanbillno);
                     para.setBillNo("");
-
+//                    Log.d("main", para.toJson());
                     result = AccessWeb.getHelper(getApplicationContext()).P_Dv_Scan("P_Dv_OutStock_D_L_NoBill_Cancel", para.toJson());
                     if (result.isEmpty()) {
                         MySound.errorSound();
                         ShowMessage.ShowMsg(hand, 3, "");
                         return;
                     }
+//                    Log.d("main", result);
                     //产品编号,型号,色号,当前型号数量,当前扫描的条码,发货单号(无作用)
                     //CS170001,1.50非球面,+1.75+0.50,1,6222323912072181,DF-CS001-17000001
                     String rest[] = result.split(",",-1);

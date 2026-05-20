@@ -187,6 +187,9 @@ public class SelectCompanyD extends Activity {
                     } else if (lsv_aim.equals("P_Dv_OutStock_Z_D_L_NoBill_BeInStock")){
                         //无单有入库代发货
                         intent = new Intent(SelectCompanyD.this, P_Dv_OutStock_Z_D_L_NoBill_BeInStock.class);
+                    }else if (lsv_aim.equals("P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock")){
+                        //无单无入库代销套餐装盒出货
+                        intent = new Intent(SelectCompanyD.this, SelectStock.class);
                     }
 
 

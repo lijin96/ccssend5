@@ -48,6 +48,7 @@ import com.holyes.ccssend5.utils.SomeUtils;
 import com.holyes.factoryscan.activity.FactoryMainActivity;
 import com.holyes.headquarter.activity.MainActivity;
 
+import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.Console;
@@ -538,6 +539,31 @@ public class LoginActivity extends Activity {
                 //				showTip("获取服务器时间...");
                 //				checkSystemDatetime();
                 showTip("验证用户身份...");
+                if (sysUserInfo.getSoftType().equals("52")) {
+//                    if (businessid == null || businessid.isEmpty()) {
+//                        businessid = sysUserInfo.getEnterpriseId();
+//                        if (businessid == null || businessid.isEmpty()) {
+//                            businessid = "00";//测试
+//                        }
+//                        }
+//                    }
+//                    businessid="00";
+                    String tEnterpriseId = sysUserInfo.getEnterpriseId();
+//                    Log.d("main", tEnterpriseId);
+                    String agentVersionNum = AccessWeb.getHelper(mContext).ReadBrand(tEnterpriseId);
+//                    Log.d("main", agentVersionNum);
+                    JSONObject jsonObject = new JSONObject(agentVersionNum);
+                    String tVerNo = jsonObject.optString("VerNo");
+                    if (tVerNo.equals("CCS7")){
+                        //如果是新版本的CCS就更新域名和端口号
+                        SqliteDataHelper.getHelper(getApplicationContext()).execSQL(String.format("update brandinfo set  serverccip =  '%1$s',port = '%2$s'" +" where businessid = '%3$s' ",jsonObject.optString("ServerCcIp"),jsonObject.optString("Port"),businessid));
+
+                        sysUserInfo.setServerIp( jsonObject.optString("ServerCcIp"));
+                        sysUserInfo.setServerport(jsonObject.optString("Port"));
+                    }
+                    sysUserInfo.setAgentVersionNum(tVerNo);
+                }
+
                 if (isPaused)
                     return;
                 if (!userlogin()) {
@@ -604,15 +630,7 @@ public class LoginActivity extends Activity {
                     //代理商模式，下载零售商资料
                     showTip("下载零售店资料...");
                     downLoadTraderInfor();
-
                     //改变是否是新版本的，暂用来判断代理商模式是否要添加发货撤销退货撤销功能
-
-                    if (businessid == null || businessid.isEmpty()) {
-                        businessid = sysUserInfo.getEnterpriseId();
-                        if (businessid == null || businessid.isEmpty()) {
-                            businessid = "00";//测试
-                        }
-                    }
                     //品牌代号除了海伦的之外其他的不下载分销店资料
                     //if("88".equals(businessid)||"00".equals(businessid))
                     //{
@@ -620,9 +638,6 @@ public class LoginActivity extends Activity {
                     showTip("下载分销店资料...");
                     downloadStoreInfor();
                     //}
-                    String agentVersionNum = AccessWeb.getHelper(mContext).JudgeBrandNessVer(businessid);
-//                    sysUserInfo.setIsNewVerSoft(isNewVerSoft);agentVersionNum
-                    sysUserInfo.setAgentVersionNum(agentVersionNum);
                 }
 
 
@@ -717,7 +732,7 @@ public class LoginActivity extends Activity {
         List<Map<String, Object>> map;
         for (maxDataTime = getLSMaxUprecndate("newretail", sysUserInfo.getCompanyid()); companycurcount < companycount; maxDataTime = getLSMaxUprecndate("newretail", sysUserInfo.getCompanyid())) {
             map = AccessWeb.getHelper(getApplicationContext()).GetDownLoadTraderInfor(maxDataTime);
-//            Log.d("Main",map.toString());
+//            Log.d("main",map.toString());
             if (map.size() == 0) {
                 return;
             }
@@ -744,8 +759,8 @@ public class LoginActivity extends Activity {
                         "uprecndate=? where traderid=? ";
                 try {
                     String rest = "";
-                    rest = SqliteDataHelper.getHelper(getApplicationContext()).execSQLString("select traderid from newretail where traderid=?",
-                            new String[]{TraderId});
+                    rest = SqliteDataHelper.getHelper(getApplicationContext()).execSQLString("select traderid from newretail where traderid=? and agentid=?",
+                            new String[]{TraderId,AgentId});
                     if (rest == "") {
                         SqliteDataHelper.getHelper(getApplicationContext()).execSQL(sqlInsert,
                                 new String[]{TraderId, TraderName, Link, Tel, CorpAddr, ProviceName,
@@ -775,13 +790,16 @@ public class LoginActivity extends Activity {
      */
     public void downloadStoreInfor() throws Exception {
         maxDataTime = getMaxUprecndate("storeinfor");
+
         companycurcount = 0;
+//        Log.d("main", maxDataTime);
         companycount = Integer.parseInt(AccessWeb.getHelper(getApplicationContext()).GetDownLoadStoreRecord(maxDataTime));
         setProgressBarMax(companycount);
         String StoreId, StoreName, Link, Tel, CorpAddr, TraderId, Uprecndate;
         List<Map<String, Object>> map;
         for (maxDataTime = getMaxUprecndate("storeinfor"); companycurcount < companycount; maxDataTime = getMaxUprecndate("storeinfor")) {
             map = AccessWeb.getHelper(mContext).GetDownLoadStoreInfor(maxDataTime);
+
             if (map.size() == 0) {
                 return;
             }
@@ -1154,7 +1172,6 @@ public class LoginActivity extends Activity {
 
     }
 
-
     /**
      * 直营店数据下载
      */
@@ -1292,7 +1309,14 @@ public class LoginActivity extends Activity {
 
     private boolean userlogin() throws Exception {
         String result = "";
-        result = AccessWeb.getHelper(getApplicationContext()).UserLogin(et_username.getText().toString().trim(), et_password.getText().toString());
+        if (sysUserInfo.getAgentVersionNum().equals("CCS7")){
+            //新客户调用新版登录接口
+            result = AccessWeb.getHelper(getApplicationContext()).AgentUserLogin(et_username.getText().toString().trim(), et_password.getText().toString(),sysUserInfo.getEnterpriseId());
+
+        }else {
+            result = AccessWeb.getHelper(getApplicationContext()).UserLogin(et_username.getText().toString().trim(), et_password.getText().toString());
+        }
+//        Log.d("main", result);
         return ParseData_login(result);
     }
 
@@ -1300,6 +1324,7 @@ public class LoginActivity extends Activity {
     protected void onResume() {
         super.onResume();
         startCheckNetState();
+        sysUserInfo.setAgentVersionNum("");
         //		Log.i("main", "onResume--");
     }
 
@@ -1370,7 +1395,6 @@ public class LoginActivity extends Activity {
             return false;
         }
         if (Boolean.parseBoolean(user.getP00()) == false) {
-
             // 显示错误信息
             ShowMessage.ShowMsg(hand, user.getP01());
             return false;
@@ -1387,33 +1411,10 @@ public class LoginActivity extends Activity {
             }
 
             if (sysUserInfo.getSoftType().equals("52")) {
-                if (!et_username.getText().toString().equals(sysUserInfo.getMobile())) {
+//                if (!et_username.getText().toString().equals(sysUserInfo.getMobile())) {
                     SqliteDataHelper.getHelper(getApplicationContext()).CleanStoreinfor();
-                }
+//                }
             }
-
-            if (user.getP05().equals("供应商")) {
-//                Log.d("main", user.toString());
-                sysUserInfo.setUserid(user.getP01());
-                sysUserInfo.setLoginid(user.getP02());
-                //总公司 代号传00，代理商则代理商代号
-                if ("总公司".equals(user.getP05())) {
-                    sysUserInfo.setCompanyid("00");
-                } else {
-                    sysUserInfo.setCompanyid(user.getP06());
-                }
-                sysUserInfo.setStock(user.getP04());
-                sysUserInfo.setMode(user.getP05());
-                sysUserInfo.setCompanyid(user.getP06());
-                sysUserInfo.setMobile(checkBox.isChecked() ? et_username.getText().toString() : "");
-                sysUserInfo.setLoginpwd(checkBox.isChecked() ? et_password.getText().toString() : "");
-                sysUserInfo.setIfrember(checkBox.isChecked());
-                sysUserInfo.setLastLoginServerIp(sysUserInfo.getServerip());
-
-                ShowMessage.ShowMsg(hand, "供应商登录");
-                return false;
-            }
-
             if (sysUserInfo.getSoftType().equals("52"))//代理商模式
             {
                 if (user.getP05().equals("总公司")) {
@@ -1447,6 +1448,10 @@ public class LoginActivity extends Activity {
                 SqliteDataHelper.getHelper(getApplicationContext()).execSQL(String.format("update brandinfo set  username =  '%1$s',pwd = '%2$s',IfRemember = '%3$s'  where businessid = '%4$s' ", et_username.getText().toString().trim(), et_password.getText().toString().trim(), String.valueOf(checkBox.isChecked()), sysUserInfo.getClientId()));
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+            if (user.getP05().equals("供应商")){
+                ShowMessage.ShowMsg(hand, "供应商登录");
+                return false;
             }
             return true;
         } else {
@@ -1809,7 +1814,7 @@ public class LoginActivity extends Activity {
                 cursor.close();
                 cursor = null;
             }
-            if (maxUprecndate == null) {
+            if (maxUprecndate == null||maxUprecndate.equals("null")) {
                 maxUprecndate = "";
             }
         } catch (Exception e) {
@@ -1887,11 +1892,8 @@ public class LoginActivity extends Activity {
                 SqliteDataHelper.getHelper(getApplicationContext()).execSQL(sql);
                 addTestMenu();
             }
-
             //			List<Map<String, String>> allList = SqliteDataHelper.exeselect("select * from menus");
             //			Log.i("main", "allList----"+allList.toString());
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }

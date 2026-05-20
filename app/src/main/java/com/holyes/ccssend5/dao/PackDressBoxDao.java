@@ -269,6 +269,50 @@ public class PackDressBoxDao {
             }
         }
 
+        /**
+         * 套餐内已扫数量合计（sum(scannum)）
+         */
+        public static int querySumScannum(Context context) {
+            List<Map<String, Object>> list;
+            String sql = "select sum(scannum) as scannum from packdressboxscan";
+            try {
+                list = SqliteDataHelper.getHelper(context).QueryDbList(sql, null);
+                if (list == null || list.isEmpty()) {
+                    return 0;
+                }
+                Object v = list.get(0).get("scannum");
+                if (v == null || v.toString().isEmpty()) {
+                    return 0;
+                }
+                return Integer.parseInt(v.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+                return 0;
+            }
+        }
+
+        /**
+         * 当前产品在套餐明细中的计划数量 packnum（同一 goodsid 多行时取首行）
+         */
+        public static int queryPacknumForGoodsid(Context context, String goodsid) {
+            List<Map<String, Object>> list;
+            String sql = "select packnum from packdressboxscan where goodsid ='" + goodsid + "' limit 1";
+            try {
+                list = SqliteDataHelper.getHelper(context).QueryDbList(sql, null);
+                if (list == null || list.isEmpty()) {
+                    return 0;
+                }
+                Object v = list.get(0).get("packnum");
+                if (v == null) {
+                    return 0;
+                }
+                return Integer.parseInt(v.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+                return 0;
+            }
+        }
+
 
 
 

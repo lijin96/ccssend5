@@ -106,7 +106,7 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
         // 使用全局蓝牙管理器
         bluetoothManager = BluetoothManager.getInstance();
         mBluetoothAdapter = bluetoothManager.getBluetoothAdapter();
-        
+
         connectedDeviceName = sysUserInfo.getConnectedBluetoothName();
         connectedDeviceAddress = sysUserInfo.getConnectedBluetoothAddress();
 
@@ -130,7 +130,7 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
                 // 已经连接，从BluetoothManager获取当前连接的设备信息
                 String currentDeviceName = bluetoothManager.getConnectedDeviceName();
                 String currentDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
-                
+
                 if (currentDeviceName != null && !currentDeviceName.isEmpty()) {
                     connectedDeviceName = currentDeviceName;
                     connectedDeviceAddress = currentDeviceAddress;
@@ -141,7 +141,7 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
                         connectedDeviceName = "未知设备";
                     }
                 }
-                
+
                 // 直接更新UI状态
                 isConnectedBluetooth = true;
                 tv_connect_state.setText("已连接:" + connectedDeviceName);
@@ -186,7 +186,7 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
                 updateBluetoothConnectionStatus();
             }
         }, 200); // 延迟200ms，给更多时间让蓝牙服务初始化
-        
+
         // 再次延迟检查，确保状态同步
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
@@ -195,7 +195,7 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
             }
         }, 500); // 延迟500ms再次检查
     }
-    
+
     /**
      * 更新蓝牙连接状态
      */
@@ -203,18 +203,18 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
         if (bluetoothManager == null) {
             return;
         }
-        
+
         // 检查蓝牙服务是否存在
         if (bluetoothManager.getBluetoothService() == null) {
             // 如果蓝牙服务不存在，尝试重新初始化
             bluetoothManager.initBluetoothServiceAndAutoConnect(this, mHandler);
         }
-        
+
         if (bluetoothManager.isBluetoothConnected()) {
             // 如果蓝牙已连接，更新界面状态
             String currentDeviceName = bluetoothManager.getConnectedDeviceName();
             String currentDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
-            
+
             if (currentDeviceName != null && !currentDeviceName.isEmpty()) {
                 connectedDeviceName = currentDeviceName;
                 connectedDeviceAddress = currentDeviceAddress;
@@ -228,7 +228,7 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
                     connectedDeviceName = "未知设备";
                 }
             }
-            
+
             // 更新UI状态
             isConnectedBluetooth = true;
             tv_connect_state.setText("已连接:" + connectedDeviceName);
@@ -260,20 +260,20 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
                     if (resultCode == Activity.RESULT_OK) {
                         connectedDeviceAddress = data.getStringExtra("deviceAddress");
                         connectedDeviceName = data.getStringExtra("deviceName");
-                        
+
                         // 处理设备名称为空的情况
                         if (connectedDeviceName == null || connectedDeviceName.isEmpty()) {
                             connectedDeviceName = connectedDeviceAddress;
                         }
-                        
+
                         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(connectedDeviceAddress);
-                        
+
                         // 立即更新界面状态为"正在连接"
                         isConnectedBluetooth = false;
                         tv_connect_state.setText("正在连接:" + connectedDeviceName + "...");
                         tv_connect_state.setTextColor(Color.BLACK);
                         btn_connect.setText("连接");
-                        
+
                         // 开始连接
                         bluetoothManager.connect(device);
                     }
@@ -388,7 +388,7 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
                     // 获取连接的设备名称和地址
                     String deviceName = msg.getData().getString(BluetoothUtil.DEVICE_NAME);
                     String deviceAddress = msg.getData().getString(BluetoothUtil.DEVICE_ADDRESS);
-                    
+
                     // 确保设备名称不为空，如果为空则使用设备地址
                     if (deviceName == null || deviceName.isEmpty()) {
                         deviceName = deviceAddress;
@@ -396,7 +396,7 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
                     if (deviceName == null || deviceName.isEmpty()) {
                         deviceName = "未知设备";
                     }
-                    
+
                     connectedDeviceName = deviceName;
                     if (deviceAddress != null && !deviceAddress.isEmpty()) {
                         connectedDeviceAddress = deviceAddress;
@@ -404,18 +404,18 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
                         // 如果消息中没有设备地址，从BluetoothManager获取
                         connectedDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
                     }
-                    
+
                     // 更新UI显示（不依赖连接状态检查，因为消息顺序可能不确定）
                     tv_connect_state.setText("已连接:" + connectedDeviceName);
                     tv_connect_state.setTextColor(Color.parseColor("#008000"));
                     btn_connect.setText("断开");
                     isConnectedBluetooth = true;
-                    
+
                     // 保存连接信息到sysUserInfo
                     sysUserInfo.setConnectedBluetoothName(connectedDeviceName);
                     sysUserInfo.setConnectedBluetoothAddress(connectedDeviceAddress);
                     break;
-                    
+
                 case BluetoothUtil.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothService.STATE_CONNECTED:
@@ -423,25 +423,25 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
                             // 使用已设置的设备信息或从BluetoothManager获取
                             String currentDeviceName = connectedDeviceName;
                             String currentDeviceAddress = connectedDeviceAddress;
-                            
+
                             if (currentDeviceName == null || currentDeviceName.isEmpty()) {
                                 currentDeviceName = bluetoothManager.getConnectedDeviceName();
                                 currentDeviceAddress = bluetoothManager.getConnectedDeviceAddress();
                             }
-                            
+
                             if (currentDeviceName == null || currentDeviceName.isEmpty()) {
                                 currentDeviceName = "未知设备";
                             }
-                            
+
                             connectedDeviceName = currentDeviceName;
                             connectedDeviceAddress = currentDeviceAddress;
-                            
+
                             // 强制更新界面状态
                             btn_connect.setText("断开");
                             tv_connect_state.setText("已连接:" + connectedDeviceName);
                             tv_connect_state.setTextColor(Color.parseColor("#008000"));
                             isConnectedBluetooth = true;
-                            
+
                             // 保存连接信息
                             sysUserInfo.setConnectedBluetoothName(connectedDeviceName);
                             sysUserInfo.setConnectedBluetoothAddress(connectedDeviceAddress);
@@ -497,7 +497,13 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
                 break;
             case R.id.btn_again_print_boxcode:
                 if (isConnectedBluetooth) {
-                    printBoxCode(boxTag);
+//                    if (boxTag.getBoxNo().indexOf("P")>0){
+//                        //如果码包含P，就是套标
+//                        printBoxCodeV1(boxTag);
+//                    }else{
+                        printBoxCode(boxTag);
+//                    }
+
                 } else {
                     ShowMessage.ShowMsg(mHandler, HandToaskErrorMsg, "未连接蓝牙，请先连接蓝牙");
                 }
@@ -512,24 +518,44 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
         }
     }
 
+    //盒标补打
     public void printBoxCode(BoxTag boxTag) {
         if (boxTag == null) {
             ShowMessage.ShowMsg(mHandler, HandToaskErrorMsg, "没有数据可以打印");
             return;
         }
         String message = "";
-
-        if (isFileExists("lab_" + sysUserInfo.getEnterpriseId().toString() + ".txt")) {
-            message = SomeUtils.readAssetsTxt(mContext, "lab_" + sysUserInfo.getEnterpriseId().toString());
-        } else {
+        if (tPageType.equals("factorypack")){
+            message =SomeUtils.readAssetsTxt(mContext, "lab_gys");
+        }else{
+            if (isFileExists("lab_" + sysUserInfo.getEnterpriseId().toString() + ".txt")) {
+                message = SomeUtils.readAssetsTxt(mContext, "lab_" + sysUserInfo.getEnterpriseId().toString());
+            } else {
 //			message = SomeUtils.readFileString(mContext,BluetoothUtil.BoxTagModel);
 //            川久2022年2月25日17:20:05要求不显示时间
-            message = SomeUtils.readAssetsTxt(mContext, "lab_ChuanJ");
+                message = SomeUtils.readAssetsTxt(mContext, "lab_Chuanj");
 //            message = SomeUtils.readAssetsTxt(mContext, "lab_jb");
+            }
         }
 
         sendMessage(message, boxTag);
     }
+
+
+    //套标补打
+    public void printBoxCodeV1(BoxTag boxTag) {
+
+        if (boxTag == null) {
+            ShowMessage.ShowMsg(mHandler, ShowMessage.HandShowMessage, "没有数据可以打印");
+            return;
+        }
+//		lab_jb lab_meal
+        String message = SomeUtils.readAssetsTxt(mContext, "lab_meal");
+//		Log.i("main", "sendMessage--------判断boxTag");
+        sendMessageV1(message, boxTag);
+
+    }
+
 
 
     //判断assets文件夹 文件是否存在
@@ -554,7 +580,46 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
     }
 
     /**
-     * 发送给蓝牙打印
+     * 套标发送给蓝牙打印
+     *
+     * @param message 模本字符串
+     * @param boxTag  要打印的数据封装成的类
+     */
+    private void sendMessageV1(String message, BoxTag boxTag) {
+
+        if (!bluetoothManager.isBluetoothConnected()) {
+            ShowMessage.Show(mContext, "未连接蓝牙");
+            return;
+        }
+
+        message = message.replace("%BOX", boxTag.getBoxNo());
+        message = message.replace("%U", boxTag.getUserCode());
+        if (boxTag.getBrandName().length() > 7) {
+            message = message.replace("%B", boxTag.getBrandName().substring(0, 7));
+            message = message.replace("%S", boxTag.getBrandName().substring(8));
+
+        } else {
+            message = message.replace("%B", boxTag.getBrandName());
+            message = message.replace("%S", " ");
+        }
+        message = message.replace("%N", boxTag.getNum());
+        message = message.replace("%D", boxTag.getPackDate());
+
+
+        //byte[] send = readFileByte();
+        byte[] send;
+        try {
+            send = message.getBytes("GBK");
+            bluetoothManager.write(send);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    /**
+     * 盒标发送给蓝牙打印
      *
      * @param message 模本字符串
      * @param boxTag  要打印的数据封装成的类
@@ -564,47 +629,8 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
             ShowMessage.Show(mContext, "未连接蓝牙");
             return;
         }
-        if (isFileExists("lab_" + sysUserInfo.getEnterpriseId().toString() + ".txt")) {
-            //52万新  53帕兰德
-            if (sysUserInfo.getEnterpriseId().toString().equals("52")||sysUserInfo.getEnterpriseId().toString().equals("53")){
-                message = message.replace("%BOX", boxTag.getBoxNo());
-                message = message.replace("%U", boxTag.getUserCode());
-                message = message.replace("%B", boxTag.getBrandName());
-                message = message.replace("%S", boxTag.getSerialName());
-                message = message.replace("%M", boxTag.getModel());
-                message = message.replace("%C", boxTag.getColor());
-                message = message.replace("%N", boxTag.getNum());
-//                message = message.replace("%D", boxTag.getPackDate());
-            }else if (sysUserInfo.getEnterpriseId().toString().equals("12")){
-//                12邦维 用汉印IT4S打印机打印
-                message = message.replace("%BOX", boxTag.getBoxNo());
-                message = message.replace("%U", boxTag.getUserCode());
-                message = message.replace("%B", boxTag.getBrandName());
-                message = message.replace("%S", boxTag.getSerialName());
-                message = message.replace("%M", boxTag.getModel());
-                message = message.replace("%C", boxTag.getColor());
-                message = message.replace("%N", boxTag.getNum());
-//                message = message.replace("%D", boxTag.getPackDate());
-            }else if (sysUserInfo.getEnterpriseId().toString().equals("76")||sysUserInfo.getEnterpriseId().toString().equals("74")||sysUserInfo.getEnterpriseId().toString().equals("00")){
-//                逸夫和阿塔那都需要加仓库，品牌代号是76和74
-                message = message.replace("%BOX", boxTag.getBoxNo());
-                message = message.replace("%U", boxTag.getUserCode());
-                message = message.replace("%B", boxTag.getBrandName());
-                message = message.replace("%S", boxTag.getSerialName());
-                message = message.replace("%M", boxTag.getModel());
-                message = message.replace("%C", boxTag.getColor());
-                message = message.replace("%N", boxTag.getNum());
-                message = message.replace("%D", boxTag.getStockName());
-            }else{
-                //51
-                message = message.replace("%BOX", boxTag.getBoxNo());
-                message = message.replace("%B", boxTag.getBrandName());
-                message = message.replace("%M", boxTag.getModel());
-                message = message.replace("%C", boxTag.getColor());
-                message = message.replace("%N", boxTag.getNum());
-                message = message.replace("%D", boxTag.getPackDate());
-            }
-        } else {
+
+        if (tPageType.equals("factorypack")){
             message = message.replace("%BOX", boxTag.getBoxNo());
             message = message.replace("%U", boxTag.getUserCode());
             message = message.replace("%B", boxTag.getBrandName());
@@ -613,6 +639,57 @@ public class P_Dv_InStock_PackBox_Search extends Activity implements View.OnClic
             message = message.replace("%C", boxTag.getColor());
             message = message.replace("%N", boxTag.getNum());
             message = message.replace("%D", boxTag.getPackDate());
+        }else {
+            if (isFileExists("lab_" + sysUserInfo.getEnterpriseId().toString() + ".txt")) {
+                //52万新  53帕兰德
+                if (sysUserInfo.getEnterpriseId().toString().equals("52") || sysUserInfo.getEnterpriseId().toString().equals("53")) {
+                    message = message.replace("%BOX", boxTag.getBoxNo());
+                    message = message.replace("%U", boxTag.getUserCode());
+                    message = message.replace("%B", boxTag.getBrandName());
+                    message = message.replace("%S", boxTag.getSerialName());
+                    message = message.replace("%M", boxTag.getModel());
+                    message = message.replace("%C", boxTag.getColor());
+                    message = message.replace("%N", boxTag.getNum());
+//                message = message.replace("%D", boxTag.getPackDate());
+                } else if (sysUserInfo.getEnterpriseId().toString().equals("12")) {
+//                12邦维 用汉印IT4S打印机打印
+                    message = message.replace("%BOX", boxTag.getBoxNo());
+                    message = message.replace("%U", boxTag.getUserCode());
+                    message = message.replace("%B", boxTag.getBrandName());
+                    message = message.replace("%S", boxTag.getSerialName());
+                    message = message.replace("%M", boxTag.getModel());
+                    message = message.replace("%C", boxTag.getColor());
+                    message = message.replace("%N", boxTag.getNum());
+//                message = message.replace("%D", boxTag.getPackDate());
+                } else if (sysUserInfo.getEnterpriseId().toString().equals("76") || sysUserInfo.getEnterpriseId().toString().equals("74") || sysUserInfo.getEnterpriseId().toString().equals("00")||sysUserInfo.getEnterpriseId().toString().equals("72")) {
+//                逸夫和阿塔那都需要加仓库，品牌代号是76和74
+                    message = message.replace("%BOX", boxTag.getBoxNo());
+                    message = message.replace("%U", boxTag.getUserCode());
+                    message = message.replace("%B", boxTag.getBrandName());
+                    message = message.replace("%S", boxTag.getSerialName());
+                    message = message.replace("%M", boxTag.getModel());
+                    message = message.replace("%C", boxTag.getColor());
+                    message = message.replace("%N", boxTag.getNum());
+                    message = message.replace("%D", boxTag.getStockName());
+                } else {
+                    //51
+                    message = message.replace("%BOX", boxTag.getBoxNo());
+                    message = message.replace("%B", boxTag.getBrandName());
+                    message = message.replace("%M", boxTag.getModel());
+                    message = message.replace("%C", boxTag.getColor());
+                    message = message.replace("%N", boxTag.getNum());
+                    message = message.replace("%D", boxTag.getPackDate());
+                }
+            } else {
+                message = message.replace("%BOX", boxTag.getBoxNo());
+                message = message.replace("%U", boxTag.getUserCode());
+                message = message.replace("%B", boxTag.getBrandName());
+                message = message.replace("%S", boxTag.getSerialName());
+                message = message.replace("%M", boxTag.getModel());
+                message = message.replace("%C", boxTag.getColor());
+                message = message.replace("%N", boxTag.getNum());
+                message = message.replace("%D", boxTag.getStockName());
+            }
         }
 
         //	        	byte[] send = readFileByte();

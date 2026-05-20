@@ -582,8 +582,6 @@ public class P_Dv_OutStock_Z_D_NoBill_BeInStock extends Activity {
                             } else {
                                 nScanCount = String.valueOf(Integer.parseInt(curcount) + Integer.parseInt(jsonObject1.getString("CurNum")));
                             }
-
-
                         }
                     } else {
                         //true;产品编号,型号,色号,当前型号数量,当前扫描的条码,入库单号

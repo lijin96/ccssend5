@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -116,13 +117,10 @@ public class P_Dv_Brand_Check extends Activity implements View.OnClickListener {
                         public void run() {
 
                             try {
-
                                 bm = ImageUtils.UrlToBitmap(logurl);
-
                                 hand.sendEmptyMessage(0);
-
                             } catch (Exception e) {
-
+                                ShowMessage.ShowMsg(hand, ShowMessage.HandScanSuccess, e.getMessage());
                                 e.printStackTrace();
                             }
 
@@ -165,6 +163,7 @@ public class P_Dv_Brand_Check extends Activity implements View.OnClickListener {
 
                         try {
                             reault = access.AccreditCodeLeadingV2(edt_code.getText().toString().trim(), ADevicesManager.getDeviceId());
+
                             businessid=reault.get("businessid").toString();
                             brandname=reault.get("brandname").toString();
                             serverccip=reault.get("serverccip").toString();

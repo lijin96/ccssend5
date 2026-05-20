@@ -487,6 +487,7 @@
             android:layout_toRightOf="@id/btn_connect"
             android:background="@drawable/button_background2"
             android:text="扫描打印"
+            android:visibility="gone"
             android:textSize="28dp" />
 
         <Button

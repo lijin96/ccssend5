@@ -311,7 +311,7 @@ public class Holyes_Dv_Box_InStock_NoBill extends Activity {
 
                     result = accWeb.P_Dv_Scan("Holyes_Dv_Box_InStock_NoBill", gson.toJson(boxmap));
 
-                    Log.d("main",result);
+//                    Log.d("main",result);
 
                     JSONArray listjson = new JSONArray(result);
                     List<Map<String, Object>> WeedOutList = new ArrayList<Map<String, Object>>();

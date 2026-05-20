@@ -28,6 +28,7 @@ import com.holyes.ccssend5.myview.MyProgressDialog;
 import com.holyes.ccssend5.utils.DisplayUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
 import com.holyes.headquarter.other.P_Dv_PackDressBoxCheck;
+import com.holyes.headquarter.sendgoods_d.P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,7 @@ public class SelectSetmeal extends Activity implements View.OnClickListener {
     private AccessWeb accWeb;
     private Thread downloadThread;
     private Handler hand;
+    private Intent getIntent;
 
     private ListView listview;
     private EditText et_search;
@@ -54,6 +56,7 @@ public class SelectSetmeal extends Activity implements View.OnClickListener {
     private List<Map<String, Object>> searchList = new ArrayList<Map<String, Object>>();
     private Map<String, Object> item;
 
+    private String lsv_aim = "";
     private String lsv_etStr = "", lsv_searchSql = "";
 
     @Override
@@ -68,11 +71,15 @@ public class SelectSetmeal extends Activity implements View.OnClickListener {
         listview = (ListView) findViewById(R.id.listView1);
         tv_total = (TextView) findViewById(R.id.tv_total);
 
+        getIntent = getIntent();
+        lsv_aim = getIntent().getStringExtra("aim");
+
         try {
             SqliteDataHelper.getHelper(getApplicationContext()).execSQL("delete from packmealset");
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
         list = new ArrayList<Map<String, Object>>();
 
@@ -127,13 +134,45 @@ public class SelectSetmeal extends Activity implements View.OnClickListener {
             ListView listView = (ListView) parent;
             item = (Map<String, Object>) listView.getItemAtPosition(position);
 
+            Intent intent = new Intent(mContext, P_Dv_PackDressBoxCheck.class);
 
-            Intent intent = new Intent(SelectSetmeal.this, SelectSureConfirm.class);
+            if (lsv_aim.equals("P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock")||lsv_aim.equals("P_Dv_OutStock_Z_L_PackMeal_NoBill_NoInStock")) {
+                intent = new Intent(mContext, P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock.class);
+                //无单无入库代销套餐装盒出货
+                intent.putExtra("aim", lsv_aim);
+                intent.putExtra("supplier_id", getIntent.getStringExtra("supplier_id"));
+                intent.putExtra("supplier_name", getIntent.getStringExtra("supplier_name"));
 
-            intent.putExtra("title", "确定选择套餐：" + item.get("PackName")
-                    + "吗？");
+                intent.putExtra("stock_id", getIntent.getStringExtra("stock_id"));
+                intent.putExtra("stock_name",getIntent.getStringExtra("stock_name"));
+                //代理或直营
+                intent.putExtra("company_name", getIntent.getStringExtra("company_name"));
+                intent.putExtra("company_id", getIntent.getStringExtra("company_id"));
+            }else if (lsv_aim.equals("P_Dv_OutStock_Z_L_PackMeal_NoBill_NoInStock")){
+                //无单无入库直销套餐装盒出货
+                intent.putExtra("aim", lsv_aim);
+                intent.putExtra("supplier_id", getIntent.getStringExtra("supplier_id"));
+                intent.putExtra("supplier_name", getIntent.getStringExtra("supplier_name"));
 
-            startActivityForResult(intent, 0);
+                intent.putExtra("stock_id", getIntent.getStringExtra("stock_id"));
+                intent.putExtra("stock_name",getIntent.getStringExtra("stock_name"));
+                //代理或直营
+                intent.putExtra("company_name", getIntent.getStringExtra("company_name"));
+                intent.putExtra("company_id", getIntent.getStringExtra("company_id"));
+            }
+
+            intent.putExtra("PackId", (String) item.get("PackId"));
+            intent.putExtra("PackName", (String) item.get("PackName"));
+
+            startActivity(intent);
+
+//
+//            Intent intent = new Intent(SelectSetmeal.this, SelectSureConfirm.class);
+//
+//            intent.putExtra("title", "确定选择套餐：" + item.get("PackName")
+//                    + "吗？");
+
+//            startActivityForResult(intent, 0);
         }
     }
 
@@ -229,12 +268,7 @@ public class SelectSetmeal extends Activity implements View.OnClickListener {
 
 
             if (requestCode == 0) {
-                Intent intent = new Intent(mContext, P_Dv_PackDressBoxCheck.class);
 
-                intent.putExtra("PackId", (String) item.get("PackId"));
-                intent.putExtra("PackName", (String) item.get("PackName"));
-
-                startActivity(intent);
             }
 
         }

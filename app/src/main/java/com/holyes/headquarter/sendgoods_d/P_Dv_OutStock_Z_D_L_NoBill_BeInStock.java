@@ -330,7 +330,6 @@ public class P_Dv_OutStock_Z_D_L_NoBill_BeInStock extends Activity {
 
                     ShowMessage.Show(mContext, "撤销成功");
 
-
                     break;
                 case 8:
                     MyProgressDialog.close();
@@ -626,7 +625,6 @@ public class P_Dv_OutStock_Z_D_L_NoBill_BeInStock extends Activity {
                         if (rest[8] != null) {
                             mAgentBillNo = rest[8].trim();
                         }
-
                     }
                     ShowMessage.ShowMsg(handler, ShowMessage.HandScanSuccess, "ok");
                     lStar = "";
@@ -754,8 +752,6 @@ public class P_Dv_OutStock_Z_D_L_NoBill_BeInStock extends Activity {
 //						et_barcode.setText("");
 //						return true;
 //					}
-//
-
                     access_send(tBarcode);
                     et_barcode.setText("");
 
@@ -775,10 +771,7 @@ public class P_Dv_OutStock_Z_D_L_NoBill_BeInStock extends Activity {
 
         @Override
         public void onClick(View v) {
-
-//
-//            Intent intent = new Intent(mContext,
-//                    QueryScanDetail.class);
+//            Intent intent = new Intent(mContext,QueryScanDetail.class);
             Intent intent = null;
             if (sysUserInfo.getEnterpriseId().equals("00")||sysUserInfo.getEnterpriseId().equals("08")){
                 intent = new Intent(mContext, QueryScanBatchDetail.class);

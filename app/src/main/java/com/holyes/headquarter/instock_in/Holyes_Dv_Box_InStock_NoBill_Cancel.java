@@ -119,22 +119,11 @@ public class Holyes_Dv_Box_InStock_NoBill_Cancel extends Activity {
         tv_curqty.setText("0");
         tv_billno.setText("");
         tv_box_totalqty.setText("0");
-
-//		send = new SendDatas();
-//		send.start();
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//		sysUserInfo.SaveConfigString("searchProductSql", "");
-//		send.interrupt();
-//		try {
-//			send.join();
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
     }
 
     /**
