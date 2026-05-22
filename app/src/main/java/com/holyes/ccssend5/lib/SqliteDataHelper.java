@@ -633,6 +633,14 @@ public class SqliteDataHelper extends SQLiteOpenHelper {
                 strError += "创建套餐扫描明细表创建失败:" + ex.getMessage() + "\r\n";
             }
 
+            // 套餐装盒出货：整盒提交成功前的本次扫描条码明细
+            try {
+                sql = "Create table if not exists packmealoutscanline(goodsid nvarchar(20),modelm nvarchar(20),colors nvarchar(20),barcode nvarchar(30))";
+                execSQL(sql);
+            } catch (Exception ex) {
+                strError += "套餐出货扫描条码明细表创建失败:" + ex.getMessage() + "\r\n";
+            }
+
 
 
 

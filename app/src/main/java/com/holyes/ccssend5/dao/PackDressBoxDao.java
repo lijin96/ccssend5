@@ -77,39 +77,90 @@ public class PackDressBoxDao {
         }
 
 
-        /**
-         *产品数量和扫描数量是否相等
-         * @param context
-         * @return
-         */
-        public static boolean queryScanNum(Context context)
-        {
-
-            List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-            int packnum=0,scannum=0;
-            String sql  =  "select sum(packnum) as packnum,sum(scannum) as scannum from packdressboxscan";
-
+        private static int parseNum(Object value) {
+            if (value == null) {
+                return 0;
+            }
+            String s = value.toString().trim();
+            if (s.isEmpty()) {
+                return 0;
+            }
             try {
-                list =  SqliteDataHelper.getHelper(context).QueryDbList(sql,null);
+                return Integer.parseInt(s);
+            } catch (Exception e) {
+                return 0;
+            }
+        }
 
-                for (Map<String, Object> map : list) {
-                    packnum=Integer.parseInt(map.get("packnum").toString());
-                    scannum=Integer.parseInt(map.get("scannum").toString());
-
+        /**
+         * 套餐计划总数量 sum(packnum)
+         */
+        public static int queryTotalPacknum(Context context) {
+            List<Map<String, Object>> list;
+            try {
+                list = SqliteDataHelper.getHelper(context).QueryDbList(
+                        "select sum(packnum) as packnum from packdressboxscan", null);
+                if (list == null || list.isEmpty()) {
+                    return 0;
                 }
-                if(packnum==scannum){
-                    return true;
-                }else if (packnum>scannum) {
-                    return false;
-                }else if (packnum<scannum) {
-                    return false;
-                }
-
+                return parseNum(list.get(0).get("packnum"));
             } catch (Exception e) {
                 e.printStackTrace();
-                return false;
+                return 0;
             }
-            return false;
+        }
+
+        /**
+         * 未提交条码明细条数
+         */
+        public static int countOutScanLines(Context context) {
+            List<Map<String, Object>> list;
+            try {
+                list = SqliteDataHelper.getHelper(context).QueryDbList(
+                        "select count(*) as cnt from packmealoutscanline", null);
+                if (list == null || list.isEmpty()) {
+                    return 0;
+                }
+                return parseNum(list.get(0).get("cnt"));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return 0;
+            }
+        }
+
+        /**
+         * 条码逐条扫入后，最后判断：已扫合计 sum(scannum) 是否等于计划合计 sum(packnum)
+         *
+         * @return 可上传时返回 null，否则返回提示文案
+         */
+        public static String getScanTotalMismatchReason(Context context) {
+            List<Map<String, Object>> list;
+            try {
+                list = SqliteDataHelper.getHelper(context).QueryDbList(
+                        "select sum(packnum) as packnum,sum(scannum) as scannum from packdressboxscan", null);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "读取扫描合计失败";
+            }
+            if (list == null || list.isEmpty()) {
+                return "套餐明细为空";
+            }
+            int packnum = parseNum(list.get(0).get("packnum"));
+            int scannum = parseNum(list.get(0).get("scannum"));
+            if (packnum <= 0) {
+                return "套餐计划合计为0";
+            }
+            if (packnum == scannum) {
+                return null;
+            }
+            return "已扫数量（" + scannum + "）与计划合计（" + packnum + "）不一致";
+        }
+
+        /**
+         * 已扫合计与计划合计是否一致（用于整盒上传前判断）
+         */
+        public static boolean queryScanNum(Context context) {
+            return getScanTotalMismatchReason(context) == null;
         }
 
 
@@ -313,8 +364,84 @@ public class PackDressBoxDao {
             }
         }
 
+        /**
+         * 记录本次整盒提交成功前扫描的一条物流码
+         */
+        public static void insertOutScanLine(Context context, String goodsid, String modelm, String colors, String barcode) {
+            String sql = String.format(
+                    "insert into packmealoutscanline(goodsid,modelm,colors,barcode) values('%1$s','%2$s','%3$s','%4$s')",
+                    goodsid, modelm, colors, barcode);
+            try {
+                SqliteDataHelper.getHelper(context).execSQL(sql);
+            } catch (Exception e) {
+                ShowMessage.Show(context, "保存扫描条码明细失败" + e.getMessage());
+            }
+        }
 
+        public static void deleteOutScanLineByBarcode(Context context, String barcode) {
+            String sql = String.format("delete from packmealoutscanline where barcode='%1$s'", barcode);
+            try {
+                SqliteDataHelper.getHelper(context).execSQL(sql);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
+        /**
+         * 删除未提交的一条扫描条码，并同步减少 packdressboxscan 中对应产品的已扫数量
+         *
+         * @return 被删记录的产品代号；未找到则返回 null
+         */
+        public static String removeOutScanLineWithDecrement(Context context, String barcode) {
+            if (barcode == null || barcode.isEmpty()) {
+                return null;
+            }
+            List<Map<String, Object>> list;
+            String sql = "select goodsid from packmealoutscanline where barcode='" + barcode + "' limit 1";
+            try {
+                list = SqliteDataHelper.getHelper(context).QueryDbList(sql, null);
+                if (list == null || list.isEmpty()) {
+                    return null;
+                }
+                String goodsid = list.get(0).get("goodsid").toString();
+                deleteOutScanLineByBarcode(context, barcode);
+                int cur = 0;
+                String snStr = queryGoodsidNum(context, goodsid);
+                if (snStr != null && !snStr.isEmpty()) {
+                    cur = Integer.parseInt(snStr);
+                }
+                int next = cur > 0 ? cur - 1 : 0;
+                updatePackingByNum(context, next, goodsid, "");
+                return goodsid;
+            } catch (Exception e) {
+                e.printStackTrace();
+                ShowMessage.Show(context, "删除扫描条码失败：" + e.getMessage());
+                return null;
+            }
+        }
+
+        public static void clearOutScanLines(Context context) {
+            try {
+                SqliteDataHelper.getHelper(context).execSQL("delete from packmealoutscanline");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        /**
+         * 当前盒未提交成功前的扫描明细（型号色号、数量、条码）
+         */
+        public static List<Map<String, Object>> queryOutScanLines(Context context, String lsv_etStr) {
+            String sql = "select goodsid,(modelm||'-'||colors) as model_color,'1' as curcount,barcode from packmealoutscanline";
+            if (lsv_etStr != null && !lsv_etStr.isEmpty()) {
+                sql = "select goodsid,(modelm||'-'||colors) as model_color,'1' as curcount,barcode from packmealoutscanline where " +
+                        "goodsid like '%%" + lsv_etStr + "%%' or " +
+                        "modelm like '%%" + lsv_etStr + "%%' or " +
+                        "colors like '%%" + lsv_etStr + "%%' or " +
+                        "barcode like '%%" + lsv_etStr + "%%'";
+            }
+            return SqliteDataHelper.getHelper(context).QueryDbList(sql, null);
+        }
 
     }
 

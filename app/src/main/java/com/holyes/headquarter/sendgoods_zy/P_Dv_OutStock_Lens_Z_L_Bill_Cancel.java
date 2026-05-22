@@ -168,7 +168,7 @@ public class P_Dv_OutStock_Lens_Z_L_Bill_Cancel extends Activity {
                     //			mark[1] = "供应商："+tv_company_name.getText().toString();
                     //			mark[2] = "仓   库 ："+tv_stock_name.getText().toString();
 
-                    printbill.printLens(P_Dv_OutStock_Lens_Z_L_Bill_Cancel.this, "镜片有单直销发货撤销", mark, sacnDataList, sysUserInfo.getUserid());
+                    printbill.printLens(P_Dv_OutStock_Lens_Z_L_Bill_Cancel.this, "镜片有单无入库发货", mark, sacnDataList, sysUserInfo.getUserid());
                     break;
 
                 case 9:

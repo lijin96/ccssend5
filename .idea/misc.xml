@@ -26,6 +26,7 @@
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_p_dv_returnedmendlabel_z_d_havenobill.xml" value="0.178125" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_p_dv_returnedmendlabel_z_l_havenobill.xml" value="0.178125" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_p_dv_returnedpurchase_z_s_nobill.xml" value="0.264" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_packmeal_outscan_detail.xml" value="0.1" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_select_allfactoryboxdetail.xml" value="0.1" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_select_allfactoryscandetail.xml" value="0.1" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/activity_select_lens.xml" value="0.13828125" />
@@ -90,7 +91,7 @@
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_nobill_beinstock.xml" value="0.178125" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_nobill_cancel.xml" value="0.178125" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_nobill_noinstock.xml" value="0.178125" />
-        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_packmeal_nobill_noinstock.xml" value="0.21875" />
+        <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_d_packmeal_nobill_noinstock.xml" value="0.1625" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_l_bill_beinstock.xml" value="0.2" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_l_bill_cancel.xml" value="0.4" />
         <entry key="..\:/eclipseworkspace/Test/ccssend5/app/src/main/res/layout/new_p_dv_outstock_z_l_bill_noinstock.xml" value="0.178125" />

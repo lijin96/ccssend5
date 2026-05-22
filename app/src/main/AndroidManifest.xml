@@ -90,8 +90,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.holyes.agent.activity.P_Dv_Select_Brand"
 
+            android:name="com.holyes.agent.activity.P_Dv_Select_Brand"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Light.NoTitleBar"
@@ -1021,6 +1021,12 @@
         <!-- 装盒扫描明细1 -->
         <activity
             android:name="com.holyes.ccssend5.select.SelectPackingScanDetail1"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" >
+        </activity>
+        <!-- 套餐装盒出货：当前盒未提交前的扫描明细 -->
+        <activity
+            android:name="com.holyes.ccssend5.select.SelectPackMealOutScanDetail"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" >
         </activity>

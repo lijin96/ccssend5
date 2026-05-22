@@ -90,12 +90,12 @@ public class ShowMessage {
     {
         TextView tvMessage = new TextView(context);
         tvMessage.setGravity(Gravity.CENTER);
-        tvMessage.setTextColor(Color.WHITE);
+        tvMessage.setTextColor(Color.BLACK);
         tvMessage.setTextSize(20);
         tvMessage.setPadding(10, 0, 10, 10);
         tvMessage.setText(msg);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder =  new AlertDialog.Builder(context,android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
 
         builder.setIcon(R.drawable.ccs);
         builder.setTitle(title);

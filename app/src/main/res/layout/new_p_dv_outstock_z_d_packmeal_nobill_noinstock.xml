@@ -58,6 +58,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/relayout_packmeal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -82,6 +83,34 @@
                     android:textColor="@color/white"
                     android:textSize="30dp" />
             </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/relayout_packmeal">
+
+                <TextView
+                    android:id="@+id/tv_sleevelabel_str"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:text="当前套标码："
+                    android:textColor="@color/white"
+                    android:textSize="30dp" />
+
+                <TextView
+                    android:id="@+id/tv_sleevelabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/tv_sleevelabel_str"
+                    android:text=""
+                    android:textColor="@color/white"
+                    android:textSize="30dp" />
+            </RelativeLayout>
         </RelativeLayout>
 
         <RelativeLayout
@@ -90,8 +119,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp" >
+             >
 
             <RelativeLayout
                 android:id="@+id/relayout_company"
@@ -144,6 +172,34 @@
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/tv_stock_str"
                     android:text=""
+                    android:textColor="@color/white"
+                    android:textSize="30dp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relayout_stock"
+                android:layout_marginTop="5dp" >
+
+                <TextView
+                    android:id="@+id/tv_check_log"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:text="显示返回数据："
+                    android:textColor="@color/white"
+                    android:textSize="30dp" />
+
+                <CheckBox
+                    android:id="@+id/check_log"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/tv_check_log"
+                    android:button="@null"
+                    android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
                     android:textColor="@color/white"
                     android:textSize="30dp" />
             </RelativeLayout>
@@ -234,10 +290,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
+                android:paddingBottom="3dp"
+                android:paddingTop="3dp"
                 android:text="当前扫描条码 "
-                android:textSize="30dp" />
+                android:textSize="24dp" />
         </LinearLayout>
 
         <View
@@ -260,7 +316,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="5dp"
                 android:text=""
-                android:textSize="30dp" />
+                android:textSize="26dp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -336,8 +392,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.9"
             android:orientation="vertical"
-            android:paddingBottom="15dp"
-            android:paddingTop="15dp" >
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp" >
 
             <TextView
                 android:id="@+id/tv_model_colors"
@@ -579,34 +635,13 @@
                 android:text="连接"
                 android:textSize="30dp" />
 
-            <Button
-                android:id="@+id/btn_scan_detail"
-                android:layout_width="200dp"
-                android:layout_height="60dp"
-                android:layout_marginLeft="30dp"
-                android:layout_toRightOf="@id/btn_connect"
-                android:background="@drawable/button_background2"
-                android:text="扫描明细"
-                android:textSize="30dp"
-                android:visibility="gone" />
-
-            <Button
-                android:visibility="gone"
-                android:id="@+id/btn_scan_print"
-                android:layout_width="200dp"
-                android:layout_height="60dp"
-                android:layout_marginLeft="30dp"
-                android:layout_toRightOf="@id/btn_scan_detail"
-                android:background="@drawable/button_background2"
-                android:text="扫描打印"
-                android:textSize="30dp" />
 
             <Button
                 android:id="@+id/btn_again_print_boxcode"
                 android:layout_width="200dp"
                 android:layout_height="60dp"
-                android:layout_marginLeft="50dp"
-                android:layout_toRightOf="@id/btn_scan_print"
+                android:layout_marginLeft="30dp"
+                android:layout_toRightOf="@id/btn_connect"
                 android:background="@drawable/button_background2"
                 android:text="补打套标"
                 android:textSize="30dp" />
@@ -615,20 +650,39 @@
                 android:id="@+id/btn_test_packing"
                 android:layout_width="200dp"
                 android:layout_height="60dp"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="30dp"
                 android:layout_toRightOf="@id/btn_again_print_boxcode"
                 android:background="@drawable/button_background2"
                 android:text="测试打印"
                 android:textSize="30dp" />
 
             <Button
-                android:id="@+id/btn_finish"
+                android:id="@+id/btn_scan_details"
                 android:layout_width="200dp"
                 android:layout_height="60dp"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="30dp"
                 android:layout_toRightOf="@id/btn_test_packing"
                 android:background="@drawable/button_background2"
-                android:text="完成"
+                android:text="当前扫描明细"
+                android:textSize="30dp" />
+
+<!--            <Button-->
+<!--                android:id="@+id/btn_finish"-->
+<!--                android:layout_width="200dp"-->
+<!--                android:layout_height="60dp"-->
+<!--                android:layout_marginLeft="30dp"-->
+<!--                android:background="@drawable/button_background2"-->
+<!--                android:text="完成"-->
+<!--                android:textSize="30dp" />-->
+
+            <Button
+                android:id="@+id/btn_print"
+                android:layout_width="200dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="30dp"
+                android:layout_toRightOf="@id/btn_scan_details"
+                android:background="@drawable/button_background2"
+                android:text="打印"
                 android:textSize="30dp" />
         </RelativeLayout>
     </LinearLayout>

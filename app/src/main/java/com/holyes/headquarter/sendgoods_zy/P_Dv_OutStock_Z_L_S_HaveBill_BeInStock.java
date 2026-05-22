@@ -98,6 +98,8 @@ public class P_Dv_OutStock_Z_L_S_HaveBill_BeInStock extends Activity {
     private PopupWindow mPopWindow;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -162,10 +164,8 @@ public class P_Dv_OutStock_Z_L_S_HaveBill_BeInStock extends Activity {
         tv_stock_name.setText(stock_name);
         tv_source_billno.setText(sourceBillNo);
 
-
         billProductUtil = new BillProductUtil(mContext);
         billProductUtil.downloadBillProduct(sourceBillNo);
-
 
         btn_p_dv_outstock_z_l_bill_beinstock_revoke = (Button) findViewById(R.id.btn_p_dv_outstock_z_l_bill_beinstock_revoke);
         btn_p_dv_outstock_z_l_bill_beinstock_revoke.setOnClickListener(new View.OnClickListener() {

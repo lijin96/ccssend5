@@ -725,6 +725,7 @@ public class LoginActivity extends Activity {
      */
     private void downLoadTraderInfor() throws Exception {
         maxDataTime = getLSMaxUprecndate("newretail", sysUserInfo.getCompanyid());
+        Log.d("main",maxDataTime);
         companycurcount = 0;
         companycount = Integer.parseInt(AccessWeb.getHelper(getApplicationContext()).GetDownLoadTraderRecord(maxDataTime));
         setProgressBarMax(companycount);
@@ -732,7 +733,7 @@ public class LoginActivity extends Activity {
         List<Map<String, Object>> map;
         for (maxDataTime = getLSMaxUprecndate("newretail", sysUserInfo.getCompanyid()); companycurcount < companycount; maxDataTime = getLSMaxUprecndate("newretail", sysUserInfo.getCompanyid())) {
             map = AccessWeb.getHelper(getApplicationContext()).GetDownLoadTraderInfor(maxDataTime);
-//            Log.d("main",map.toString());
+            Log.d("main",map.toString());
             if (map.size() == 0) {
                 return;
             }

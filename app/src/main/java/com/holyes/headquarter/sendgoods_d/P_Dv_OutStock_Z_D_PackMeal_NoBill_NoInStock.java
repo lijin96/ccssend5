@@ -23,6 +23,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ import com.holyes.ccssend5.lib.bluetooth.DeviceListActivity;
 import com.holyes.ccssend5.myview.MyProgressDialog;
 import com.holyes.ccssend5.dao.PackDressBoxDao;
 import com.holyes.ccssend5.select.QueryScanDetail;
+import com.holyes.ccssend5.select.SelectPackMealOutScanDetail;
 import com.holyes.ccssend5.select.SelectSetmealDetails;
 import com.holyes.ccssend5.utils.PrintUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
@@ -98,6 +100,7 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
     private String modelm = "", colors = "";
     private String PackId="", PackName=""; //套餐id，套餐名称
     private final int Lic_SelectModel = 2;
+    private final int Lic_OutScanDetail = 4;
     private String nScanCount = "0";//合计（界面显示为 已扫/计划）
     private int nSize = 0;//次数
 
@@ -118,6 +121,9 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
 
     /** 本界面会话内整盒出货（P_Dv_Scan 批量）成功次数 */
     private int packBoxSuccessCount = 0;
+
+    /** 扫描/上传串行锁，避免并发扫码导致条码列表与 scannum 不一致 */
+    private final Object scanLock = new Object();
 
     private static final class BarcodeGoods {
         final String barcode;
@@ -143,6 +149,11 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
     private String lsv_aim="";
     private TextView tv_title;
 
+    private Button btn_scan_details;//当前扫描明细
+
+    private TextView tv_sleevelabel;//显示返回的套标码
+    private CheckBox checkBox_log;//显示返回的内容
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,19 +169,20 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
 
         lsv_aim = getIntent().getStringExtra("aim");
 
-
-
         //把以前扫描的数据清空
         try {
             SqliteDataHelper.getHelper(getApplicationContext()).execSQL("delete from newscandate");
         } catch (Exception e) {
             e.printStackTrace();
         }
+        tv_sleevelabel=findViewById(R.id.tv_sleevelabel);
+        checkBox_log=findViewById(R.id.check_log);
+
 
 //        ((Button) findViewById(R.id.btn_list))
 //                .setOnClickListener(new BtnListClick());
-//        ((Button) findViewById(R.id.btn_print))
-//                .setOnClickListener(new BtnPrintClick());
+        ((Button) findViewById(R.id.btn_print))
+                .setOnClickListener(new BtnPrintClick());
         ((Button) findViewById(R.id.btn_finish))
                 .setOnClickListener(new BtnExitClick());
 
@@ -237,11 +249,18 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
 
         tv_packmeal.setText(PackName);
 
+        btn_scan_details=findViewById(R.id.btn_scan_details);
+        btn_scan_details.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, SelectPackMealOutScanDetail.class);
+                startActivityForResult(intent, Lic_OutScanDetail);
+            }
+        });
 //        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 
         scanBillno = sysUserInfo.getUserid() + "DF" + SomeUtils.RandomScanOrder();// 系统
-
 
         //测试打印
         btn_test_packing=findViewById(R.id.btn_test_packing);
@@ -326,6 +345,7 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
                 String err = null;
                 try {
                     SqliteDataHelper.getHelper(getApplicationContext()).execSQL("delete from packdressboxscan");
+                    PackDressBoxDao.clearOutScanLines(getApplicationContext());
                     List<Map<String, Object>> dlist = accWeb.GetPackMealDetail(PackId);
                     if (dlist != null && dlist.size() > 0) {
                         List<String> sqlList = new ArrayList<String>();
@@ -525,13 +545,12 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
                         ShowMessage.ShowMsg(handler, "网络不给力，请稍后再试！");
                         return;
                     }
-//					   "PackBoxNumber": "P20091700001",    （盒标码)
-//        "PackId": "200916000001",            (套餐代号)
-//        "PackName": "测试套标",              (套餐名称)
-//        "PackNum": "6"                       (已装数量)
+//		    "PackBoxNumber": "P20091700001",    （盒标码)
+//          "PackId": "200916000001",            (套餐代号)
+//          "PackName": "测试套标",              (套餐名称)
+//          "PackNum": "6"                       (已装数量)
                     PackMealBoxLabel mealBoxLabel = gson.fromJson(result, PackMealBoxLabel.class);
-                    MakeBox=new BoxTag(mealBoxLabel.getPackBoxNumber(), mealBoxLabel.getPackName(), "测试", "测试","测试", mealBoxLabel.getPackNum(),
-                            sysUserInfo.getUserid() ,simpleDateFormat.format(new Date()).substring(0, 10));
+                    MakeBox=new BoxTag(mealBoxLabel.getPackBoxNumber(), mealBoxLabel.getPackName(), "测试", "测试","测试", mealBoxLabel.getPackNum(),sysUserInfo.getUserid() ,simpleDateFormat.format(new Date()).substring(0, 10));
 //
                     ShowMessage.ShowMsg(handler, ShowMessage.HandMakeDressBox, MakeBox);
                 } catch (Exception e) {
@@ -641,7 +660,15 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
                     break;
                 case ShowMessage.HandScanError:
                     MySound.errorSound();
+//                    if (checkBox_log.isChecked()){
+//                        ShowMessage.MessageBox(mContext,"测试显示",msg.obj.toString());
+//                    }
                     ShowMessage.Show(mContext, msg.obj.toString());
+                    break;
+
+                case ShowMessage.HandUploadDetail:
+                    //如果显示当前返回的log是true，就显示接口返回的数据
+                    ShowMessage.MessageBox(mContext,"套标发货返回接口数据",msg.obj.toString());
                     break;
 
                 case MSG_PACK_DETAIL_LOADED:
@@ -653,20 +680,26 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
                     break;
 
                 case ShowMessage.HandMakeDressBox:
-                    printBoxCode(MakeBox);
                     MyProgressDialog.close();
                     ShowMessage.Show(mContext, "正在补打套标...");
+                    printBoxCode(MakeBox);
                     break;
-
-//                case 8:
-//                    MyProgressDialog.close();
-//                    String[] mark = new String[3];
-//                    mark[0] = "发货单：" + mBillNo;
-//                    mark[1] = "代理商：" + tv_company_name.getText().toString();
-//                    mark[2] = "仓   库 ：" + tv_stock_name.getText().toString();
-//
-//                    printbill.print(P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock.this, "    无单无入库代销发货", mark, sacnDataList, sysUserInfo.getUserid());
-//                    break;
+                case 8:
+                    MyProgressDialog.close();
+                    String[] mark = new String[3];
+                    mark[0] = "发货单：" + mBillNo;
+                    if (lsv_aim.equals("P_Dv_OutStock_Z_L_PackMeal_NoBill_NoInStock")) {
+                        mark[1] = "直营店：" + tv_company_name.getText().toString();
+                    }else{
+                        mark[1] = "代理商：" + tv_company_name.getText().toString();
+                    }
+                    mark[2] = "仓   库 ：" + tv_stock_name.getText().toString();
+                    if (lsv_aim.equals("P_Dv_OutStock_Z_L_PackMeal_NoBill_NoInStock")) {
+                        printbill.print(P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock.this, "无单无入库套标直销发货", mark, sacnDataList, sysUserInfo.getUserid());
+                    }else{
+                        printbill.print(P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock.this, "无单无入库套标代销发货", mark, sacnDataList, sysUserInfo.getUserid());
+                    }
+                    break;
                 case 9:
                     MyProgressDialog.close();
                     ShowMessage.Show(mContext, msg.obj.toString());
@@ -812,6 +845,12 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
                     colors = data.getStringExtra("colors");
                     refreshQtyLabels();
                     break;
+                case Lic_OutScanDetail:
+                    if (data.getBooleanExtra(SelectPackMealOutScanDetail.EXTRA_DATA_CHANGED, false)) {
+                        syncPendingScanSessionFromDb();
+                        refreshQtyLabels();
+                    }
+                    break;
             }
         }
 
@@ -853,129 +892,173 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
             ShowMessage.ShowMsg(handler, ShowMessage.HandScanError, "请先在明细中选择产品，再扫描物流码");
             return;
         }
+        final String scanGoodsId = goodsid;
+        final String scanModelm = modelm;
+        final String scanColors = colors;
         Thread sendCode = new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    accWeb.mWebId = contents;
-
-                    if (scannedBarcodes.contains(contents)) {
-                        ShowMessage.ShowMsg(handler, ShowMessage.HandScanError, "该条码已扫描过，请勿重复");
-                        return;
-                    }
-                    if (!PackDressBoxDao.queryGoodsid(mContext, goodsid)) {
-                        ShowMessage.ShowMsg(handler, ShowMessage.HandScanError, "当前产品不在本套餐明细内");
-                        return;
-                    }
-                    if (!PackDressBoxDao.queryNum(mContext, goodsid)) {
-                        ShowMessage.ShowMsg(handler, ShowMessage.HandScanError, "当前型号已扫满，请先选择其它明细产品");
-                        return;
-                    }
-
-                    JSONObject checkPara = new JSONObject();
-                    checkPara.put("Barcode", contents);
-                    checkPara.put("GoodsId", goodsid);
-//                    Log.d("main", checkPara.toString());
-                    String checkRaw = accWeb.P_Dv_PackDressBoxCheck(checkPara.toString());
-//                    Log.d("main", checkRaw);
-//                    String verifiedGoodsId = checkRaw.isEmpty() ? goodsid : checkRaw;
-//                    if (!verifiedGoodsId.equalsIgnoreCase(goodsid)) {
-//                        throw new Exception("验证通过的产品代号与当前所选不一致：" + verifiedGoodsId);
-//                    }
-
-                    String snStr = PackDressBoxDao.queryGoodsidNum(mContext, goodsid);
+                synchronized (scanLock) {
                     int curScanBefore = 0;
-                    if (snStr != null && !snStr.isEmpty()) {
-                        curScanBefore = Integer.parseInt(snStr);
-                    }
-                    PackDressBoxDao.updatePackingByNum(mContext, curScanBefore + 1, goodsid, "");
-                    scannedBarcodes.add(contents);
-                    outStockScanSession.add(new BarcodeGoods(contents, goodsid));
-
-                    //比对明细是否数量相等，相等就要上传到接口
-                    if (PackDressBoxDao.queryScanNum(mContext)) {
-                        List<HashMap<Object, Object>> packList = new ArrayList<HashMap<Object, Object>>();
-                        for (BarcodeGoods line : outStockScanSession) {
-                            HashMap<Object, Object> packmap = new HashMap<Object, Object>();
-                            packmap.put("PackId", PackId);
-                            packmap.put("Barcode", line.barcode);
-                            packmap.put("DeCompId", company_id);
-                            packmap.put("GoodsId", line.goodsId);
-                            packmap.put("StockId", stock_id);
-                            packmap.put("ScanBillNo", scanBillno);
-                            packmap.put("BillNo", mBillNo);
-                            packmap.put("OaSuserId", sysUserInfo.getUserid());
-                            packList.add(packmap);
-                        }
+                    try {
                         accWeb.mWebId = contents;
-                        String uploadRes="";
-                        try {
-//                            Log.d("main", gson.toJson(packList));
-                            //直销套标发货
-                            if (lsv_aim.equals("P_Dv_OutStock_Z_L_PackMeal_NoBill_NoInStock")){
-                                uploadRes = accWeb.P_Dv_Scan("P_Dv_OutStock_Z_L_PackMeal_NoBill_NoInStock", gson.toJson(packList));
-                            }else {
-                                uploadRes = accWeb.P_Dv_Scan("P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock", gson.toJson(packList));
-                            }
-//                            Log.d("main", uploadRes);
-                        } catch (Exception upEx) {
-                            PackDressBoxDao.updatePackingByNum(mContext, curScanBefore, goodsid, "");
-                            scannedBarcodes.remove(scannedBarcodes.size() - 1);
-                            outStockScanSession.remove(outStockScanSession.size() - 1);
-                            throw upEx;
+
+                        if (scannedBarcodes.contains(contents)) {
+                            ShowMessage.ShowMsg(handler, ShowMessage.HandScanError, "该条码已扫描过，请勿重复");
+                            return;
                         }
-                        if (uploadRes == null || uploadRes.trim().isEmpty()) {
-                            PackDressBoxDao.updatePackingByNum(mContext, curScanBefore, goodsid, "");
-                            scannedBarcodes.remove(scannedBarcodes.size() - 1);
-                            outStockScanSession.remove(outStockScanSession.size() - 1);
-                            throw new Exception("整盒出货上传失败：无返回");
+                        if (!PackDressBoxDao.queryGoodsid(mContext, scanGoodsId)) {
+                            ShowMessage.ShowMsg(handler, ShowMessage.HandScanError, "当前产品不在本套餐明细内");
+                            return;
                         }
-                        JSONArray listjson = new JSONArray(uploadRes);
-                        if (listjson.length() == 0) {
-                            PackDressBoxDao.updatePackingByNum(mContext, curScanBefore, goodsid, "");
-                            scannedBarcodes.remove(scannedBarcodes.size() - 1);
-                            outStockScanSession.remove(outStockScanSession.size() - 1);
-                            throw new Exception("整盒出货上传失败：无有效数据");
-                        }
-                        JSONObject jsonObject2 = listjson.getJSONObject(0);
-                        if ((mBillNo == null || mBillNo.isEmpty()) && jsonObject2.has("BillNo")) {
-                            mBillNo = jsonObject2.getString("BillNo");
+                        if (!PackDressBoxDao.queryNum(mContext, scanGoodsId)) {
+                            ShowMessage.ShowMsg(handler, ShowMessage.HandScanError, "当前型号已扫满，请先选择其它明细产品");
+                            return;
                         }
 
-                        PackMealBoxCode=jsonObject2.getString("BoxCode");
+                        JSONObject checkPara = new JSONObject();
+                        checkPara.put("Barcode", contents);
+                        checkPara.put("GoodsId", scanGoodsId);
+                        accWeb.P_Dv_PackDressBoxCheck(checkPara.toString());
 
-                        String PackMealnum = PackDressBoxDao.queryAllScanNum(mContext);
+                        String snStr = PackDressBoxDao.queryGoodsidNum(mContext, scanGoodsId);
+                        if (snStr != null && !snStr.isEmpty()) {
+                            curScanBefore = Integer.parseInt(snStr);
+                        }
+                        PackDressBoxDao.updatePackingByNum(mContext, curScanBefore + 1, scanGoodsId, "");
+                        scannedBarcodes.add(contents);
+                        outStockScanSession.add(new BarcodeGoods(contents, scanGoodsId));
+                        PackDressBoxDao.insertOutScanLine(mContext, scanGoodsId, scanModelm, scanColors, contents);
 
-                        boxTag = new BoxTag(PackMealBoxCode, PackName, "测试", "", "", PackMealnum,sysUserInfo.getUserid(), simpleDateFormat.format(new Date()).substring(0, 10));
-
-                        packBoxSuccessCount++;
-                        PackDressBoxDao.emptyPackingByNum(mContext);
-                        scannedBarcodes.clear();
-                        outStockScanSession.clear();
-                        goodsid = "";
-                        modelm = "";
-                        colors = "";
-
+                        final boolean readyUpload = PackDressBoxDao.queryScanNum(mContext);
+                        final String triggerBarcode = contents;
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                // 先刷新界面合计（最后一条扫完后显示 扫描总数/合计 一致）
                                 refreshQtyLabels();
-                                printBoxCode(boxTag);
-                                ShowMessage.Show(mContext, "整套套餐明细已扫满，已提交出货");
+                                if (readyUpload) {
+                                    submitPackMealUploadAfterUiReady(triggerBarcode);
+                                } else {
+                                    MySound.scanSound();
+                                    if (tv_billno != null) {
+                                        tv_billno.setText(mBillNo);
+                                    }
+                                }
                             }
                         });
+                        lStar = "";
+                    } catch (Exception e) {
+                        ShowMessage.ShowMsg(handler, ShowMessage.HandScanError,
+                                e.getMessage());
+                        lStar = SomeUtils.isNotFromServiceError(e.getMessage());
                     }
-
-                    ShowMessage.ShowMsg(handler, ShowMessage.HandSuccess, "ok");
-                    lStar = "";
-                } catch (Exception e) {
-                    ShowMessage.ShowMsg(handler, ShowMessage.HandScanError,
-                            e.getMessage());
-                    lStar = SomeUtils.isNotFromServiceError(e.getMessage());
                 }
             }
         });
         sendCode.start();
+    }
+
+    /**
+     * 界面合计已显示为一致后，再请求整盒上传接口
+     */
+    private void submitPackMealUploadAfterUiReady(final String triggerBarcode) {
+        int totalScan = PackDressBoxDao.querySumScannum(mContext);
+        int totalPack = PackDressBoxDao.queryTotalPacknum(mContext);
+        MyProgressDialog.show(mContext,
+                "合计已齐（" + totalScan + "/" + totalPack + "），正在提交出货...", false, false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    uploadPackMealBox(triggerBarcode);
+                    ShowMessage.ShowMsg(handler, ShowMessage.HandSuccess, "ok");
+                } catch (Exception e) {
+                    ShowMessage.ShowMsg(handler, ShowMessage.HandScanError, e.getMessage());
+                    lStar = SomeUtils.isNotFromServiceError(e.getMessage());
+                } finally {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            MyProgressDialog.close();
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 已扫合计与计划合计一致时，批量上传并生成套标
+     */
+    private void uploadPackMealBox(final String triggerBarcode) throws Exception {
+        String mismatch = PackDressBoxDao.getScanTotalMismatchReason(mContext);
+        if (mismatch != null) {
+            return;
+        }
+
+        List<HashMap<Object, Object>> packList = new ArrayList<HashMap<Object, Object>>();
+        for (BarcodeGoods line : outStockScanSession) {
+            HashMap<Object, Object> packmap = new HashMap<Object, Object>();
+            packmap.put("PackId", PackId);
+            packmap.put("Barcode", line.barcode);
+            packmap.put("DeCompId", company_id);
+            packmap.put("GoodsId", line.goodsId);
+            packmap.put("StockId", stock_id);
+            packmap.put("ScanBillNo", scanBillno);
+            packmap.put("BillNo", mBillNo);
+            packmap.put("OaSuserId", sysUserInfo.getUserid());
+            packList.add(packmap);
+        }
+
+        accWeb.mWebId = triggerBarcode;
+        String uploadRes;
+        if (lsv_aim.equals("P_Dv_OutStock_Z_L_PackMeal_NoBill_NoInStock")) {
+            uploadRes = accWeb.P_Dv_Scan("P_Dv_OutStock_Z_L_PackMeal_NoBill_NoInStock", gson.toJson(packList));
+        } else {
+            uploadRes = accWeb.P_Dv_Scan("P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock", gson.toJson(packList));
+        }
+//        Log.d("main", uploadRes);
+        if (checkBox_log.isChecked())
+        {
+            //如果是显示log数据就显示接口返回的数据
+            ShowMessage.ShowMsg(handler, ShowMessage.HandUploadDetail, uploadRes);
+        }
+        if (uploadRes == null || uploadRes.trim().isEmpty()) {
+            throw new Exception("整盒出货上传失败：无返回"+uploadRes);
+        }
+        JSONArray listjson = new JSONArray(uploadRes);
+        if (listjson.length() == 0) {
+            throw new Exception("整盒出货上传成功：但无有效数据"+uploadRes);
+        }
+        JSONObject jsonObject2 = listjson.getJSONObject(0);
+        if ((mBillNo == null || mBillNo.isEmpty()) && jsonObject2.has("BillNo")) {
+            mBillNo = jsonObject2.getString("BillNo");
+        }
+
+        PackMealBoxCode = jsonObject2.getString("BoxCode");
+        String PackMealnum = PackDressBoxDao.queryAllScanNum(mContext);
+        boxTag = new BoxTag(PackMealBoxCode, PackName, "测试", "", "", PackMealnum,sysUserInfo.getUserid(), simpleDateFormat.format(new Date()).substring(0, 10));
+
+        packBoxSuccessCount++;
+        PackDressBoxDao.emptyPackingByNum(mContext);
+        PackDressBoxDao.clearOutScanLines(mContext);
+        scannedBarcodes.clear();
+        outStockScanSession.clear();
+        goodsid = "";
+        modelm = "";
+        colors = "";
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                MySound.scanSound();
+                tv_sleevelabel.setText(PackMealBoxCode);
+                refreshQtyLabels();
+                printBoxCode(boxTag);
+                ShowMessage.Show(mContext, "整套套餐明细已扫满，已提交出货");
+            }
+        });
     }
 
 
@@ -990,7 +1073,6 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
 
                     String tBarcode = "";
-
                     if (et_barcode.getText().toString().trim().indexOf("=") != -1||et_barcode.getText().toString().trim().indexOf("http") != -1) {
                         //包含
                         tBarcode = SomeUtils.InterceptCode(mContext, et_barcode.getText().toString().trim());
@@ -998,11 +1080,8 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
                         //不包含
                         tBarcode = SomeUtils.UpdatefirstString(mContext,et_barcode.getText().toString().trim());
                     }
-
-
                     tv_show_code.setText(tBarcode);
 //                    String tBarcode = et_barcode.getText().toString().trim();
-
                     if (tBarcode.isEmpty()) {
                         MySound.errorSound();
                         ShowMessage.Show(getApplicationContext(), "请扫描二维码，谢谢！");
@@ -1022,9 +1101,7 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
                     if (!et_barcode.getText().toString().trim().isEmpty()) {
                         access_send(tBarcode);
                         et_barcode.setText("");
-
                     }
-
                 }
                 return true;
             } else {
@@ -1032,7 +1109,6 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
             }
         }
     }
-
 
     /**
      * 明细按钮监听类
@@ -1057,25 +1133,22 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
         public void onClick(View v) {
             MyProgressDialog.show(mContext, "正在打印...", false, true);
             Thread sendprint = new Thread(new Runnable() {
-
                 @Override
                 public void run() {
                     try {
                         sacnDataList = accWeb.GetDowLoadBilldetail(sysUserInfo.getLoginid(), scanBillno);
+//                        Log.d("main", sacnDataList.toString());
                         if (sacnDataList.size() == 0) {
                             ShowMessage.ShowMsg(handler, 9, "没有可打印的数据");
                             return;
                         }
-
                         ShowMessage.ShowMsg(handler, 8, "打印");
                     } catch (Exception e) {
                         ShowMessage.ShowMsg(handler, 9, e.getMessage());
                     }
-
                 }
             });
             sendprint.start();
-
         }
     }
 
@@ -1108,7 +1181,7 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
                     }
                 } catch (Exception ignored) {
                 }
-                if (scan < pack) {
+                if (scan>0&&scan < pack) {
                     ShowMessage.Show(mContext, "当前产品尚未扫满，请继续扫描；扫满后再选择其它明细产品");
                     return;
                 }
@@ -1117,6 +1190,32 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
             intent.putExtra("SetmealId", PackId);
             intent.putExtra("use_local_detail", true);
             startActivityForResult(intent, Lic_SelectModel);
+        }
+    }
+
+    /**
+     * 从本地未提交条码表恢复内存中的防重列表与上传会话列表
+     */
+    private void syncPendingScanSessionFromDb() {
+        scannedBarcodes.clear();
+        outStockScanSession.clear();
+        List<Map<String, Object>> lines = PackDressBoxDao.queryOutScanLines(mContext, "");
+        if (lines == null || lines.isEmpty()) {
+            return;
+        }
+        for (Map<String, Object> line : lines) {
+            Object bcObj = line.get("barcode");
+            Object gidObj = line.get("goodsid");
+            if (bcObj == null || gidObj == null) {
+                continue;
+            }
+            String bc = bcObj.toString();
+            String gid = gidObj.toString();
+            if (bc.isEmpty() || gid.isEmpty()) {
+                continue;
+            }
+            scannedBarcodes.add(bc);
+            outStockScanSession.add(new BarcodeGoods(bc, gid));
         }
     }
 
@@ -1134,6 +1233,11 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
         }
         int totalScan = PackDressBoxDao.querySumScannum(mContext);
         tv_totalqty.setText(totalScan + "/" + totalPack);
+        if (totalPack > 0 && totalScan == totalPack) {
+            tv_totalqty.setTextColor(Color.parseColor("#008000"));
+        } else {
+            tv_totalqty.setTextColor(Color.BLACK);
+        }
         if (tv_pack_box_success != null) {
             tv_pack_box_success.setText(String.valueOf(packBoxSuccessCount));
         }

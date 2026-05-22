@@ -1059,8 +1059,8 @@ public class P_Dv_InStock_PackBox_List_NoBill extends Activity implements View.O
             return;
         }
         if (isFileExists("lab_" + sysUserInfo.getEnterpriseId().toString() + ".txt")) {
-            //52万新  53帕兰德
-            if (sysUserInfo.getEnterpriseId().toString().equals("52")||sysUserInfo.getEnterpriseId().toString().equals("53")){
+            //52万新  53帕兰德 66安踏
+            if (sysUserInfo.getEnterpriseId().toString().equals("52")||sysUserInfo.getEnterpriseId().toString().equals("53")||sysUserInfo.getEnterpriseId().toString().equals("66")){
                 message = message.replace("%BOX", boxTag.getBoxNo());
                 message = message.replace("%U", boxTag.getUserCode());
                 message = message.replace("%B", boxTag.getBrandName());

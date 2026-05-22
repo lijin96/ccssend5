@@ -373,8 +373,7 @@ public class PrintUtil implements IOCallBack {
 
 
 
-    public void print( final Activity activity,final String title, final String[] mark,
-                       final	List<Map<String, Object>> slist,  final String username )
+    public void print( final Activity activity,final String title, final String[] mark,final	List<Map<String, Object>> slist,  final String username )
     {
 //        Log.d("main print=", slist.toString());
         printer = new MiposPrinter(activity.getApplicationContext());
