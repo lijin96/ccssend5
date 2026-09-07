@@ -76,7 +76,7 @@
         </provider>
         <activity
 
-            android:name="com.holyes.ccssend5.activity.LoginActivity"
+            android:name="com.holyes.agent.activity.P_Dv_Select_Brand"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:exported="true"
             android:label="@string/app_name"
@@ -90,8 +90,8 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.holyes.ccssend5.activity.LoginActivity"
 
-            android:name="com.holyes.agent.activity.P_Dv_Select_Brand"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Light.NoTitleBar"

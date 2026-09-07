@@ -444,6 +444,7 @@ public class AccessWeb {
         map.put("tLoginId", sysUserInfo.getLoginid());
         map.put("tCondition", tCondition);
         para.add(map);
+//        Log.d("main",para.toString());
         String result = downLoadWebResult("GetDownLoadStoreInfor", para);
 //        Log.d("main",result);
         JSONArray listjson = new JSONArray(result);
@@ -1591,7 +1592,7 @@ public class AccessWeb {
             SoapObject object = (SoapObject) envelope.bodyIn;
 //            SoapObject object = (SoapObject) envelope.getResponse();
             // 获取返回的结果
-//            Log.d("main",object.toString());
+//            Log.d("main--",object.toString());
             result = object.getProperty(0).toString();
         } catch (IOException e) {
             throw new Exception("服务器:（IOException网络超时）"+e);
@@ -1645,6 +1646,10 @@ public class AccessWeb {
 
             transport.debug = true;
 
+//            Log.d("main--", webservice_url);
+//            Log.d("main--", methodName);
+//            Log.d("main--", propertys.toString());
+
             try {
                 // 调用WebService
                 //				long beforeTime = System.currentTimeMillis();
@@ -1657,7 +1662,7 @@ public class AccessWeb {
 //				SoapObject object = (SoapObject) envelope.getResponse();
                 // 获取返回的结果
                 result = object.getProperty(0).toString();
-//                Log.d("main", result);
+//                Log.d("main--", result);
 
             } catch (IOException e) {
                 throw new Exception("服务器连接超时"+e.getMessage());
@@ -1738,7 +1743,8 @@ public class AccessWeb {
                     this.webdownload_url, 5000); // set timeout 5s
 
             transport.debug = true;
-
+//            Log.d("main--", webdownload_url);
+//            Log.d("main--", propertys.toString());
             try {
                 // 调用WebService
                 transport.call(SOAP_ACTION, envelope);
@@ -1746,7 +1752,7 @@ public class AccessWeb {
 //                				SoapObject object = (SoapObject) envelope.getResponse();
                 // 获取返回的结果
                 result = object.getProperty(0).toString();
-
+//                Log.d("main--", result);
 
             } catch (IOException e) {
                 throw new Exception("服务器连接超时");
@@ -2111,6 +2117,21 @@ public class AccessWeb {
     }
 
 
+    /** 代理商给零售商发货 佰莱德需求，要选产品*/
+
+    public String P_Dv_OutStock_D_L_Partner(String tPara) throws Exception {
+        ArrayList<HashMap<Object, Object>> para = new ArrayList<HashMap<Object, Object>>();
+        HashMap<Object, Object> map = new HashMap<Object, Object>();
+        map.put("tLoginId", sysUserInfo.getLoginid());
+        map.put("tWebId", mWebId);
+        map.put("tPara", tPara);
+        para.add(map);
+        String data = getWebResult("P_Dv_OutStock_D_L_Partner", para);
+        return data;
+    }
+
+
+
     /** 代理商给零售商发货  首发
      *
      *tLoginId：用户登录成功的LogId
@@ -2244,7 +2265,7 @@ public class AccessWeb {
         map.put("pBillNo", pBillNo);
         map.put("pShopBillNo", pShopBillNo);
         para.add(map);
-        Log.d("main",map.toString() );
+//        Log.d("main",map.toString() );
         String data = getWebResult("P_Dv_OutStock_D_S_NoBill", para);
         return data;
     }

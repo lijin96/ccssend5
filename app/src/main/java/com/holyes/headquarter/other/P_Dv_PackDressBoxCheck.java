@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -52,6 +53,7 @@ import com.holyes.ccssend5.utils.SomeUtils;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -597,10 +599,38 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
             return;
         }
 //		lab_jb lab_meal
-        String message = SomeUtils.readAssetsTxt(mContext, "lab_meal");
-//		Log.i("main", "sendMessage--------判断boxTag");
-        sendMessage(message, boxTag);
+//        String message = SomeUtils.readAssetsTxt(mContext, "lab_meal");
+////		Log.i("main", "sendMessage--------判断boxTag");
+//        sendMessage(message, boxTag);
 
+        String message = "";
+        if (isFileExists("lab_meal_" + sysUserInfo.getEnterpriseId().toString() + ".txt")) {
+            message = SomeUtils.readAssetsTxt(mContext, "lab_meal_" + sysUserInfo.getEnterpriseId().toString());
+        }else {
+            message = SomeUtils.readAssetsTxt(mContext, "lab_meal");
+        }
+        sendMessage(message, boxTag);
+    }
+
+
+    private boolean isFileExists(String filename) {
+        AssetManager assetManager = getAssets();
+        try {
+            String[] names = assetManager.list("");
+            for (int i = 0; i < names.length; i++) {
+                //	            LogUtil.e(names[i]);
+                if (names[i].equals(filename.trim())) {
+                    System.out.println(filename + "存在");
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println(filename + "不存在");
+            return false;
+        }
+        System.out.println(filename + "不存在");
+        return false;
     }
 
 
@@ -924,8 +954,15 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
             return;
         }
 
+        if (sysUserInfo.getEnterpriseId().toString().equals("05")) {
+            //派丽蒙要求去掉工号和日期
+        }else{
+            message = message.replace("%U", boxTag.getUserCode());
+            message = message.replace("%D", boxTag.getPackDate());
+        }
+
         message = message.replace("%BOX", boxTag.getBoxNo());
-        message = message.replace("%U", boxTag.getUserCode());
+//        message = message.replace("%U", boxTag.getUserCode());
         if (boxTag.getBrandName().length() > 7) {
             message = message.replace("%B", boxTag.getBrandName().substring(0, 7));
             message = message.replace("%S", boxTag.getBrandName().substring(8));
@@ -935,7 +972,7 @@ public class P_Dv_PackDressBoxCheck extends Activity implements View.OnClickList
             message = message.replace("%S", " ");
         }
         message = message.replace("%N", boxTag.getNum());
-        message = message.replace("%D", boxTag.getPackDate());
+//        message = message.replace("%D", boxTag.getPackDate());
 
 
         //byte[] send = readFileByte();

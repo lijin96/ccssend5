@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -58,6 +59,7 @@ import com.holyes.headquarter.other.P_Dv_PackDressBoxCheck;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -183,8 +185,8 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
 //                .setOnClickListener(new BtnListClick());
         ((Button) findViewById(R.id.btn_print))
                 .setOnClickListener(new BtnPrintClick());
-        ((Button) findViewById(R.id.btn_finish))
-                .setOnClickListener(new BtnExitClick());
+//        ((Button) findViewById(R.id.btn_finish))
+//                .setOnClickListener(new BtnExitClick());
 
         //选择型号色号
         ((Button) findViewById(R.id.btn_select_goodsid))
@@ -675,6 +677,8 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
                     MyProgressDialog.close();
                     if (msg.obj != null) {
                         ShowMessage.Show(mContext, "加载套餐明细失败：" + msg.obj.toString());
+                    } else {
+                        selectFirstIncompletePackDetail();
                     }
                     refreshQtyLabels();
                     break;
@@ -839,15 +843,19 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
                 return;
             }
             switch (requestCode) {
-                case Lic_SelectModel:
-                    goodsid = data.getStringExtra("goodsid");
-                    modelm = data.getStringExtra("modelm");
-                    colors = data.getStringExtra("colors");
-                    refreshQtyLabels();
-                    break;
+                // 套餐装盒出货：明细列表仅查看，不再通过点选切换型号色号
+                // case Lic_SelectModel:
+                //     goodsid = data.getStringExtra("goodsid");
+                //     modelm = data.getStringExtra("modelm");
+                //     colors = data.getStringExtra("colors");
+                //     refreshQtyLabels();
+                //     break;
                 case Lic_OutScanDetail:
                     if (data.getBooleanExtra(SelectPackMealOutScanDetail.EXTRA_DATA_CHANGED, false)) {
                         syncPendingScanSessionFromDb();
+                        if (goodsid == null || goodsid.isEmpty()) {
+                            selectFirstIncompletePackDetail();
+                        }
                         refreshQtyLabels();
                     }
                     break;
@@ -888,8 +896,14 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
 
     // 请求服务
     private void access_send(final String contents) {
+        ensureGoodsidReadyForScan();
         if (goodsid == null || goodsid.isEmpty()) {
-            ShowMessage.ShowMsg(handler, ShowMessage.HandScanError, "请先在明细中选择产品，再扫描物流码");
+            ShowMessage.ShowMsg(handler, ShowMessage.HandScanError, "套餐明细为空，无法扫描");
+            return;
+        }
+        if (PackDressBoxDao.isGoodsidScanFull(mContext, goodsid)
+                && PackDressBoxDao.queryScanNum(mContext)) {
+            ShowMessage.ShowMsg(handler, ShowMessage.HandScanError, "全部型号已扫满，请等待整盒提交");
             return;
         }
         final String scanGoodsId = goodsid;
@@ -912,7 +926,21 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
                             return;
                         }
                         if (!PackDressBoxDao.queryNum(mContext, scanGoodsId)) {
-                            ShowMessage.ShowMsg(handler, ShowMessage.HandScanError, "当前型号已扫满，请先选择其它明细产品");
+                            Map<String, Object> next = PackDressBoxDao.findNextIncompleteAfter(mContext, scanGoodsId);
+                            if (next != null) {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        applyPackDetailRow(next);
+                                        refreshQtyLabels();
+                                        ShowMessage.Show(mContext, "当前型号已扫满，已切换至："
+                                                + modelm + "-" + colors + "，请继续扫描");
+                                    }
+                                });
+                            } else {
+                                ShowMessage.ShowMsg(handler, ShowMessage.HandScanError,
+                                        "当前型号已扫满，整套即将提交");
+                            }
                             return;
                         }
 
@@ -940,6 +968,8 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
                                 if (readyUpload) {
                                     submitPackMealUploadAfterUiReady(triggerBarcode);
                                 } else {
+                                    advanceToNextIncompleteIfCurrentFull(true);
+                                    refreshQtyLabels();
                                     MySound.scanSound();
                                     if (tv_billno != null) {
                                         tv_billno.setText(mBillNo);
@@ -1045,13 +1075,11 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
         PackDressBoxDao.clearOutScanLines(mContext);
         scannedBarcodes.clear();
         outStockScanSession.clear();
-        goodsid = "";
-        modelm = "";
-        colors = "";
 
         handler.post(new Runnable() {
             @Override
             public void run() {
+                selectFirstIncompletePackDetail();
                 MySound.scanSound();
                 tv_sleevelabel.setText(PackMealBoxCode);
                 refreshQtyLabels();
@@ -1171,25 +1199,86 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
     private class BtnSelectProductClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            if (goodsid != null && !goodsid.isEmpty()) {
-                int pack = PackDressBoxDao.queryPacknumForGoodsid(mContext, goodsid);
-                int scan = 0;
-                try {
-                    String sn = PackDressBoxDao.queryGoodsidNum(mContext, goodsid);
-                    if (sn != null && !sn.isEmpty()) {
-                        scan = Integer.parseInt(sn);
-                    }
-                } catch (Exception ignored) {
-                }
-                if (scan>0&&scan < pack) {
-                    ShowMessage.Show(mContext, "当前产品尚未扫满，请继续扫描；扫满后再选择其它明细产品");
-                    return;
-                }
-            }
+            // 原逻辑：未扫满时不允许切换型号（已改为自动按序扫描，此处仅打开明细查看）
+            // if (goodsid != null && !goodsid.isEmpty()) {
+            //     int pack = PackDressBoxDao.queryPacknumForGoodsid(mContext, goodsid);
+            //     int scan = 0;
+            //     try {
+            //         String sn = PackDressBoxDao.queryGoodsidNum(mContext, goodsid);
+            //         if (sn != null && !sn.isEmpty()) {
+            //             scan = Integer.parseInt(sn);
+            //         }
+            //     } catch (Exception ignored) {
+            //     }
+            //     if (scan>0&&scan < pack) {
+            //         ShowMessage.Show(mContext, "当前产品尚未扫满，请继续扫描；扫满后再选择其它明细产品");
+            //         return;
+            //     }
+            // }
             Intent intent = new Intent(mContext, SelectSetmealDetails.class);
             intent.putExtra("SetmealId", PackId);
             intent.putExtra("use_local_detail", true);
-            startActivityForResult(intent, Lic_SelectModel);
+            intent.putExtra("view_only", true);
+            startActivity(intent);
+            // startActivityForResult(intent, Lic_SelectModel);
+        }
+    }
+
+    private void applyPackDetailRow(Map<String, Object> row) {
+        if (row == null) {
+            goodsid = "";
+            modelm = "";
+            colors = "";
+            return;
+        }
+        Object g = row.get("goodsid");
+        goodsid = g == null ? "" : g.toString();
+        Object m = row.get("modelm");
+        modelm = m == null ? "" : m.toString();
+        Object c = row.get("colors");
+        colors = c == null ? "" : c.toString();
+    }
+
+    /** 默认选中第一个尚未扫满的型号色号 */
+    private void selectFirstIncompletePackDetail() {
+        applyPackDetailRow(PackDressBoxDao.findFirstIncompleteDetail(mContext));
+    }
+
+    /**
+     * 扫描前：若无当前型号或当前已扫满，则自动切到下一个未扫满的型号
+     */
+    private void ensureGoodsidReadyForScan() {
+        if (goodsid == null || goodsid.isEmpty()) {
+            selectFirstIncompletePackDetail();
+            return;
+        }
+        if (PackDressBoxDao.isGoodsidScanFull(mContext, goodsid)) {
+            Map<String, Object> next = PackDressBoxDao.findNextIncompleteAfter(mContext, goodsid);
+            if (next != null) {
+                applyPackDetailRow(next);
+            }
+        }
+    }
+
+    /**
+     * 当前型号扫满后自动切换到下一个；showTip 为 true 时提示用户
+     */
+    private void advanceToNextIncompleteIfCurrentFull(boolean showTip) {
+        if (goodsid == null || goodsid.isEmpty()) {
+            return;
+        }
+        if (!PackDressBoxDao.isGoodsidScanFull(mContext, goodsid)) {
+            return;
+        }
+        Map<String, Object> next = PackDressBoxDao.findNextIncompleteAfter(mContext, goodsid);
+        if (next == null) {
+            return;
+        }
+        String prevLabel = modelm + "-" + colors;
+        applyPackDetailRow(next);
+        String nextLabel = modelm + "-" + colors;
+        if (showTip && !nextLabel.equals(prevLabel)) {
+            ShowMessage.Show(mContext, "当前型号已扫满，已切换至：" + nextLabel);
         }
     }
 
@@ -1244,7 +1333,7 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
 
         if (goodsid == null || goodsid.isEmpty()) {
             tv_curqty.setText("0/0");
-            tv_model_colors.setText("（请点击选择，先选套餐中的产品）");
+            tv_model_colors.setText("（套餐明细加载中…）");
             tv_goodsid.setText("");
             return;
         }
@@ -1257,8 +1346,9 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
             }
         } catch (Exception ignored) {
         }
-        tv_curqty.setText(sn + "/" + pn);
-        tv_model_colors.setText(modelm + "-" + colors);
+        String qtyPart = sn + "/" + pn;
+        tv_curqty.setText(qtyPart);
+        tv_model_colors.setText(modelm + "-" + colors + "  " + qtyPart);
         tv_goodsid.setText("(" + goodsid + ")");
         tv_billno.setText(mBillNo);
     }
@@ -1299,7 +1389,12 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
             return;
         }
 //		lab_jb lab_meal
-        String message = SomeUtils.readAssetsTxt(mContext, "lab_meal");
+        String message = "";
+        if (isFileExists("lab_meal_" + sysUserInfo.getEnterpriseId().toString() + ".txt")) {
+            message = SomeUtils.readAssetsTxt(mContext, "lab_meal_" + sysUserInfo.getEnterpriseId().toString());
+        }else {
+            message = SomeUtils.readAssetsTxt(mContext, "lab_meal");
+        }
 //		Log.i("main", "sendMessage--------判断boxTag");
         sendMessage(message, boxTag);
     }
@@ -1316,20 +1411,21 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
             ShowMessage.Show(mContext, "未连接蓝牙");
             return;
         }
-
+        if (sysUserInfo.getEnterpriseId().toString().equals("05")) {
+            //派丽蒙要求去掉工号和日期
+        }else{
+            message = message.replace("%U", boxTag.getUserCode());
+            message = message.replace("%D", boxTag.getPackDate());
+        }
         message = message.replace("%BOX", boxTag.getBoxNo());
-        message = message.replace("%U", boxTag.getUserCode());
         if (boxTag.getBrandName().length() > 7) {
             message = message.replace("%B", boxTag.getBrandName().substring(0, 7));
             message = message.replace("%S", boxTag.getBrandName().substring(8));
-
         } else {
             message = message.replace("%B", boxTag.getBrandName());
             message = message.replace("%S", " ");
         }
         message = message.replace("%N", boxTag.getNum());
-        message = message.replace("%D", boxTag.getPackDate());
-
 
         //byte[] send = readFileByte();
         byte[] send;
@@ -1341,6 +1437,26 @@ public class P_Dv_OutStock_Z_D_PackMeal_NoBill_NoInStock extends Activity {
         }
     }
 
+
+    private boolean isFileExists(String filename) {
+        AssetManager assetManager = getAssets();
+        try {
+            String[] names = assetManager.list("");
+            for (int i = 0; i < names.length; i++) {
+                //	            LogUtil.e(names[i]);
+                if (names[i].equals(filename.trim())) {
+                    System.out.println(filename + "存在");
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println(filename + "不存在");
+            return false;
+        }
+        System.out.println(filename + "不存在");
+        return false;
+    }
 
 }
 

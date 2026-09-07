@@ -49,7 +49,6 @@ public class P_Dv_InStock_Z_ChangeCode extends Activity {
     private PrintUtil printBillSend;
     private ChangeCodePara codePara;
 
-
     private EditText et_old_code, et_new_code;
     private TextView tv_old_mess, tv_old_code, tv_new_code, tv_result, tv_error,tv_information;
     private RadioGroup radioGroup;
@@ -63,6 +62,9 @@ public class P_Dv_InStock_Z_ChangeCode extends Activity {
     private String changeCodeType = "", OldCode = "", NewBarcode = "", result, sql;
 
     private String  product_id = "",modelm = "",colors = "";
+
+    private int nScanQty=0;
+    private TextView tv_totalqty;
 
 
     @Override
@@ -91,6 +93,9 @@ public class P_Dv_InStock_Z_ChangeCode extends Activity {
 
 
         tv_information=findViewById(R.id.tv_information);//换标成功显示的型号色号
+
+        tv_totalqty=findViewById(R.id.tv_totalqty);
+        tv_totalqty.setText("当前累计换标数："+nScanQty);
 
         et_old_code.setOnKeyListener(new EtBarodeOnkeyListener());
         et_new_code.setOnKeyListener(new EtBarodeOnkeyListener());
@@ -282,6 +287,7 @@ public class P_Dv_InStock_Z_ChangeCode extends Activity {
 
 
                     if (result.length()>0) {
+                        nScanQty++;
                         if (changeCodeType.equals("0")) {
                             sql = "insert into newchangecode(newcode,oldcode,oldcodetype)values('" + newBarcode + "','" + oldBarcode + "','" + "物流码" + "')";
 
@@ -311,6 +317,7 @@ public class P_Dv_InStock_Z_ChangeCode extends Activity {
                     tv_error.setText("");
                     tv_information.setText("型号色号:"+modelm+colors);
                     et_new_code.requestFocus();
+                    tv_totalqty.setText("当前累计换标数："+nScanQty);
                     break;
                 case ShowMessage.HandScanError:
                     MySound.errorSound();

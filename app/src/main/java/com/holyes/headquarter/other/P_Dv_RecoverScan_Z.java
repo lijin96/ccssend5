@@ -111,16 +111,13 @@ public class P_Dv_RecoverScan_Z extends Activity {
         et_barcode = (EditText) findViewById(R.id.et_barcode);
         et_barcode.setOnKeyListener(new EtBarodeOnkeyListener());
 
-
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         scanBillno = sysUserInfo.getUserid() + "S" + SomeUtils.RandomScanOrder();// 系统
 
         tv_totalqty.setText("0");
         tv_curqty.setText("0");
-
 //		send = new SendDatas();
 //		send.start();
-
     }
 
     @Override

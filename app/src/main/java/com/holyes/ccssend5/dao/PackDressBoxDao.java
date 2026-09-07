@@ -256,7 +256,7 @@ public class PackDressBoxDao {
         }
 
         /**
-         * 查询所有产品
+         * 查询所有产品（按插入顺序，与套餐明细加载顺序一致）
          * @param context
          */
         public static List<Map<String,Object>> queryAllGoods(Context context)
@@ -265,6 +265,68 @@ public class PackDressBoxDao {
             String listsql="select * from packdressboxscan group by goodsid";
             list=SqliteDataHelper.getHelper(context).QueryDbList(listsql,null);
             return list;
+        }
+
+        /** 当前型号是否已扫满（scannum >= packnum） */
+        public static boolean isGoodsidScanFull(Context context, String goodsid) {
+            if (goodsid == null || goodsid.isEmpty()) {
+                return true;
+            }
+            return !queryNum(context, goodsid);
+        }
+
+        private static String mapStr(Map<String, Object> row, String key) {
+            if (row == null) {
+                return "";
+            }
+            Object v = row.get(key);
+            return v == null ? "" : v.toString();
+        }
+
+        /**
+         * 第一个尚未扫满的套餐明细；若均已扫满则返回列表第一项
+         */
+        public static Map<String, Object> findFirstIncompleteDetail(Context context) {
+            List<Map<String, Object>> list = queryAllGoods(context);
+            if (list == null || list.isEmpty()) {
+                return null;
+            }
+            for (Map<String, Object> row : list) {
+                if (!isGoodsidScanFull(context, mapStr(row, "goodsid"))) {
+                    return row;
+                }
+            }
+            return list.get(0);
+        }
+
+        /**
+         * 当前 goodsid 之后（含绕回）第一个尚未扫满的明细；无则返回 null
+         */
+        public static Map<String, Object> findNextIncompleteAfter(Context context, String afterGoodsid) {
+            List<Map<String, Object>> list = queryAllGoods(context);
+            if (list == null || list.isEmpty()) {
+                return null;
+            }
+            int startIdx = 0;
+            if (afterGoodsid != null && !afterGoodsid.isEmpty()) {
+                for (int i = 0; i < list.size(); i++) {
+                    if (afterGoodsid.equals(mapStr(list.get(i), "goodsid"))) {
+                        startIdx = i + 1;
+                        break;
+                    }
+                }
+            }
+            for (int pass = 0; pass < 2; pass++) {
+                int from = pass == 0 ? startIdx : 0;
+                int to = pass == 0 ? list.size() : startIdx;
+                for (int i = from; i < to; i++) {
+                    Map<String, Object> row = list.get(i);
+                    if (!isGoodsidScanFull(context, mapStr(row, "goodsid"))) {
+                        return row;
+                    }
+                }
+            }
+            return null;
         }
 
 

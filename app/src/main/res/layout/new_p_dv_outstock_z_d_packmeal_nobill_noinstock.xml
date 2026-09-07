@@ -400,7 +400,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="5dp"
-                android:text="（请先选择产品的型号色号！>>>）"
+                android:text="（加载套餐后自动显示第一个型号色号）"
                 android:textSize="30dp" />
 
             <TextView
@@ -430,7 +430,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="80dp"
                 android:layout_marginRight="20dp"
-                android:text="选\t择 "
+                android:text="查\t看"
                 android:textSize="28dp" />
         </LinearLayout>
     </LinearLayout>

@@ -136,6 +136,13 @@ public class SelectCompanyRetailer extends Activity {
 
     public void initListView(String sql) {
         dList = SqliteDataHelper.getHelper(getApplicationContext()).QueryDbList(sql, null);
+        Map<String, Object> TestMap = new HashMap<String, Object>();
+//        TestMap.put("tradername","测试零售店");
+//        TestMap.put("link","测试联系人");
+//        TestMap.put("tel","测试电话");
+//        TestMap.put("traderid","测试代号");
+//        TestMap.put("corpaddr","测试地址");
+//        dList.add(TestMap);
         adapter = new SimpleAdapter(this, dList, R.layout.lst_company_item,
                 new String[]{"tradername", "link", "tel", "traderid", "corpaddr",
                 }, new int[]{

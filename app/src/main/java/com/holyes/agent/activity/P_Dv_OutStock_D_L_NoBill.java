@@ -33,6 +33,7 @@ import com.holyes.ccssend5.lib.SqliteDataHelper;
 import com.holyes.ccssend5.lib.SysUserInfo;
 import com.holyes.ccssend5.myview.MyProgressDialog;
 import com.holyes.ccssend5.select.QueryScanDetail;
+import com.holyes.ccssend5.select.SelectProductModelColor;
 import com.holyes.ccssend5.utils.PrintUtil;
 import com.holyes.ccssend5.utils.SomeUtils;
 
@@ -83,7 +84,10 @@ public class P_Dv_OutStock_D_L_NoBill extends Activity {
 
 //	private List<String> codesList= new ArrayList<String>();
 //
-//	Thread send ;
+//	Thread send ; setMode
+
+    private final int Lic_SelectModel = 2;
+    private Button btn_choosegoods;//合作商身份需要选择产品发货，调用新的发货接口，佰莱德需求
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +113,20 @@ public class P_Dv_OutStock_D_L_NoBill extends Activity {
                 .setOnClickListener(new BtnPtintClick());
         ((Button) findViewById(R.id.btn_exit))
                 .setOnClickListener(new BtnExitClick());
+
+
+        btn_choosegoods=findViewById(R.id.btn_choosegoods);
+        if (sysUserInfo.getMode().equals("合作商")){
+            btn_choosegoods.setVisibility(View.VISIBLE);
+            btn_choosegoods.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, SelectProductModelColor.class);
+                    startActivityForResult(intent, Lic_SelectModel);
+                }
+            });
+        }
+
         tv_title = (TextView) findViewById(R.id.tv_title);
         tv_company_na = (TextView) findViewById(R.id.tv_company_na);
         tv_product_id = (TextView) findViewById(R.id.tv_product_id);
@@ -178,6 +196,28 @@ public class P_Dv_OutStock_D_L_NoBill extends Activity {
 //		} catch (InterruptedException e) {
 //			e.printStackTrace();
 //		}
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == RESULT_OK) {
+            if (data == null) {
+                return;
+            }
+            switch (requestCode) {
+                case Lic_SelectModel:
+                    product_id = data.getStringExtra("goodsid");
+                    modelm = data.getStringExtra("modelm");
+                    colors = data.getStringExtra("colors");
+                    String productinfo = modelm + "-" + colors;
+                    tv_model_colors.setText(productinfo);
+                    tv_product_id.setText("(" + product_id + ")");
+                    break;
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private class handShowMsg extends Handler {
@@ -360,6 +400,10 @@ public class P_Dv_OutStock_D_L_NoBill extends Activity {
     // {{自定义函数
     @SuppressLint("NewApi")
     private void access_send(final String contents) {
+        if (sysUserInfo.getMode().equals("合作商")&&product_id.equals("")){
+            ShowMessage.Show(mContext, "请先选择产品");
+            return;
+        }
         Thread sendCode = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -368,74 +412,40 @@ public class P_Dv_OutStock_D_L_NoBill extends Activity {
                     AccessWeb.getHelper(getApplicationContext()).mWebId = lStar + contents;
                     //！！！注意，这个服务和其他的调的参数有差异
 
-                    if (sysUserInfo.getFirstStart().equals("01") ||
-                            sysUserInfo.getFirstStart().equals("11")) {
-                        //Barcode：扫描的条码(必传)
-                        //SoCompId：代理商代号(必传)
-                        //DeCompId：零售商代号(必传)
-                        //OaSuserId：扫描人员代号(必传)
-                        //ScanSn：扫描序号(必传)
-                        //ScanBillNo：扫描单号(必传)
-                        //BillNo：发货单号(首次扫码传空，成功再扫码时传返回的发货单号)
-                        //FirstDelivery：是否首次发货(0-非首次；1-首次)
+                    if (sysUserInfo.getMode().equals("合作商")){
+                        //如果是合作商身份要用新的发货接口 不支持套标发货
+//                        Barcode：扫描的条码(必传)
+//                        SoCompId：代理商代号(必传)
+//                        DeCompId：零售商代号(必传)
+//                        GoodsId：产品代号
+//                        OaSuserId：扫描人员代号(必传)
+//                        ScanSn：扫描序号(必传)
+//                        ScanBillNo：扫描单号(必传)
+//                        BillNo：发货单号(首次扫码传空，成功再扫码时传返回的发货单号)
+//                        FirstDelivery：是否首次发货(0-非首次；1-首次)
                         para.setBarcode(contents);
                         para.setSoCompId(socompany_id);
                         para.setDeCompId(company_id);
+                        para.setGoodsId(product_id);
                         para.setOaSuserId(sysUserInfo.getUserid());
                         para.setScanSn(String.valueOf(nSize));
                         para.setScanBillNo(Scanbillno);
                         para.setBillNo(mBillNo);
                         para.setFirstDelivery(Delivery_type);
-                        result = AccessWeb.getHelper(getApplicationContext()).P_Dv_OutStock_D_L_NoBillv1(para.toJson());
-                    } else {
-                        result = AccessWeb.getHelper(getApplicationContext()).P_Dv_OutStock_D_L_NoBill(contents, socompany_id,
-                                company_id, String.valueOf(nSize), Scanbillno,
-                                mBillNo);
-                    }
-                    //返回结果为空
-                    if (result.isEmpty()) {
-                        MySound.errorSound();
-                        ShowMessage.ShowMsg(hand, 3, "");
-                        return;
-                    }
-                    nSize++;
-                    if (contents.startsWith("P")) {
-
-                        JSONArray listjson = new JSONArray(result);
-
-
-                        //                "GoodsId": "C00001",
-                        //                "Modelm": "1357",
-                        //                "Colors": "C01",
-                        //                "CurNum": "80",
-                        //                "PackNumber": "P200917000001",
-                        //                "TranLno" :"DX-00-200000001"
-
-                        for (int i = 0; i < listjson.length(); i++) {
-                            JSONObject jsonObject1 = (JSONObject) listjson.opt(i);
-
-                            product_id = jsonObject1.getString("GoodsId");
-                            modelm = jsonObject1.getString("Modelm");
-                            colors = jsonObject1.getString("Colors");
-                            curcount = jsonObject1.getString("CurNum");
-                            //					lastSuccessBarcode = rest[4].trim();
-                            if (mBillNo == null || mBillNo.isEmpty()) {
-                                mBillNo = jsonObject1.getString("TranLno");
-                            }
-
-                            nScanCount = String.valueOf(Integer.parseInt(nScanCount) + Integer.parseInt(jsonObject1.optString("CurNum","0")));
+                        result = AccessWeb.getHelper(getApplicationContext()).P_Dv_OutStock_D_L_Partner(para.toJson());
+                        //返回结果为空
+                        if (result.isEmpty()) {
+                            MySound.errorSound();
+                            ShowMessage.ShowMsg(hand, 3, "");
+                            return;
                         }
-                        ShowMessage.ShowMsg(hand, ShowMessage.HandScanSuccess, "");
-                    } else {
-                        //CS170001,1.50非球面,+1.75+0.50,1,6222323912072181,DF-CS001-17000001
-                        //产品编号,型号,色号,当前型号数量,当前扫描的条码,发货单号
-                        String rest[] = result.split(",",-1);
+                        nSize++;
+                        // true;产品编号,型号,色号,当前型号数量,当前扫描的条码,发货单号
+                        String rest[] = result.split(",", -1);
 
                         if (rest.length < 6) {
                             MySound.errorSound();
-                            ShowMessage.ShowMsg(hand, "sendgood参数个数不够，当前"
-                                    + rest.length + "位！");
-
+                            ShowMessage.ShowMsg(hand, "sendgood参数个数不够，当前" + rest.length + "位！");
                             return;
                         }
 
@@ -449,19 +459,105 @@ public class P_Dv_OutStock_D_L_NoBill extends Activity {
                         curcount = rest[3].trim();
                         lastSuccessBarcode = contents;
 
-                        if (rest.length > 6) {
-                            if (Integer.parseInt(nScanCount) < Integer.parseInt(rest[6].trim())) {
-                                nScanCount = rest[6].trim();
+
+                        if (Integer.parseInt(nScanCount) < Integer.parseInt(rest[6].trim())) {
+                            nScanCount = rest[6].trim();
+                        }
+                        //第五代返回结果处理
+                        ShowMessage.ShowMsg(hand, ShowMessage.HandScanSuccess, "");
+
+                    }else{
+
+                        if (sysUserInfo.getFirstStart().equals("01") || sysUserInfo.getFirstStart().equals("11")) {
+                            //Barcode：扫描的条码(必传)
+                            //SoCompId：代理商代号(必传)
+                            //DeCompId：零售商代号(必传)
+                            //OaSuserId：扫描人员代号(必传)
+                            //ScanSn：扫描序号(必传)
+                            //ScanBillNo：扫描单号(必传)
+                            //BillNo：发货单号(首次扫码传空，成功再扫码时传返回的发货单号)
+                            //FirstDelivery：是否首次发货(0-非首次；1-首次)
+                            para.setBarcode(contents);
+                            para.setSoCompId(socompany_id);
+                            para.setDeCompId(company_id);
+                            para.setOaSuserId(sysUserInfo.getUserid());
+                            para.setScanSn(String.valueOf(nSize));
+                            para.setScanBillNo(Scanbillno);
+                            para.setBillNo(mBillNo);
+                            para.setFirstDelivery(Delivery_type);
+                            result = AccessWeb.getHelper(getApplicationContext()).P_Dv_OutStock_D_L_NoBillv1(para.toJson());
+                        } else {
+                            result = AccessWeb.getHelper(getApplicationContext()).P_Dv_OutStock_D_L_NoBill(contents, socompany_id, company_id, String.valueOf(nSize), Scanbillno, mBillNo);
+                        }
+                        //返回结果为空
+                        if (result.isEmpty()) {
+                            MySound.errorSound();
+                            ShowMessage.ShowMsg(hand, 3, "");
+                            return;
+                        }
+                        nSize++;
+                        if (contents.startsWith("P")) {
+
+                            JSONArray listjson = new JSONArray(result);
+
+
+                            //                "GoodsId": "C00001",
+                            //                "Modelm": "1357",
+                            //                "Colors": "C01",
+                            //                "CurNum": "80",
+                            //                "PackNumber": "P200917000001",
+                            //                "TranLno" :"DX-00-200000001"
+
+                            for (int i = 0; i < listjson.length(); i++) {
+                                JSONObject jsonObject1 = (JSONObject) listjson.opt(i);
+
+                                product_id = jsonObject1.getString("GoodsId");
+                                modelm = jsonObject1.getString("Modelm");
+                                colors = jsonObject1.getString("Colors");
+                                curcount = jsonObject1.getString("CurNum");
+                                //					lastSuccessBarcode = rest[4].trim();
+                                if (mBillNo == null || mBillNo.isEmpty()) {
+                                    mBillNo = jsonObject1.getString("TranLno");
+                                }
+
+                                nScanCount = String.valueOf(Integer.parseInt(nScanCount) + Integer.parseInt(jsonObject1.optString("CurNum", "0")));
                             }
-                            //第五代返回结果处理
                             ShowMessage.ShowMsg(hand, ShowMessage.HandScanSuccess, "");
                         } else {
-                            //第四代返回结果处理
-                            ShowMessage.ShowMsg(hand, ShowMessage.HandSuccess, "");
+                            //CS170001,1.50非球面,+1.75+0.50,1,6222323912072181,DF-CS001-17000001
+                            //产品编号,型号,色号,当前型号数量,当前扫描的条码,发货单号
+                            String rest[] = result.split(",", -1);
+
+                            if (rest.length < 6) {
+                                MySound.errorSound();
+                                ShowMessage.ShowMsg(hand, "sendgood参数个数不够，当前" + rest.length + "位！");
+
+                                return;
+                            }
+
+                            if (mBillNo.isEmpty()) {
+                                mBillNo = rest[5];
+                            }
+
+                            product_id = rest[0].trim();
+                            modelm = rest[1].trim();
+                            colors = rest[2].trim();
+                            curcount = rest[3].trim();
+                            lastSuccessBarcode = contents;
+
+                            if (rest.length > 6) {
+                                if (Integer.parseInt(nScanCount) < Integer.parseInt(rest[6].trim())) {
+                                    nScanCount = rest[6].trim();
+                                }
+                                //第五代返回结果处理
+                                ShowMessage.ShowMsg(hand, ShowMessage.HandScanSuccess, "");
+                            } else {
+                                //第四代返回结果处理
+                                ShowMessage.ShowMsg(hand, ShowMessage.HandSuccess, "");
+                            }
                         }
                     }
                     lStar = "";
-
                 } catch (Exception e) {
                     ShowMessage.ShowMsg(hand, ShowMessage.HandScanError,
                             e.getMessage());

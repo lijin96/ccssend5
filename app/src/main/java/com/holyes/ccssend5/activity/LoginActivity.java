@@ -638,8 +638,14 @@ public class LoginActivity extends Activity {
                     showTip("下载分销店资料...");
                     downloadStoreInfor();
                     //}
+                    if (sysUserInfo.getMode().equals("合作商")){
+                        // 下载更新产品资料
+                        setProgressBarMax(0);
+                        setProgressBarValue(0);
+                        showTip("下载更新产品资料...");
+                        downProduct();
+                    }
                 }
-
 
                 if (!isPaused) // 正常
                 {
@@ -725,7 +731,7 @@ public class LoginActivity extends Activity {
      */
     private void downLoadTraderInfor() throws Exception {
         maxDataTime = getLSMaxUprecndate("newretail", sysUserInfo.getCompanyid());
-        Log.d("main",maxDataTime);
+//        Log.d("main",maxDataTime);
         companycurcount = 0;
         companycount = Integer.parseInt(AccessWeb.getHelper(getApplicationContext()).GetDownLoadTraderRecord(maxDataTime));
         setProgressBarMax(companycount);
@@ -733,7 +739,7 @@ public class LoginActivity extends Activity {
         List<Map<String, Object>> map;
         for (maxDataTime = getLSMaxUprecndate("newretail", sysUserInfo.getCompanyid()); companycurcount < companycount; maxDataTime = getLSMaxUprecndate("newretail", sysUserInfo.getCompanyid())) {
             map = AccessWeb.getHelper(getApplicationContext()).GetDownLoadTraderInfor(maxDataTime);
-            Log.d("main",map.toString());
+//            Log.d("main",map.toString());
             if (map.size() == 0) {
                 return;
             }
@@ -793,12 +799,13 @@ public class LoginActivity extends Activity {
         maxDataTime = getMaxUprecndate("storeinfor");
 
         companycurcount = 0;
-//        Log.d("main", maxDataTime);
+//        Log.d("main-1", maxDataTime);
         companycount = Integer.parseInt(AccessWeb.getHelper(getApplicationContext()).GetDownLoadStoreRecord(maxDataTime));
         setProgressBarMax(companycount);
         String StoreId, StoreName, Link, Tel, CorpAddr, TraderId, Uprecndate;
         List<Map<String, Object>> map;
         for (maxDataTime = getMaxUprecndate("storeinfor"); companycurcount < companycount; maxDataTime = getMaxUprecndate("storeinfor")) {
+//            Log.d("main-2", maxDataTime);
             map = AccessWeb.getHelper(mContext).GetDownLoadStoreInfor(maxDataTime);
 
             if (map.size() == 0) {
@@ -1317,7 +1324,7 @@ public class LoginActivity extends Activity {
         }else {
             result = AccessWeb.getHelper(getApplicationContext()).UserLogin(et_username.getText().toString().trim(), et_password.getText().toString());
         }
-//        Log.d("main", result);
+//        Log.d("main--", result);
         return ParseData_login(result);
     }
 
@@ -1411,11 +1418,11 @@ public class LoginActivity extends Activity {
                 //				}
             }
 
-            if (sysUserInfo.getSoftType().equals("52")) {
-//                if (!et_username.getText().toString().equals(sysUserInfo.getMobile())) {
-                    SqliteDataHelper.getHelper(getApplicationContext()).CleanStoreinfor();
-//                }
-            }
+//            if (sysUserInfo.getSoftType().equals("52")) {
+////                if (!et_username.getText().toString().equals(sysUserInfo.getMobile())) {
+//                    SqliteDataHelper.getHelper(getApplicationContext()).CleanStoreinfor();
+////                }
+//            }
             if (sysUserInfo.getSoftType().equals("52"))//代理商模式
             {
                 if (user.getP05().equals("总公司")) {

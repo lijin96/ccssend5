@@ -205,8 +205,6 @@
             </RelativeLayout>
         </RelativeLayout>
 
-
-
         <TextView
             android:id="@+id/tv_information"
             android:layout_width="wrap_content"
@@ -226,6 +224,16 @@
             android:text=""
             android:textColor="@color/red"
             android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/tv_totalqty"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="26dp"
+            android:gravity="right"
+            android:layout_marginRight="20dp"
+            android:text="当前累计换标数"></TextView>
     </LinearLayout>
 
     <LinearLayout

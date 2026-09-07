@@ -28,7 +28,7 @@ import java.util.Map;
 
 /**
  * @ClassName: SelectSetmealDetails
- * @Description: 选择套餐明细（套标发货：从本地 packdressboxscan 展示，点击一行返回产品）
+ * @Description: 套餐明细列表（套标发货：从本地 packdressboxscan 展示；装盒出货为仅查看，不可点选）
  * @Author: lijin
  * @Date: 2026/5/11 17:34
  */
@@ -43,13 +43,17 @@ public class SelectSetmealDetails extends Activity {
 
     private String PackId = "";
 
-    /** 从扫描页进入：不清空本地扫描表，只展示并点选 */
+    /** 从扫描页进入：不清空本地扫描表，只展示本地数据 */
     private boolean useLocalDetail;
+
+    /** 仅查看列表，不可点击选择型号色号 */
+    private boolean viewOnly;
 
     private List<Map<String, Object>> list;
 
     private ListView PackDressBox_list;
     private TextView tv_total;
+    private TextView txt_tile;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,15 +71,21 @@ public class SelectSetmealDetails extends Activity {
 
         PackDressBox_list = findViewById(R.id.PackDressBox_list);
         tv_total = findViewById(R.id.tv_total);
+        txt_tile = findViewById(R.id.txt_tile);
 
         PackId = getIntent().getStringExtra("SetmealId");
         useLocalDetail = getIntent().getBooleanExtra("use_local_detail", false);
+        viewOnly = getIntent().getBooleanExtra("view_only", false);
+        if (viewOnly && txt_tile != null) {
+            txt_tile.setText("套餐明细（仅查看）");
+        }
 
         if (useLocalDetail) {
             list = SqliteDataHelper.getHelper(getApplicationContext()).QueryDbList("select * from packdressboxscan", null);
             if (list != null && !list.isEmpty()) {
                 initListView(list);
-                bindPickListener();
+                // 装盒出货：仅查看，不绑定点选
+                // bindPickListener();
                 return;
             }
         }
@@ -93,23 +103,26 @@ public class SelectSetmealDetails extends Activity {
         downloadThread.start();
     }
 
+    /**
+     * 点击列表项选择型号色号并返回（装盒出货已改为仅查看，默认不调用）
+     */
     private void bindPickListener() {
-        if (!useLocalDetail) {
+        if (!useLocalDetail || viewOnly) {
             return;
         }
-        PackDressBox_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Map<String, Object> row = (Map<String, Object>) parent.getItemAtPosition(position);
-                Intent ret = new Intent();
-                ret.putExtra("goodsid", str(row.get("goodsid")));
-                ret.putExtra("modelm", str(row.get("modelm")));
-                ret.putExtra("colors", str(row.get("colors")));
-                ret.putExtra("packnum", str(row.get("packnum")));
-                setResult(RESULT_OK, ret);
-                finish();
-            }
-        });
+        // PackDressBox_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //     @Override
+        //     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        //         Map<String, Object> row = (Map<String, Object>) parent.getItemAtPosition(position);
+        //         Intent ret = new Intent();
+        //         ret.putExtra("goodsid", str(row.get("goodsid")));
+        //         ret.putExtra("modelm", str(row.get("modelm")));
+        //         ret.putExtra("colors", str(row.get("colors")));
+        //         ret.putExtra("packnum", str(row.get("packnum")));
+        //         setResult(RESULT_OK, ret);
+        //         finish();
+        //     }
+        // });
     }
 
     private static String str(Object o) {
@@ -160,7 +173,7 @@ public class SelectSetmealDetails extends Activity {
                         String listsql = "select * from packdressboxscan";
                         list = SqliteDataHelper.getHelper(getApplicationContext()).QueryDbList(listsql, null);
                         initListView(list);
-                        bindPickListener();
+                        // bindPickListener();
                     }
 
                     break;
